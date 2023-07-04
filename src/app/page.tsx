@@ -1,6 +1,5 @@
-import Image from 'next/image';
-import LoginForm from '@components/LoginForm';
 import Upload from '@components/Upload';
+import Link from 'next/link';
 
 export default function Home() {
   return (
@@ -11,11 +10,21 @@ export default function Home() {
       >
         <h1 className="text-3xl  font-bold">Welcome to Peaktopia</h1>
       </div>
-      <div className="z-10 w-full items-center justify-between font-mono text-sm lg:flex mb-4">
-        <p className={`left-0 top-0 flex w-full justify-center pb-6 pt-8 lg:static 2xl:w-auto lg:p-4`}>
-          Get started by logging in <br />
-          or just upload your graphs to start selecting peaks 🚩
-        </p>
+      <div className="w-full items-center justify-between font-mono text-sm lg:flex mb-4">
+        <div
+          className={`left-0 top-0 flex w-full justify-center pb-6 pt-8 lg:static 2xl:w-auto lg:p-4 tracking-wide
+          leading-9`}
+        >
+          <span>
+            Get started by{' '}
+            <Link href="login" className="underline underline-offset-4 text-primary">
+              logging in
+            </Link>
+            <br />
+            or <br />
+            upload your graphs to start selecting and comparing peaks 🚩
+          </span>
+        </div>
       </div>
       <Upload accept={['image/png', 'image/jpg']} />
     </main>

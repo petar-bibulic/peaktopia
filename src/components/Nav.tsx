@@ -1,20 +1,14 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
-import { signIn, signOut, useSession, getProviders } from 'next-auth/react';
-import Provider from '@components/Provider';
 import { LiaMountainSolid } from 'react-icons/lia';
 import { RxHamburgerMenu } from 'react-icons/rx';
 
 type Props = {};
 
 const Nav = (props: Props) => {
-  const [login, setLogin] = useState();
-
   return (
-    <nav className="navbar bg-base-100">
+    <nav className="navbar bg-base-200 sticky top-0 z-50">
       <div className="navbar-start">
         <div className="dropdown">
           <div className="flex flex-row items-center">
@@ -24,16 +18,22 @@ const Nav = (props: Props) => {
           </div>
           <ul tabIndex={0} className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
             <li>
-              <Link href="">Home</Link>
+              <Link href="">Showcase</Link>
+            </li>
+            <li>
+              <Link href="">Tables</Link>
+            </li>
+            <li>
+              <Link href="">Graphs</Link>
             </li>
             <li>
               <Link href="">Parent</Link>
               <ul className="p-2">
                 <li>
-                  <a>Submenu 1</a>
+                  <Link href="">Submenu 1</Link>
                 </li>
                 <li>
-                  <a>Submenu 2</a>
+                  <Link href="">Submenu 2</Link>
                 </li>
               </ul>
             </li>
@@ -43,35 +43,43 @@ const Nav = (props: Props) => {
           </ul>
         </div>
         <Link href="/" className="flex items-center">
-          <LiaMountainSolid className="text-4xl text-sky-400" />
-          <span className="normal-case text-xl px-2 sm:hidden lg:flex">Peaktopia</span>
+          <LiaMountainSolid className="text-4xl text-primary" />
+          <span className="normal-case text-xl px-2 lg:flex">Peaktopia</span>
         </Link>
       </div>
       <div className="navbar-center hidden lg:flex">
         <ul className="menu menu-horizontal px-1">
           <li>
-            <a>Item 1</a>
+            <Link href="">Showcase</Link>
           </li>
-          <li tabIndex={0}>
+          <li>
+            <Link href="">Tables</Link>
+          </li>
+          <li>
+            <Link href="">Graphs</Link>
+          </li>
+          <li>
             <details>
               <summary>Parent</summary>
               <ul className="p-2">
                 <li>
-                  <a>Submenu 1</a>
+                  <Link href="">Submenu 1</Link>
                 </li>
                 <li>
-                  <a>Submenu 2</a>
+                  <Link href="">Submenu 2</Link>
                 </li>
               </ul>
             </details>
           </li>
           <li>
-            <a>Item 3</a>
+            <Link href="">About</Link>
           </li>
         </ul>
       </div>
       <div className="navbar-end">
-        <a className="btn">Register</a>
+        <Link href="login" className="btn btn-primary rounded">
+          Login
+        </Link>
       </div>
     </nav>
   );
