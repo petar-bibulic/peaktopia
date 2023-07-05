@@ -4,6 +4,8 @@ import { ChangeEvent, FormEvent, useState } from 'react';
 import { redirect } from 'next/navigation';
 import { ref, uploadBytesResumable } from 'firebase/storage';
 import { storage, auth } from '@firebase/config';
+import { useRouter } from 'next/navigation';
+import FileInput from './FileInput';
 // import { onAuthStateChanged } from 'firebase/auth';
 
 type Props = {
@@ -11,15 +13,15 @@ type Props = {
 };
 
 const Upload = (props: Props) => {
-  const [isSelected, setIsSelected] = useState(false);
+  const [selected, setSelected] = useState(false);
   const [files, setFiles] = useState<File[]>();
-  // const user = auth.currentUser;
-  const user = { token: '12345' };
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   const onFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       setFiles([...e.target.files]);
-      setIsSelected(true);
+      setSelected(true);
     }
   };
 
@@ -45,6 +47,7 @@ const Upload = (props: Props) => {
     uploadTask.on(
       'state_changed',
       (snapshot) => {
+        setLoading(true);
         const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
         // TODO: display progress in place of a upload file, maybe move this logic up to a parent component
         console.log('Upload is ' + progress + '% done');
@@ -58,42 +61,34 @@ const Upload = (props: Props) => {
         }
       },
       (error) => {
-        console.log('Yo, shit got fucked');
-        // list of all error codes: https://firebase.google.com/docs/storage/web/handle-errors
+        setLoading(false);
+        console.error("Shit's on fire, yo");
         switch (error.code) {
           case 'storage/unauthorized':
-            // User doesn't have permission to access the object
+            console.warn('Permission denied');
             break;
           case 'storage/canceled':
-            // User canceled the upload
+            console.warn('Upload canceled');
             break;
           case 'storage/unknown':
-            // Unknown error occurred, inspect error.serverResponse
+            console.warn('Unknown upload error');
             break;
         }
       },
       () => {
         // TODO: successful upload, show check and redirect after timeout
-        redirect('/login');
+        setLoading(false);
+        setTimeout(() => router.push('/data'), 1500);
       }
     );
   };
 
   return (
     <form action="post" onSubmit={handleSubmit} className="flex justify-between">
-      <input
-        type="file"
-        className="file-input file-input-bordered, file-input-primary w-full max-w-sm"
-        accept={props.accept.join(', ')}
-        onChange={onFileChange}
-        // multiple
-      />
-      {isSelected ? (
-        <button className="btn btn-primary mx-4" type="submit">
-          Submit
-        </button>
+      {loading ? (
+        <span className="loading loading-spinner loading-lg" />
       ) : (
-        <button className="btn btn-disabled mx-4">Submit</button>
+        <FileInput fileTypes={props.accept} selected={selected} changeHandler={onFileChange} />
       )}
     </form>
   );

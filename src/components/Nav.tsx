@@ -8,7 +8,7 @@ type Props = {};
 
 const Nav = (props: Props) => {
   return (
-    <nav className="navbar bg-base-200 sticky top-0 z-50">
+    <nav className="navbar opacity-90 bg-base-200 sticky top-0 z-50">
       <div className="navbar-start">
         <div className="dropdown">
           <div className="flex flex-row items-center">
@@ -77,7 +77,7 @@ const Nav = (props: Props) => {
         </ul>
       </div>
       <div className="navbar-end">
-        <Link href="login" className="btn btn-primary rounded">
+        <Link href="/auth/login" className="btn btn-primary rounded">
           Login
         </Link>
       </div>
