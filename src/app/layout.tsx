@@ -2,6 +2,8 @@ import '@styles/globals.css';
 import Nav from '@components/Nav';
 import { Inter } from 'next/font/google';
 import Footer from '@components/Footer';
+import { AuthContextProvider } from '@store/AuthContext';
+import { auth } from '@firebase/config';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -14,9 +16,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body className={`${inter.className} bg-neutral`}>
-        <Nav />
-        {children}
-        <Footer />
+        <AuthContextProvider>
+          <Nav />
+          {children}
+          <Footer />
+        </AuthContextProvider>
       </body>
     </html>
   );

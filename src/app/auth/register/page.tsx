@@ -1,4 +1,4 @@
-import LoginForm from '@components/LoginForm';
+import RegisterForm from '@components/auth/RegisterForm';
 import Image from 'next/image';
 
 type Props = {};
@@ -6,17 +6,17 @@ type Props = {};
 const Register = (props: Props) => {
   return (
     <>
-      <div className="mb-12 md:mb-0 md:w-8/12 lg:w-6/12">
+      <div className="mb-3 sm:w-1/2 lg:w-6/12 flex items-center">
         <Image
-          src="/assets/images/login_image.svg"
-          width={200}
-          height={200}
-          className="w-full mr-40"
-          alt="Login image"
+          src="/assets/images/register_image.svg"
+          width={100}
+          height={100}
+          className="w-full overflow-hidden"
+          alt="Register image"
           priority={true}
         />
       </div>
-      <LoginForm />
+      <RegisterForm />
     </>
   );
 };

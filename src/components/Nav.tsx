@@ -1,8 +1,7 @@
-'use client';
-
 import Link from 'next/link';
 import { LiaMountainSolid } from 'react-icons/lia';
 import { RxHamburgerMenu } from 'react-icons/rx';
+import LoginButton from '@components/auth/LoginButton';
 
 type Props = {};
 
@@ -77,9 +76,7 @@ const Nav = (props: Props) => {
         </ul>
       </div>
       <div className="navbar-end">
-        <Link href="/auth/login" className="btn btn-primary rounded">
-          Login
-        </Link>
+        <LoginButton />
       </div>
     </nav>
   );

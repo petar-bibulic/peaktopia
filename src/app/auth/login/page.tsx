@@ -1,4 +1,4 @@
-import LoginForm from '@components/LoginForm';
+import LoginForm from '@components/auth/LoginForm';
 import Image from 'next/image';
 
 type Props = {};
@@ -6,7 +6,7 @@ type Props = {};
 const Login = (props: Props) => {
   return (
     <>
-      <div className="mb-3 sm:w-1/2 lg:w-6/12 flex items-center">
+      <div className="mb-3 w-1/2 absolute top-40 z-0 opacity-10 md:relative md:top-0 md:opacity-100">
         <Image
           src="/assets/images/login_image.svg"
           width={100}
