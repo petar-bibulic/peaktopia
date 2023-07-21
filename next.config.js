@@ -1,8 +1,14 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    output: 'standalone',
+    // output: 'standalone', // use for docker build
     images: {
-        dangerouslyAllowSVG: true
+        dangerouslyAllowSVG: true,
+        remotePatterns: [
+            {
+              protocol: 'https',
+              hostname: 'firebasestorage.googleapis.com',
+            },
+          ],
     }
 }
 
