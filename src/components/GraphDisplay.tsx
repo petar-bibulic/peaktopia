@@ -16,6 +16,7 @@ const GraphDisplay = async (props: Props) => {
     const userCookie = cookies().get('userToken');
     const userToken = await getAuth(firebaseAdminApp as App).verifyIdToken(userCookie?.value as string);
   } catch (err) {
+    console.error(err);
     redirect('/auth/login');
   }
 
