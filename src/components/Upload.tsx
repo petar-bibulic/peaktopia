@@ -1,27 +1,30 @@
 'use client';
 
 import { ChangeEvent, FormEvent, useState } from 'react';
-import { redirect } from 'next/navigation';
-import { ref, uploadBytesResumable } from 'firebase/storage';
+import { StorageReference, ref, uploadBytesResumable } from 'firebase/storage';
 import { storage, auth } from '@firebase/config';
 import { useRouter } from 'next/navigation';
 import FileInput from './FileInput';
-// import { onAuthStateChanged } from 'firebase/auth';
+import { useCookies } from 'react-cookie';
 
 type Props = {
-  accept: string[];
+  acceptFiles: string[];
 };
 
 const Upload = (props: Props) => {
   const [selected, setSelected] = useState(false);
   const [files, setFiles] = useState<File[]>();
   const [loading, setLoading] = useState(false);
+  const [cookies, setCookie] = useCookies();
   const router = useRouter();
 
   const onFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
+    if (e.target.files?.length) {
       setFiles([...e.target.files]);
       setSelected(true);
+    } else {
+      setFiles([]);
+      setSelected(false);
     }
   };
 
@@ -41,7 +44,10 @@ const Upload = (props: Props) => {
       contentType: files[0].type,
       Authorization: `Bearer ${user.getIdToken()}`,
     };
-    const storageRef = ref(storage, 'images/' + files[0].name);
+
+    const storagePath = files[0].type.startsWith('image/') ? 'images/' : 'datafiles/';
+    let filePath = storagePath + files[0].name;
+    const storageRef = ref(storage, filePath);
     const uploadTask = uploadBytesResumable(storageRef, files[0], headers);
 
     uploadTask.on(
@@ -77,18 +83,20 @@ const Upload = (props: Props) => {
       },
       () => {
         // TODO: successful upload, show check and redirect after timeout
+        const fileUUID = crypto.randomUUID();
+        setCookie(fileUUID, filePath, { path: '/' });
         setLoading(false);
-        setTimeout(() => router.push('/data'), 1500);
+        setTimeout(() => router.push(`/data/${fileUUID}/graph`), 1000);
       }
     );
   };
 
   return (
-    <form action="post" onSubmit={handleSubmit} className="flex justify-between">
+    <form action="post" onSubmit={handleSubmit} className="flex justify-center w-full">
       {loading ? (
         <span className="loading loading-spinner loading-lg" />
       ) : (
-        <FileInput fileTypes={props.accept} selected={selected} changeHandler={onFileChange} />
+        <FileInput fileTypes={props.acceptFiles} selected={selected} files={files} changeHandler={onFileChange} />
       )}
     </form>
   );

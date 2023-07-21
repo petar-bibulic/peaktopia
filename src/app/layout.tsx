@@ -3,7 +3,6 @@ import Nav from '@components/Nav';
 import { Inter } from 'next/font/google';
 import Footer from '@components/Footer';
 import { AuthContextProvider } from '@store/AuthContext';
-import { auth } from '@firebase/config';
 
 const inter = Inter({ subsets: ['latin'] });
 
