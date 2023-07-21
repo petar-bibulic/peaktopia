@@ -1,6 +1,8 @@
 import GraphDisplay from '@components/GraphDisplay';
 
 const Data = ({ params }: { params: { slug: string } }) => {
+  const Graph = GraphDisplay as any;
+
   return (
     <main className="flex min-h-screen flex-col items-center">
       <div className="drawer lg:drawer-open">
@@ -10,7 +12,7 @@ const Data = ({ params }: { params: { slug: string } }) => {
           <section className="h-screen">
             <div className="container h-full px-6 py-10">
               <div className="g-6 flex h-full flex-wrap items-center justify-center lg:justify-between">
-                <GraphDisplay slug={params.slug} />
+                <Graph slug={params.slug} />
               </div>
             </div>
           </section>
