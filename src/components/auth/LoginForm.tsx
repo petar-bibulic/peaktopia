@@ -78,7 +78,7 @@ const LoginForm = (props: Props) => {
           </Link>
         </div>
         <div className="mb-6 flex items-center justify-between">
-          Don't have an account yet?
+          Don&apos;t have an account yet?
           <Link href="/auth/register" className="link-primary">
             Register
           </Link>
