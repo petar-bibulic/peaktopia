@@ -6,9 +6,12 @@ import { cookies } from 'next/headers';
 import Image from 'next/image';
 import firebaseAdminApp from '@firebase/configAdmin';
 import { redirect } from 'next/navigation';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '@firebase/config';
 
 type Props = {
-  slug: string;
+  userId?: string;
+  fileId?: string;
 };
 
 const GraphDisplay = async (props: Props) => {
@@ -21,13 +24,21 @@ const GraphDisplay = async (props: Props) => {
   }
 
   try {
-    const fileCookie = cookies().get(props.slug);
-    const storageRef = ref(storage, fileCookie?.value);
-    const item = await getDownloadURL(storageRef);
+    const docRef = doc(db, 'files', props.fileId as string);
+    const docSnap = await getDoc(docRef);
+    let item;
+    if (docSnap.exists()) {
+      const storageRef = ref(storage, docSnap.data().url);
+      item = await getDownloadURL(storageRef);
+    } else {
+      // docSnap.data() will be undefined in this case
+      console.log('No such document!');
+    }
+
     return item ? (
-      <Image src={item} width={100} height={100} alt="Data image" priority></Image>
+      <Image src={item} width={500} height={500} alt="Data image" priority></Image>
     ) : (
-      <div>GraphDisplay</div>
+      <div>File not found</div>
     );
   } catch (err) {
     console.log(err);

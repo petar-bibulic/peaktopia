@@ -3,6 +3,7 @@ import {
   createUserWithEmailAndPassword, 
   signInWithEmailAndPassword, 
   signInWithPopup,
+  signInWithRedirect,
   signOut,
   signInAnonymously, 
   AuthProvider} from "firebase/auth";
@@ -37,10 +38,14 @@ async function logOut() {
   }
 }
 
-async function oauthSignIn(provider: AuthProvider): Promise<{ result:any, error:any }> {
+async function oauthSignIn(provider: AuthProvider, isMobile: boolean = false): Promise<{ result:any, error:any }> {
   let result = null, error = null;
-  try { 
-    result = await signInWithPopup(auth, provider)
+  try {
+    if (!isMobile) {
+      result = await signInWithPopup(auth, provider)
+    } else {
+      signInWithRedirect(auth, provider);
+    }
   } catch (e: any) {
     error = e
   } 

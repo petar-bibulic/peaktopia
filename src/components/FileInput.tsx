@@ -28,11 +28,12 @@ const FileInput = (props: Props) => {
               </p>
             )}
           </div>
+          <div>{props.fileTypes.join(',')}</div>
           <input
             id="dropzone-file"
             type="file"
             className="hidden"
-            accept={props.fileTypes.join(', ')}
+            accept={props.fileTypes.join(',')}
             onChange={props.changeHandler}
             // multiple
           />

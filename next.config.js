@@ -9,6 +9,7 @@ const nextConfig = {
               hostname: 'firebasestorage.googleapis.com',
             },
           ],
+        domains: ['lh3.googleusercontent.com'],
     }
 }
 

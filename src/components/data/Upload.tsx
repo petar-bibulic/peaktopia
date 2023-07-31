@@ -2,10 +2,12 @@
 
 import { ChangeEvent, FormEvent, useState } from 'react';
 import { StorageReference, ref, uploadBytesResumable } from 'firebase/storage';
-import { storage, auth } from '@firebase/config';
+import { storage, auth, db } from '@firebase/config';
 import { useRouter } from 'next/navigation';
-import FileInput from './FileInput';
-import { useCookies } from 'react-cookie';
+import FileInput from '../FileInput';
+import CheckMark from '@components/Checkmark';
+import { motion, useMotionValue } from 'framer-motion';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 
 type Props = {
   acceptFiles: string[];
@@ -14,9 +16,10 @@ type Props = {
 const Upload = (props: Props) => {
   const [selected, setSelected] = useState(false);
   const [files, setFiles] = useState<File[]>();
+  const [uploaded, setUploaded] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [cookies, setCookie] = useCookies();
   const router = useRouter();
+  const progress = useMotionValue(90);
 
   const onFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files?.length) {
@@ -46,7 +49,7 @@ const Upload = (props: Props) => {
     };
 
     const storagePath = files[0].type.startsWith('image/') ? 'images/' : 'datafiles/';
-    let filePath = storagePath + files[0].name;
+    const filePath = storagePath + files[0].name;
     const storageRef = ref(storage, filePath);
     const uploadTask = uploadBytesResumable(storageRef, files[0], headers);
 
@@ -81,12 +84,13 @@ const Upload = (props: Props) => {
             break;
         }
       },
-      () => {
-        // TODO: successful upload, show check and redirect after timeout
+      async () => {
         const fileUUID = crypto.randomUUID();
-        setCookie(fileUUID, filePath, { path: '/' });
+        const docRef = doc(db, 'files', fileUUID);
+        setDoc(docRef, { url: filePath });
         setLoading(false);
-        setTimeout(() => router.push(`/data/${fileUUID}/graph`), 1000);
+        setUploaded(true);
+        setTimeout(() => router.push(`/data/${user.uid}/graph/${fileUUID}`), 1000);
       }
     );
   };
@@ -95,6 +99,11 @@ const Upload = (props: Props) => {
     <form action="post" onSubmit={handleSubmit} className="flex justify-center w-full">
       {loading ? (
         <span className="loading loading-spinner loading-lg" />
+      ) : uploaded ? (
+        <div>
+          <motion.div initial={{ x: 0 }} animate={{ x: 100 }} style={{ x: progress }} transition={{ duration: 0.8 }} />
+          <CheckMark progress={progress} />
+        </div>
       ) : (
         <FileInput fileTypes={props.acceptFiles} selected={selected} files={files} changeHandler={onFileChange} />
       )}

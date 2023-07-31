@@ -1,6 +1,10 @@
-import GraphDisplay from '@components/GraphDisplay';
+import ImagePreview from '@components/data/ImagePreview';
+import GraphDisplay from '@components/data/GraphDisplay';
 
-const Data = ({ params }: { params: { slug: string } }) => {
+type Params = { userId: string };
+type SearchParams = { fileId: string };
+
+const Data = ({ params, searchParams }: { params: Params; searchParams: SearchParams }) => {
   const Graph = GraphDisplay as any;
 
   return (
@@ -10,9 +14,14 @@ const Data = ({ params }: { params: { slug: string } }) => {
         <div className="drawer-content flex flex-col items-center justify-center">
           {/* Page content */}
           <section className="h-screen">
-            <div className="container h-full px-6 py-10">
-              <div className="g-6 flex h-full flex-wrap items-center justify-center lg:justify-between">
-                <Graph slug={params.slug} />
+            <div className="container h-full px-6 py-20">
+              <div className="g-6 flex h-full flex-wrap justify-center lg:justify-between">
+                <div className="grid grid-cols-2 gap-4">
+                  <ImagePreview
+                    children={<Graph userId={params.userId} fileId={searchParams?.fileId} />}
+                    fileId={searchParams?.fileId}
+                  />
+                </div>
               </div>
             </div>
           </section>
@@ -24,12 +33,11 @@ const Data = ({ params }: { params: { slug: string } }) => {
           <label htmlFor="my-drawer-2" className="drawer-overlay"></label>
           <ul className="menu p-4 w-80 h-full bg-base-100 text-base-content">
             {/* Sidebar content */}
-            {/* do I even need this now? */}
             <li>
-              <a>Sidebar Item 1</a>
+              <a>Select peaks</a>
             </li>
             <li>
-              <a>Sidebar Item 2</a>
+              <a>Annotate peaks</a>
             </li>
           </ul>
         </div>

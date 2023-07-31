@@ -2,10 +2,26 @@ import Link from 'next/link';
 import { LiaMountainSolid } from 'react-icons/lia';
 import { RxHamburgerMenu } from 'react-icons/rx';
 import LoginButton from '@components/auth/LoginButton';
+import { getAuth } from 'firebase-admin/auth';
+import firebaseAdminApp from '@firebase/configAdmin';
+import { App } from 'firebase-admin/app';
+import { cookies } from 'next/headers';
 
 type Props = {};
 
-const Nav = (props: Props) => {
+const Nav = async (props: Props) => {
+  const userCookie = cookies().get('userToken');
+  let userId;
+  try {
+    const userToken = await getAuth(firebaseAdminApp as App).verifyIdToken(userCookie?.value as string);
+    userId = userToken.uid;
+  } catch (err) {
+    console.log(err);
+    console.log('User not logged in');
+  }
+
+  const graphLink = <Link href={`/data/${encodeURIComponent(userId as string)}/graph`}>Graphs</Link>;
+
   return (
     <nav className="navbar opacity-90 bg-base-200 sticky top-0 z-50">
       <div className="navbar-start">
@@ -22,9 +38,7 @@ const Nav = (props: Props) => {
             <li>
               <Link href="">Tables</Link>
             </li>
-            <li>
-              <Link href="">Graphs</Link>
-            </li>
+            <li>{graphLink}</li>
             <li>
               <Link href="">Parent</Link>
               <ul className="p-2">
@@ -54,9 +68,7 @@ const Nav = (props: Props) => {
           <li>
             <Link href="">Tables</Link>
           </li>
-          <li>
-            <Link href="">Graphs</Link>
-          </li>
+          <li>{graphLink}</li>
           <li>
             <details>
               <summary>Parent</summary>
