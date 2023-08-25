@@ -90,7 +90,8 @@ const Upload = (props: Props) => {
         setDoc(docRef, { url: filePath });
         setLoading(false);
         setUploaded(true);
-        setTimeout(() => router.push(`/data/${user.uid}/graph/${fileUUID}`), 1000);
+        // TODO: check file type and redirect accordingly
+        setTimeout(() => router.push(`/data/${user.uid}/process?fileId=${fileUUID}`), 1000);
       }
     );
   };

@@ -24,11 +24,11 @@ const FileInput = (props: Props) => {
               </p>
             ) : (
               <p className="text-xs text-gray-500 dark:text-gray-400">
-                {props.fileTypes.join(', ')} (MAX. 1024x1024px)
+                {props.fileTypes.join(' | ')} (MAX. 1024x1024px)
               </p>
             )}
           </div>
-          <div>{props.fileTypes.join(',')}</div>
+          <div>{props.fileTypes.join(' | ')}</div>
           <input
             id="dropzone-file"
             type="file"

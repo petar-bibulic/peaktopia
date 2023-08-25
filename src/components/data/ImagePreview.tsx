@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import { db, auth } from '@firebase/config';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import _ from 'lodash';
 
 import { ref, getDownloadURL, getBlob } from 'firebase/storage';
