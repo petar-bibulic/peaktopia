@@ -34,7 +34,7 @@ const ImagePreview = (props: Props) => {
     fetchData();
 
     return () => {};
-  }, []);
+  });
 
   return (
     <>

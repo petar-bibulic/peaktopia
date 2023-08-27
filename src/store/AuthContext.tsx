@@ -26,7 +26,7 @@ export const AuthContextProvider = ({ children }: { children: React.ReactNode })
     });
 
     return () => authInit();
-  }, []);
+  });
 
   useEffect(() => {
     const handle = setInterval(async () => {

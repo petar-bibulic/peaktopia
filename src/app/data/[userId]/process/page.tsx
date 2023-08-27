@@ -17,10 +17,9 @@ const Data = ({ params, searchParams }: { params: Params; searchParams: SearchPa
             <div className="container h-full px-6 py-20">
               <div className="g-6 flex h-full flex-wrap justify-center lg:justify-between">
                 <div className="grid grid-cols-2 gap-4">
-                  <ImagePreview
-                    children={<Graph userId={params.userId} fileId={searchParams?.fileId} />}
-                    fileId={searchParams?.fileId}
-                  />
+                  <ImagePreview fileId={searchParams?.fileId}>
+                    <Graph userId={params.userId} fileId={searchParams?.fileId} />
+                  </ImagePreview>
                 </div>
               </div>
             </div>

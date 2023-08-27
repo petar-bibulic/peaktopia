@@ -20,7 +20,7 @@ const Nav = async (props: Props) => {
     console.log('User not logged in');
   }
 
-  const graphLink = <Link href={`/data/${encodeURIComponent(userId as string)}/graph`}>Graphs</Link>;
+  const graphLink = <Link href={`/data/${encodeURIComponent(userId as string)}/graphs`}>Graphs</Link>;
 
   return (
     <nav className="navbar opacity-90 bg-base-200 sticky top-0 z-50">
