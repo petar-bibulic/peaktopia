@@ -2,78 +2,39 @@
 
 import { useEffect, useState } from 'react';
 import { db, auth } from '@firebase/config';
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-  ReferenceArea,
-} from 'recharts';
+
 import _ from 'lodash';
 import parser from 'xml2js';
 import { ref, getBlob } from 'firebase/storage';
 import { storage } from '@firebase/config';
 import { doc, getDoc } from 'firebase/firestore';
+import { CategoricalChartState } from 'recharts/types/chart/generateCategoricalChart';
+import { Peak, XRDFormat, GraphStateFormat } from '@components/data/DataTypes';
+import XRDTable from './XRDTable';
+import XRDGraph from './XRDGraph';
 
 type Props = {
   // children: React.ReactNode;
   // fileId: string;
 };
 
-type XRDFormat = {
-  xrdMeasurements: {
-    xrdMeasurement: [
-      {
-        scan: [
-          {
-            dataPoints: [
-              {
-                positions: [
-                  {
-                    startPosition: [string];
-                    endPosition: [string];
-                  }
-                ];
-                intensities: [
-                  {
-                    _: string;
-                  }
-                ];
-              }
-            ];
-          }
-        ];
-      }
-    ];
-  };
-};
-
-type graphStateFormat = {
-  data: Array<{ name: number; data: number }>;
-  left: string;
-  right: string;
-  refAreaLeft: string;
-  refAreaRight: string;
-  top: string;
-  bottom: string;
-  animation: boolean;
-  ticks: number[];
-};
+const OFFSET = 1.2;
 
 const XRDPreview = (props: Props) => {
   const userToken = auth.currentUser?.getIdToken;
   const [singleClick, setSingleClick] = useState(false);
   const [lastClickTime, setLastClickTime] = useState(0);
-  const [graphState, setGraphState] = useState<graphStateFormat>({
+  const [activeKey, setActiveKey] = useState<string>('');
+  const [peaks, setPeaks] = useState<Peak[]>([]);
+  const [peakWidth, setPeakWidth] = useState(0.1);
+  const [graphState, setGraphState] = useState<GraphStateFormat>({
     data: [],
     left: '',
     right: '',
-    refAreaLeft: '',
-    refAreaRight: '',
+    positionLeft: '',
+    positionRight: '',
+    indexLeft: null,
+    indexRight: null,
     top: '',
     bottom: '',
     animation: true,
@@ -88,7 +49,7 @@ const XRDPreview = (props: Props) => {
         // if (docSnap.exists()) {
         //   console.log("Got'em");
         // }
-        const storageRef = ref(storage, 'datafiles/Caffeine.xrdml');
+        const storageRef = ref(storage, 'datafiles/Caffeine.xrdml'); // replace with fetched file
         const file = await getBlob(storageRef);
         const rawData = await file.text();
         const xmlParser = new parser.Parser();
@@ -101,83 +62,88 @@ const XRDPreview = (props: Props) => {
       }
     };
 
-    const parseData = (data: XRDFormat) => {
-      const common = data?.xrdMeasurements.xrdMeasurement[0].scan[0].dataPoints[0];
-      const intensities = _.map(common?.intensities[0]._.split(' '), Number);
-      const start = Number(common?.positions[0].startPosition[0]) || 0;
-      const end = Number(common?.positions[0].endPosition[0]);
-      const range = intensities?.length || 0;
-      const step = (Number(end) - Number(start)) / (range - 1);
-      const graphData = _.map(intensities, (i: number, j: number) => ({ name: j * step + start, data: i }));
-      const dataRange = _.range(
-        Math.floor(graphData[0]?.name / 5) * 5,
-        Math.ceil(graphData.slice(-1)[0]?.name / 5 + 1) * 5,
-        5
-      );
-      setGraphState({
-        data: graphData,
-        left: 'dataMin',
-        right: 'dataMax',
-        refAreaLeft: '',
-        refAreaRight: '',
-        top: 'dataMax+1',
-        bottom: 'dataMin-1',
-        animation: true,
-        ticks: dataRange,
-      });
-    };
-
     fetchData();
 
     return () => {};
   }, []);
 
-  const getAxisYDomain = (from: number, to: number, offset: number) => {
-    const lowerLimit = graphState.data.findIndex((i) => i.name === from);
-    const upperLimit = graphState.data.findIndex((i) => i.name === to);
-    const refData = graphState.data.slice(lowerLimit, upperLimit);
-    let [bottom, top] = [refData[0].data, refData[0].data];
+  const parseData = (data: XRDFormat) => {
+    const common = data?.xrdMeasurements.xrdMeasurement[0].scan[0].dataPoints[0];
+    const intensities = _.map(common?.intensities[0]._.split(' '), Number);
+    const start = Number(common?.positions[0].startPosition[0]) || 0;
+    const end = Number(common?.positions[0].endPosition[0]);
+    const range = intensities?.length || 0;
+    const step = (Number(end) - Number(start)) / (range - 1);
+    const graphData = _.map(intensities, (i: number, j: number) => ({ position: j * step + start, intensity: i }));
+    const dataRange = _.range(
+      Math.floor(graphData[0]?.position / 5) * 5,
+      Math.ceil(graphData.slice(-1)[0]?.position / 5 + 1) * 5,
+      5
+    );
+    setGraphState({
+      data: graphData,
+      left: 'dataMin',
+      right: 'dataMax',
+      positionLeft: '',
+      positionRight: '',
+      indexLeft: null,
+      indexRight: null,
+      top: 'dataMax+1',
+      bottom: 'dataMin-1',
+      animation: true,
+      ticks: dataRange,
+    });
+  };
+
+  const getAxisYDomain = (from: number, to: number) => {
+    const refData = graphState.data.slice(from, to);
+    let [bottom, top] = [refData[0].intensity, refData[0].intensity];
     refData.forEach((d) => {
-      if (d.data > top) top = d.data;
-      if (d.data < bottom) bottom = d.data;
+      if (d.intensity > top) top = d.intensity;
+      if (d.intensity < bottom) bottom = d.intensity;
     });
 
-    return [(bottom | 0) - offset, (top | 0) + offset];
+    return [0, (top | 0) * OFFSET];
   };
 
   function zoom() {
-    let { refAreaLeft, refAreaRight } = graphState;
-    let [leftEdge, rightEdge] = [Number(refAreaLeft), Number(refAreaRight)];
+    let { positionLeft, positionRight, indexLeft, indexRight } = graphState;
     const { data } = graphState;
-    if (leftEdge === rightEdge || refAreaRight === '') {
+    if (positionLeft === positionRight || positionRight === '' || indexLeft === null || indexRight === null) {
       setGraphState((prevState) => ({
         ...prevState,
-        refAreaLeft: '',
-        refAreaRight: '',
+        positionLeft: '',
+        positionRight: '',
+        indexLeft: null,
+        indexRight: null,
       }));
       return;
     }
-
+    let leftEdge = indexLeft;
+    let rightEdge = indexRight;
     if (leftEdge > rightEdge) [leftEdge, rightEdge] = [rightEdge, leftEdge];
-    const [bottom, top] = getAxisYDomain(leftEdge, rightEdge, 1000);
+    const [bottom, top] = getAxisYDomain(leftEdge, rightEdge);
 
     setGraphState((prevState) => ({
       ...prevState,
-      refAreaLeft: '',
-      refAreaRight: '',
-      left: String(leftEdge),
-      right: String(rightEdge),
+      positionLeft: '',
+      positionRight: '',
+      indexLeft: null,
+      indexRight: null,
+      left: String(positionLeft),
+      right: String(positionRight),
       top: String(top),
       bottom: String(bottom),
     }));
   }
 
   function zoomOut() {
-    const { data } = graphState;
     setGraphState((prevState) => ({
       ...prevState,
-      refAreaLeft: '',
-      refAreaRight: '',
+      positionLeft: '',
+      positionRight: '',
+      indexLeft: null,
+      indexRight: null,
       left: 'dataMin',
       right: 'dataMax',
       top: 'dataMax+1',
@@ -185,7 +151,18 @@ const XRDPreview = (props: Props) => {
     }));
   }
 
-  const handleDoubleClick = () => {
+  const removePeak = (position: number) => {
+    const closest = peaks.reduce((prev, curr) => {
+      return Math.abs(curr.position - position) < Math.abs(prev.position - position) ? curr : prev;
+    });
+
+    if (Math.abs(closest.position - position) > 1) {
+      return;
+    }
+    setPeaks([...peaks].filter((peak) => peak !== closest));
+  };
+
+  const handleClick = (e: CategoricalChartState) => {
     const currentTime = new Date().getTime();
     if (currentTime - lastClickTime < 300) {
       zoomOut();
@@ -194,87 +171,63 @@ const XRDPreview = (props: Props) => {
       setTimeout(() => {
         setSingleClick(false);
       }, 300);
+
+      if (activeKey === 's') {
+        setPeaks([
+          ...peaks,
+          { position: Number(e.activeLabel), intensity: graphState.data[Number(e.activeTooltipIndex)].intensity },
+        ]);
+      } else if (activeKey === 'd') {
+        removePeak(Number(e.activeLabel));
+      } else if (activeKey === 'a') {
+        // TODO: add annotation logic
+        // not sure what I had in mind here
+      }
     }
     setLastClickTime(currentTime);
   };
 
-  return (
-    <>
-      <ResponsiveContainer aspect={2} width="100%" className="lg:col-span-2 bg-neutral-focus select-none">
-        <LineChart
-          data={graphState.data}
-          margin={{
-            top: 5,
-            right: 5,
-            left: 5,
-            bottom: 5,
-          }}
-          onMouseDown={(e) => {
-            e && setGraphState((prevState) => ({ ...prevState, refAreaLeft: String(e.activeLabel) }));
-          }}
-          onMouseMove={(e) => {
-            // TODO: change activeLabel to activeTooltipIndex -> avoid using findIndex
-            if (graphState.refAreaLeft && graphState.refAreaLeft !== 'undefined') {
-              e && setGraphState((prevState) => ({ ...prevState, refAreaRight: String(e.activeLabel) }));
-            }
-          }}
-          onMouseUp={zoom}
-          onClick={handleDoubleClick}
-        >
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis
-            dataKey="name"
-            type="number"
-            allowDataOverflow={true}
-            domain={[Number(graphState.left), Number(graphState.right)]}
-            ticks={graphState.ticks}
-          />
-          <YAxis allowDataOverflow={true} domain={[Number(graphState.bottom), Number(graphState.top)]} />
-          <Tooltip />
-          <Legend />
-          <Line
-            dataKey="data"
-            stroke="#3abff8"
-            isAnimationActive={false}
-            strokeWidth={3}
-            dot={false}
-            activeDot={{ stroke: 'red', r: 8 }}
-          />
-          {graphState.refAreaLeft && graphState.refAreaRight ? (
-            <ReferenceArea x1={graphState.refAreaLeft} x2={graphState.refAreaRight} strokeOpacity={1} />
-          ) : null}
-        </LineChart>
-      </ResponsiveContainer>
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === 'Escape') {
+      setActiveKey('');
+    } else {
+      console.log(e.key);
+      setActiveKey(e.key);
+    }
+  };
 
-      <div className="overflow-x-auto">
-        <table className="table table-pin-rows">
-          <thead>
-            <tr>
-              <th></th>
-              <th>Position [° 2&Theta;]</th>
-              <th>Intensity [rel]</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr className="hover">
-              <th>1</th>
-              <td>15.6</td>
-              <td>75</td>
-            </tr>
-            <tr className="hover">
-              <th>2</th>
-              <td>18.23</td>
-              <td>15.32</td>
-            </tr>
-            <tr className="hover">
-              <th>3</th>
-              <td>23.14</td>
-              <td>3.28</td>
-            </tr>
-          </tbody>
-        </table>
+  return (
+    <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 outline-none" tabIndex={-1} onKeyDown={handleKeyPress}>
+      <div className="xl:col-span-2">
+        <p className="text-base-content">Press "S" key to activate selecting peaks</p>
+        <p className="text-base-content">Press "D" to activate deleting peaks</p>
+        <p className="text-base-content">Press "Esc" to deactivate peak annotations</p>
+        <div>
+          <XRDGraph
+            state={graphState}
+            peaks={peaks}
+            setState={setGraphState}
+            handleClick={handleClick}
+            zoom={zoom}
+            peakWidth={peakWidth}
+          />
+        </div>
+        <div className="mt-2 inline-flex w-full">
+          <span className="w-3/5 sm:w-1/5 text-base-content">Peak width</span>
+          <input
+            type="range"
+            min={0}
+            max={100}
+            value={peakWidth * 100}
+            onChange={(e) => {
+              setPeakWidth(Number(e.target.value) / 100);
+            }}
+            className="range range-primary range-xs"
+          />
+        </div>
       </div>
-    </>
+      <XRDTable peaks={peaks} />
+    </div>
   );
 };
 

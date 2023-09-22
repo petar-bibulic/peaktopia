@@ -1,7 +1,9 @@
+'use client';
+
 import { useState, useEffect } from 'react';
 
 export default function useIsMobile() {
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     const onResize = () => {

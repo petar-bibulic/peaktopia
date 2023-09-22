@@ -11,12 +11,10 @@ const Data = ({ params, searchParams }: { params: Params; searchParams: SearchPa
     <main className="flex min-h-screen flex-col items-center">
       <div className="drawer lg:drawer-open">
         <input id="my-drawer-2" type="checkbox" className="drawer-toggle" />
-        <div className="drawer-content flex flex-col items-center justify-center">
+        <div className="drawer-content flex flex-col items-center">
           {/* Page content */}
-          <section className="w-full h-screen px-6 py-20 justify-center">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-              <XRDPreview />
-            </div>
+          <section className="w-full px-6 pb-20 pt-4">
+            <XRDPreview />
           </section>
           <label htmlFor="my-drawer-2" className="btn btn-primary drawer-button lg:hidden">
             Open drawer

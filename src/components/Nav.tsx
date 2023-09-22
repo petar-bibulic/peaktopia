@@ -6,6 +6,7 @@ import { getAuth } from 'firebase-admin/auth';
 import firebaseAdminApp from '@firebase/configAdmin';
 import { App } from 'firebase-admin/app';
 import { cookies } from 'next/headers';
+import Image from 'next/image';
 
 type Props = {};
 
@@ -16,7 +17,6 @@ const Nav = async (props: Props) => {
     const userToken = await getAuth(firebaseAdminApp as App).verifyIdToken(userCookie?.value as string);
     userId = userToken.uid;
   } catch (err) {
-    console.log(err);
     console.log('User not logged in');
   }
 
@@ -27,9 +27,9 @@ const Nav = async (props: Props) => {
       <div className="navbar-start">
         <div className="dropdown">
           <div className="flex flex-row items-center">
-            <label tabIndex={0} className="btn btn-ghost lg:hidden">
+            <div tabIndex={0} className="btn btn-ghost lg:hidden">
               <RxHamburgerMenu className="text-xl" />
-            </label>
+            </div>
           </div>
           <ul tabIndex={0} className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
             <li>
