@@ -8,7 +8,9 @@ import {
   Legend,
   ResponsiveContainer,
   ReferenceArea,
+  TooltipProps,
 } from 'recharts';
+import { ValueType, NameType } from 'recharts/types/component/DefaultTooltipContent';
 import { GraphStateFormat, Peak } from './DataTypes';
 import { useMemo } from 'react';
 
@@ -30,7 +32,7 @@ const calcPeakColors = (peaks: Peak[], width: number): Array<string> => {
   });
 };
 
-const CustomTooltip = ({ active, payload, label }: { active: any; payload: any; label: number }) => {
+const CustomTooltip = ({ active, payload, label }: TooltipProps<ValueType, NameType>) => {
   if (active && payload && payload.length) {
     return (
       <div className="custom-tooltip">
@@ -48,7 +50,7 @@ const XRDGraph = (props: Props) => {
   const sortedPeaks = useMemo(() => {
     return [...peaks].sort((a, b) => a.position - b.position);
   }, [peaks]);
-  const peakColors = useMemo(() => calcPeakColors(sortedPeaks, peakWidth), [peaks, peakWidth]);
+  const peakColors = useMemo(() => calcPeakColors(sortedPeaks, peakWidth), [sortedPeaks, peakWidth]);
 
   return (
     <ResponsiveContainer aspect={1.7} width="100%" className="bg-neutral-focus select-none">

@@ -199,9 +199,9 @@ const XRDPreview = (props: Props) => {
   return (
     <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 outline-none" tabIndex={-1} onKeyDown={handleKeyPress}>
       <div className="xl:col-span-2">
-        <p className="text-base-content">Press "S" key to activate selecting peaks</p>
-        <p className="text-base-content">Press "D" to activate deleting peaks</p>
-        <p className="text-base-content">Press "Esc" to deactivate peak annotations</p>
+        <p className="text-base-content">Press &quotS&quot key to activate selecting peaks</p>
+        <p className="text-base-content">Press &quotD&quot to activate deleting peaks</p>
+        <p className="text-base-content">Press &quotEsc&quot to deactivate peak annotations</p>
         <div>
           <XRDGraph
             state={graphState}
