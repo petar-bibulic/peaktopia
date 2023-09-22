@@ -1,4 +1,5 @@
 import { auth } from "@firebase/config";
+import { redirect } from 'next/navigation';
 import { 
   createUserWithEmailAndPassword, 
   signInWithEmailAndPassword, 
@@ -42,7 +43,11 @@ async function oauthSignIn(provider: AuthProvider, isMobile: boolean = false): P
   let result = null, error = null;
   try {
     if (!isMobile) {
-      result = await signInWithPopup(auth, provider)
+      result = await signInWithPopup(auth, provider);
+      console.log(result);
+      if (result) {
+        return redirect('/');
+      }
     } else {
       signInWithRedirect(auth, provider);
     }
@@ -55,7 +60,7 @@ async function oauthSignIn(provider: AuthProvider, isMobile: boolean = false): P
 async function anonSignIn(): Promise<{ result:any, error:any}> {
   let result = null, error = null;
   try {
-    result = await signInAnonymously(auth)
+    result = await signInAnonymously(auth);
   } catch (e:any) {
     error = e;
   }
