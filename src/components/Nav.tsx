@@ -7,6 +7,7 @@ import firebaseAdminApp from '@firebase/configAdmin';
 import { App } from 'firebase-admin/app';
 import { cookies } from 'next/headers';
 import Image from 'next/image';
+import NavIcon from './NavIcon';
 
 type Props = {};
 
@@ -23,7 +24,7 @@ const Nav = async (props: Props) => {
   const graphLink = <Link href={`/data/${encodeURIComponent(userId as string)}/graphs`}>Graphs</Link>;
 
   return (
-    <nav className="navbar opacity-90 bg-base-200 sticky top-0 z-50">
+    <nav className="navbar opacity-90 bg-base-100 sticky top-0 z-50 w-full backdrop-blur border-b-2 border-base-content/10">
       <div className="navbar-start">
         <div className="dropdown">
           <div className="flex flex-row items-center">
@@ -55,10 +56,7 @@ const Nav = async (props: Props) => {
             </li>
           </ul>
         </div>
-        <Link href="/" className="flex items-center">
-          <LiaMountainSolid className="text-4xl text-primary" />
-          <span className="normal-case text-xl px-2 lg:flex">Peaktopia</span>
-        </Link>
+        <NavIcon />
       </div>
       <div className="navbar-center hidden lg:flex">
         <ul className="menu menu-horizontal px-1">

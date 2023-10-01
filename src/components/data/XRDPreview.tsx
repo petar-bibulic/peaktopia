@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { db, auth } from '@firebase/config';
 
-import _ from 'lodash';
+import _, { set } from 'lodash';
 import parser from 'xml2js';
 import { ref, getBlob } from 'firebase/storage';
 import { storage } from '@firebase/config';
@@ -12,6 +12,7 @@ import { CategoricalChartState } from 'recharts/types/chart/generateCategoricalC
 import { Peak, XRDFormat, GraphStateFormat } from '@components/data/DataTypes';
 import XRDTable from './XRDTable';
 import XRDGraph from './XRDGraph';
+import useActionStore from '@hooks/useActionStore';
 
 type Props = {
   // children: React.ReactNode;
@@ -24,7 +25,6 @@ const XRDPreview = (props: Props) => {
   const userToken = auth.currentUser?.getIdToken;
   const [singleClick, setSingleClick] = useState(false);
   const [lastClickTime, setLastClickTime] = useState(0);
-  const [activeKey, setActiveKey] = useState<string>('');
   const [peaks, setPeaks] = useState<Peak[]>([]);
   const [peakWidth, setPeakWidth] = useState(0.1);
   const [graphState, setGraphState] = useState<GraphStateFormat>({
@@ -40,6 +40,8 @@ const XRDPreview = (props: Props) => {
     animation: true,
     ticks: [],
   });
+  const action = useActionStore((state) => state.action);
+  const setAction = useActionStore((state) => state.setAction);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -172,16 +174,21 @@ const XRDPreview = (props: Props) => {
         setSingleClick(false);
       }, 300);
 
-      if (activeKey === 's') {
-        setPeaks([
-          ...peaks,
-          { position: Number(e.activeLabel), intensity: graphState.data[Number(e.activeTooltipIndex)].intensity },
-        ]);
-      } else if (activeKey === 'd') {
-        removePeak(Number(e.activeLabel));
-      } else if (activeKey === 'a') {
-        // TODO: add annotation logic
-        // not sure what I had in mind here
+      switch (action.toUpperCase()) {
+        case 'S':
+          setPeaks([
+            ...peaks,
+            { position: Number(e.activeLabel), intensity: graphState.data[Number(e.activeTooltipIndex)].intensity },
+          ]);
+          break;
+        case 'D':
+          removePeak(Number(e.activeLabel));
+          break;
+        case 'A':
+          console.log(e);
+          // TODO: add annotation logic
+          // not sure what I had in mind here
+          break;
       }
     }
     setLastClickTime(currentTime);
@@ -189,19 +196,16 @@ const XRDPreview = (props: Props) => {
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === 'Escape') {
-      setActiveKey('');
+      setAction('');
     } else {
-      console.log(e.key);
-      setActiveKey(e.key);
+      setAction(e.key);
     }
   };
 
   return (
     <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 outline-none" tabIndex={-1} onKeyDown={handleKeyPress}>
       <div className="xl:col-span-2">
-        <p className="text-base-content">Press &quotS&quot key to activate selecting peaks</p>
-        <p className="text-base-content">Press &quotD&quot to activate deleting peaks</p>
-        <p className="text-base-content">Press &quotEsc&quot to deactivate peak annotations</p>
+        <p className="text-base-content">Click & drag to zoom, double-click to zoom out</p>
         <div>
           <XRDGraph
             state={graphState}

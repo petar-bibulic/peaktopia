@@ -15,9 +15,13 @@ export const AuthContextProvider = ({ children }: { children: React.ReactNode })
   useEffect(() => {
     const authInit = onIdTokenChanged(auth, async (user) => {
       if (user) {
-        const token = await user.getIdToken();
-        setUserAuth(user);
-        setUserToken('userToken', token, { path: '/' });
+        try {
+          const token = await user.getIdToken();
+          setUserAuth(user);
+          setUserToken('userToken', token, { path: '/' });
+        } catch (e) {
+          console.warn(`Error while trying to login ${e}`);
+        }
       } else {
         console.error('User not logged in');
         setUserAuth(null);

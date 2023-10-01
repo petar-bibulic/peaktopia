@@ -36,31 +36,31 @@ const LoginForm = (props: Props) => {
   return (
     <div className="md:w-8/12 lg:ml-6 lg:w-5/12 z-10">
       <form onSubmit={handleSubmit}>
-        <div className="relative">
+        <div className="relative mb-2">
           <input
             type="text"
             placeholder=" "
-            className="input input-bordered w-full mb-4 peer z-10"
+            className="input bg-neutral-focus w-full mb-4 peer z-10"
             onChange={handleEmail}
           />
           <label
-            className={`absolute left-1 rounded-2xl text-focus duration-300
-            transform -translate-y-5 scale-75 top-1.5 origin-[0] bg-base-100 px-2 peer-focus:px-2 peer-focus:text-primary 
+            className={`bg-neutral-focus absolute left-1 rounded-2xl text-focus duration-300
+            transform -translate-y-5 scale-75 top-1.5 origin-[0] px-2 peer-focus:px-2 peer-focus:text-primary 
             peer-placeholder-shown:scale-100 peer-placeholder-shown:top-1/2 peer-focus:top-1.5 peer-focus:scale-75 pointer-events-none `}
           >
             Email
           </label>
         </div>
-        <div className="relative">
+        <div className="relative mb-2">
           <input
             type="password"
             placeholder=" "
-            className="input input-bordered w-full mb-4 peer z-10"
+            className="input bg-neutral-focus w-full mb-4 peer z-10"
             onChange={handlePassword}
           />
           <label
-            className={`absolute left-1 rounded-2xl text-focus duration-300
-            transform -translate-y-5 scale-75 top-1.5 origin-[0] bg-base-100 px-2 peer-focus:px-2 peer-focus:text-primary 
+            className={`bg-neutral-focus absolute left-1 rounded-2xl text-focus duration-300
+            transform -translate-y-5 scale-75 top-1.5 origin-[0] px-2 peer-focus:px-2 peer-focus:text-primary 
             peer-placeholder-shown:scale-100 peer-placeholder-shown:top-1/2 peer-focus:top-1.5 peer-focus:scale-75 pointer-events-none `}
           >
             Password
