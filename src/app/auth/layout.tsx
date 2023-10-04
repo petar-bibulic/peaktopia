@@ -1,10 +1,10 @@
-import RootLayout from '@app/layout';
 import Footer from '@components/Footer';
 import Nav from '@components/Nav';
+import MinimalSidebar from '@components/MinimalSidebar';
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
-    <>
+    <MinimalSidebar>
       <Nav />
       <main className="flex min-h-screen flex-col items-center">
         <section className="lg:h-screen">
@@ -14,6 +14,6 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
         </section>
       </main>
       <Footer />
-    </>
+    </MinimalSidebar>
   );
 }

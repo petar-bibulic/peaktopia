@@ -1,5 +1,5 @@
+import ImagePreview from '@components/data/ImagePreview';
 import GraphDisplay from '@components/data/GraphDisplay';
-import XRDPreview from '@components/data/XRDPreview';
 
 type Params = { userId: string };
 type SearchParams = { fileId: string };
@@ -9,7 +9,9 @@ const Data = ({ params, searchParams }: { params: Params; searchParams: SearchPa
 
   return (
     <section className="w-full px-6 pb-20 pt-4">
-      <XRDPreview />
+      <ImagePreview fileId={searchParams?.fileId}>
+        <Graph userId={params.userId} fileId={searchParams?.fileId} />
+      </ImagePreview>
     </section>
   );
 };

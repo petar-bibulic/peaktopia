@@ -14,6 +14,7 @@ const MenuCharts = (props: Props) => {
         <span>Charts</span>
       </li>
       <MenuChartElement text="Chart 1" isActive={false} />
+      <MenuChartElement text="Chart 2" isActive={true} />
       <li></li>
     </ul>
   );

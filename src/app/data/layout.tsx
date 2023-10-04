@@ -6,7 +6,7 @@ export default function DataLayout({ children }: { children: React.ReactNode }) 
   return (
     <main className="flex min-h-screen flex-col items-center">
       <Sidebar>
-        <Nav />
+        <Nav inSidebar={true} />
         {children}
         <Footer />
       </Sidebar>

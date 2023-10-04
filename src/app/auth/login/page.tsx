@@ -14,13 +14,11 @@ const Login = async (props: Props) => {
   if (userCookie?.value) {
     try {
       const userToken = await getAuth(firebaseAdminApp as App).verifyIdToken(userCookie?.value as string);
+      debugger;
     } catch (err) {
       console.log(err);
       console.log('User not logged in');
     }
-    // redirect if user is logged in
-    console.log('User already logged in');
-    return redirect('/');
   }
 
   return (

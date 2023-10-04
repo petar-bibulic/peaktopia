@@ -1,6 +1,4 @@
 import '@styles/globals.css';
-import Nav from '@components/Nav';
-import Footer from '@components/Footer';
 import { Inter } from 'next/font/google';
 import { AuthContextProvider } from '@store/AuthContext';
 

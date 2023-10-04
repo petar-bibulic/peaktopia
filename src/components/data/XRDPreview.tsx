@@ -15,8 +15,7 @@ import XRDGraph from './XRDGraph';
 import useActionStore from '@hooks/useActionStore';
 
 type Props = {
-  // children: React.ReactNode;
-  // fileId: string;
+  fileId: string;
 };
 
 const OFFSET = 1.2;
@@ -46,11 +45,14 @@ const XRDPreview = (props: Props) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // const docRef = doc(db, 'files', props.fileId as string);
-        // const docSnap = await getDoc(docRef);
-        // if (docSnap.exists()) {
-        //   console.log("Got'em");
-        // }
+        if (props.fileId) {
+          const docRef = doc(db, 'files', props.fileId as string);
+          const docSnap = await getDoc(docRef);
+          if (docSnap.exists()) {
+            console.log("Got'em");
+          }
+        }
+        debugger;
         const storageRef = ref(storage, 'datafiles/Caffeine.xrdml'); // replace with fetched file
         const file = await getBlob(storageRef);
         const rawData = await file.text();
@@ -216,15 +218,23 @@ const XRDPreview = (props: Props) => {
             peakWidth={peakWidth}
           />
         </div>
-        <div className="mt-2 inline-flex w-full">
-          <span className="w-3/5 sm:w-1/5 text-base-content">Peak width</span>
+        <div className="mt-2 inline-flex w-full gap-5 items-center">
+          <div className="whitespace-nowrap text-base-content">Peak width</div>
+          <input
+            type="text"
+            value={peakWidth}
+            className="input input-bordered input-sm input-primary"
+            readOnly={true}
+          />
           <input
             type="range"
             min={0}
-            max={100}
-            value={peakWidth * 100}
+            max={1}
+            step={0.05}
+            value={peakWidth}
             onChange={(e) => {
-              setPeakWidth(Number(e.target.value) / 100);
+              e.preventDefault();
+              setPeakWidth(Number(e.target.value));
             }}
             className="range range-primary range-xs"
           />

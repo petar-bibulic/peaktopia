@@ -1,4 +1,4 @@
-import MenuActionElement from './MenuActionElement';
+import MenuActionElement from '@components/misc/MenuActionElement';
 import { HiOutlineCursorClick } from 'react-icons/hi';
 import useActionStore from '@hooks/useActionStore';
 

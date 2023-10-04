@@ -23,7 +23,6 @@ export const AuthContextProvider = ({ children }: { children: React.ReactNode })
           console.warn(`Error while trying to login ${e}`);
         }
       } else {
-        console.error('User not logged in');
         setUserAuth(null);
         setUserToken('userToken', '', { path: '/' });
       }

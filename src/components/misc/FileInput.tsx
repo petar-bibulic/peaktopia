@@ -16,19 +16,17 @@ const FileInput = (props: Props) => {
           <div className="flex flex-col items-center justify-center py-5 px-2">
             <FaCloudUploadAlt className="text-4xl pb-2" />
             <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
-              <span className="font-semibold">Click to upload</span> or nd drop
+              <span className="font-semibold">Click to upload or drop files</span>
             </p>
             {props.files?.length ? (
-              <p className="text-xs text-gray-500 dark:text-gray-400">
-                {props.files.map((file) => file.name).join(', ')}
+              <p className="text-md text-gray-200 dark:text-primary">
+                [ {props.files.map((file) => file.name).join(', ')} ]
               </p>
             ) : (
-              <p className="text-xs text-gray-500 dark:text-gray-400">
-                {props.fileTypes.join(' | ')} (MAX. 1024x1024px)
-              </p>
+              <p className="text-md text-gray-200 dark:text-gray-400">(MAX. 1024x1024px)</p>
             )}
           </div>
-          <div>{props.fileTypes.join(' | ')}</div>
+          <div className="text-md text-gray-500 dark:text-gray-400">{props.fileTypes.join(' | ')}</div>
           <input
             id="dropzone-file"
             type="file"
