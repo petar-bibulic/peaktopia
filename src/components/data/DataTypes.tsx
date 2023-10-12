@@ -1,4 +1,4 @@
-type XRDFormat = {
+type XRDDataType = {
   xrdMeasurements: {
     xrdMeasurement: [
       {
@@ -26,23 +26,32 @@ type XRDFormat = {
   };
 };
 
-type Peak = {
+type PointType = {
   position: number;
   intensity: number;
 };
 
-type GraphStateFormat = {
-  data: Array<Peak>;
-  left: string;
-  right: string;
-  positionLeft: string;
-  positionRight: string;
-  indexLeft: number | null;
-  indexRight: number | null;
-  top: string;
-  bottom: string;
-  animation: boolean;
-  ticks: number[];
+type ChartDataType = {
+  name: string;
+  data: Array<PointType>;
 };
 
-export type { Peak, XRDFormat, GraphStateFormat };
+type ChartStateType = {
+  left: number;
+  right: number;
+  zoomLeft: number | null;
+  zoomRight: number | null;
+  top: number | string;
+  bottom: number | string;
+  animation: boolean;
+  ticks: string[];
+};
+
+type DocType = {
+  name: string;
+  url: string;
+  userId: string;
+  id: string;
+};
+
+export type { XRDDataType, PointType, ChartDataType, ChartStateType, DocType };

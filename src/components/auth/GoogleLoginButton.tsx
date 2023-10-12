@@ -8,14 +8,14 @@ type Props = {
 };
 
 const GoogleLoginButton = (props: Props) => {
-  const width = useIsMobile();
+  const isWidthSmall = useIsMobile();
 
   return (
     <button
       className="btn border-none text-black bg-white hover:bg-stone-100 w-full mb-2 justify-center"
       type="button"
-      onClick={(event) => {
-        let result = oauthSignIn(props.provider, width);
+      onClick={() => {
+        oauthSignIn(props.provider, isWidthSmall);
       }}
     >
       <Image src="/assets/images/google_logo.png" width={100} height={100} className="w-6 mx-2" alt="Google logo" />

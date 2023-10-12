@@ -44,12 +44,12 @@ async function oauthSignIn(provider: AuthProvider, isMobile: boolean = false): P
   try {
     if (!isMobile) {
       result = await signInWithPopup(auth, provider);
-      console.log(result);
-      if (result) {
-        return redirect('/');
-      }
     } else {
-      signInWithRedirect(auth, provider);
+      result = await signInWithRedirect(auth, provider);
+    }
+    console.log(result.user);
+    if (result) {
+      return redirect('/')
     }
   } catch (e: any) {
     error = e

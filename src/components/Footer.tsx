@@ -5,7 +5,8 @@ type Props = {};
 
 const Footer = (props: Props) => {
   return (
-    <footer className="grid p-10 footer-center py-4 bg-base-200 text-base-content rounded">
+    <footer className="grid p-10 footer-center py-4 bg-base-100 text-base-content rounded w-full">
+      <div className="bg-base-content/10 mx-1 my-4 h-px w-full"></div>
       <div className="grid grid-flow-col gap-4 mb-4">
         <Link href="" className="link link-hover hover:text-primary">
           About us
@@ -18,7 +19,7 @@ const Footer = (props: Props) => {
         <Link href="">
           <AiFillFacebook className="text-2xl hover:text-primary" />
         </Link>
-        <Link href="">
+        <Link href="https://github.com/petar-bibulic/peaktopia" target="_blank">
           <AiFillGithub className="text-2xl hover:text-primary" />
         </Link>
         <Link href="">
@@ -26,7 +27,7 @@ const Footer = (props: Props) => {
         </Link>
       </div>
       <div className="grid grid-flow-col gap-4 mb-4">
-        <Link href="https://storyset.com/business" className="hover:text-primary">
+        <Link href="https://storyset.com/business" className="hover:text-primary" target="_blank">
           Business illustrations by Storyset
         </Link>
       </div>

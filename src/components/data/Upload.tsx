@@ -2,24 +2,32 @@
 
 import { ChangeEvent, FormEvent, useState } from 'react';
 import { StorageReference, ref, uploadBytesResumable } from 'firebase/storage';
-import { storage, auth, db } from '@firebase/config';
+import { storage, db } from '@firebase/config';
 import { useRouter } from 'next/navigation';
-import FileInput from '../FileInput';
+import FileInput from '@components/misc/FileInput';
 import CheckMark from '@components/Checkmark';
 import { motion, useMotionValue } from 'framer-motion';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { useAuthContext } from '@store/AuthContext';
+import { anonSignIn } from '@firebase/firebaseAuth';
 
-type Props = {
-  acceptFiles: string[];
-};
+type Props = {};
 
 const Upload = (props: Props) => {
   const [selected, setSelected] = useState(false);
   const [files, setFiles] = useState<File[]>();
   const [uploaded, setUploaded] = useState(false);
   const [loading, setLoading] = useState(false);
+  let user = useAuthContext();
   const router = useRouter();
   const progress = useMotionValue(90);
+
+  let acceptedFileFormats;
+  if (!user || user.isAnonymous) {
+    acceptedFileFormats = ['image/*'];
+  } else {
+    acceptedFileFormats = ['image/*', '.xrdml'];
+  }
 
   const onFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files?.length) {
@@ -35,17 +43,20 @@ const Upload = (props: Props) => {
     event.preventDefault();
 
     if (!files) {
+      // TODO: add toast
       console.error('No file selected');
       return;
     }
-    const user = auth.currentUser;
+
     if (!user) {
-      console.error('User not logged in');
-      return;
+      await anonSignIn();
     }
+
+    const token = await user?.getIdToken();
+
     const headers = {
       contentType: files[0].type,
-      Authorization: `Bearer ${user.getIdToken()}`,
+      Authorization: `Bearer ${token}`,
     };
 
     const storagePath = files[0].type.startsWith('image/') ? 'images/' : 'datafiles/';
@@ -58,7 +69,7 @@ const Upload = (props: Props) => {
       (snapshot) => {
         setLoading(true);
         const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        // TODO: display progress in place of a upload file, maybe move this logic up to a parent component
+        // TODO: display progress in place of a upload file,add fill meter component
         console.log('Upload is ' + progress + '% done');
         switch (snapshot.state) {
           case 'paused':
@@ -71,7 +82,7 @@ const Upload = (props: Props) => {
       },
       (error) => {
         setLoading(false);
-        console.error("Shit's on fire, yo");
+        console.error(`Shit's on fire, yo: ${error}`);
         switch (error.code) {
           case 'storage/unauthorized':
             console.warn('Permission denied');
@@ -87,11 +98,15 @@ const Upload = (props: Props) => {
       async () => {
         const fileUUID = crypto.randomUUID();
         const docRef = doc(db, 'files', fileUUID);
-        setDoc(docRef, { url: filePath });
+        setDoc(docRef, {
+          url: filePath,
+          userId: user?.uid,
+          name: files[0].name.split('.')[0],
+        });
         setLoading(false);
         setUploaded(true);
-        // TODO: check file type and redirect accordingly
-        setTimeout(() => router.push(`/data/${user.uid}/process?fileId=${fileUUID}`), 1000);
+        const path = files[0].name.endsWith('xrdml') ? 'charts' : 'image';
+        setTimeout(() => router.push(`/data/${path}?fileId=${fileUUID}`), 1000);
       }
     );
   };
@@ -106,7 +121,7 @@ const Upload = (props: Props) => {
           <CheckMark progress={progress} />
         </div>
       ) : (
-        <FileInput fileTypes={props.acceptFiles} selected={selected} files={files} changeHandler={onFileChange} />
+        <FileInput fileTypes={acceptedFileFormats} selected={selected} files={files} changeHandler={onFileChange} />
       )}
     </form>
   );

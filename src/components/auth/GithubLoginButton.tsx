@@ -8,14 +8,14 @@ type Props = {
 };
 
 const GithubLoginButton = (props: Props) => {
-  const width = useIsMobile();
+  const isWidthSmall = useIsMobile();
 
   return (
     <button
       className="btn border-none text-white bg-gray-900 hover:bg-gray-950 w-full"
       type="button"
-      onClick={(event) => {
-        let result = oauthSignIn(props.provider, width);
+      onClick={() => {
+        oauthSignIn(props.provider, isWidthSmall);
       }}
     >
       <AiFillGithub className="mx-2 text-2xl" />

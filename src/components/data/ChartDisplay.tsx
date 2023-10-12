@@ -10,11 +10,10 @@ import { doc, getDoc } from 'firebase/firestore';
 import { db } from '@firebase/config';
 
 type Props = {
-  userId?: string;
   fileId?: string;
 };
 
-const GraphDisplay = async (props: Props) => {
+const ChartDisplay = async (props: Props) => {
   try {
     const userCookie = cookies().get('userToken');
     const userToken = await getAuth(firebaseAdminApp as App).verifyIdToken(userCookie?.value as string);
@@ -46,4 +45,4 @@ const GraphDisplay = async (props: Props) => {
   }
 };
 
-export default GraphDisplay;
+export default ChartDisplay;

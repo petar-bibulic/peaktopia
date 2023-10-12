@@ -1,10 +1,10 @@
-import { Peak } from './DataTypes';
+import { PointType } from './DataTypes';
 
 type Props = {
-  peaks: Array<Peak>;
+  peaks: Array<PointType>;
 };
 
-const XRDTable = (props: Props) => {
+const TableDisplay = (props: Props) => {
   const { peaks } = props;
   const sortedPeaks = [...peaks].sort((a, b) => a.position - b.position);
 
@@ -32,4 +32,4 @@ const XRDTable = (props: Props) => {
   );
 };
 
-export default XRDTable;
+export default TableDisplay;

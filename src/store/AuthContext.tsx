@@ -2,7 +2,6 @@
 
 import { createContext, useContext, useEffect, useState } from 'react';
 import { auth } from '@firebase/config';
-import { anonSignIn } from '@firebase/firebaseAuth';
 import { onAuthStateChanged, User, onIdTokenChanged } from 'firebase/auth';
 import { useCookies } from 'react-cookie';
 
@@ -11,22 +10,36 @@ export const AuthContext = createContext<User | null>(null);
 export const AuthContextProvider = ({ children }: { children: React.ReactNode }) => {
   const [userAuth, setUserAuth] = useState<User | null>(null);
   const [userToken, setUserToken] = useCookies(['userToken']);
+  const storageObj: Storage | null = typeof window !== 'undefined' ? localStorage : null;
 
   useEffect(() => {
     const authInit = onIdTokenChanged(auth, async (user) => {
       if (user) {
-        const token = await user.getIdToken();
-        setUserAuth(user);
-        setUserToken('userToken', token, { path: '/' });
+        try {
+          const token = await user.getIdToken();
+          setUserAuth(user);
+          setUserToken('userToken', token, { path: '/' });
+          storageObj?.setItem(
+            'user',
+            JSON.stringify({
+              uid: user.uid,
+              isAnonymous: user.isAnonymous,
+              photoURL: user.photoURL,
+              displayName: user.displayName,
+            })
+          );
+        } catch (e) {
+          console.warn(`Error while trying to login: ${e}`);
+        }
       } else {
-        console.error('User not logged in');
         setUserAuth(null);
         setUserToken('userToken', '', { path: '/' });
+        storageObj?.removeItem('user');
       }
     });
 
     return () => authInit();
-  });
+  }, [userAuth]);
 
   useEffect(() => {
     const handle = setInterval(async () => {
@@ -42,4 +55,4 @@ export const AuthContextProvider = ({ children }: { children: React.ReactNode })
   return <AuthContext.Provider value={userAuth}>{children}</AuthContext.Provider>;
 };
 
-export const useAuth = () => useContext(AuthContext);
+export const useAuthContext = () => useContext(AuthContext);

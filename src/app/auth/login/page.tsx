@@ -18,9 +18,6 @@ const Login = async (props: Props) => {
       console.log(err);
       console.log('User not logged in');
     }
-    // redirect if user is logged in
-    console.log('User already logged in');
-    return redirect('/');
   }
 
   return (
