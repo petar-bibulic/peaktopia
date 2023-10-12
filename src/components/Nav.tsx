@@ -1,11 +1,11 @@
 import Link from 'next/link';
-import { RxHamburgerMenu } from 'react-icons/rx';
 import LoginButton from '@components/auth/LoginButton';
 import { getAuth } from 'firebase-admin/auth';
 import firebaseAdminApp from '@firebase/configAdmin';
 import { App } from 'firebase-admin/app';
 import { cookies } from 'next/headers';
 import NavIcon from '@components/NavIcon';
+import SidebarToggle from '@components/misc/SidebarToggle';
 
 type Props = {
   inSidebar?: boolean;
@@ -13,16 +13,14 @@ type Props = {
 
 const Nav = async (props: Props) => {
   const userCookie = cookies().get('userToken');
-  let userId;
   try {
     const userToken = await getAuth(firebaseAdminApp as App).verifyIdToken(userCookie?.value as string);
-    userId = userToken.uid;
+    // const userId = userToken.uid;
   } catch (err) {
-    userId = 'demo';
     console.log('User not logged in');
   }
 
-  const graphLink = <Link href={`/data/${encodeURIComponent(userId as string)}/charts`}>Charts</Link>;
+  const graphLink = <Link href={'/data/charts'}>Charts</Link>;
 
   return (
     <nav className="navbar opacity-90 bg-base-100 sticky top-0 z-40 w-full backdrop-blur border-b-2 border-base-content/10">
@@ -30,9 +28,7 @@ const Nav = async (props: Props) => {
         <div className="dropdown">
           <div className="flex flex-row items-center">
             <label htmlFor="my-drawer" aria-label="open sidebar">
-              <div tabIndex={0} className="btn btn-ghost lg:hidden">
-                <RxHamburgerMenu className="text-xl" />
-              </div>
+              <SidebarToggle />
             </label>
           </div>
         </div>

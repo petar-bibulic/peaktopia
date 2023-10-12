@@ -5,6 +5,7 @@ import MenuAction from '@components/misc/MenuAction';
 import MenuCharts from '@components/misc/MenuCharts';
 import MenuNav from '@components/misc/MenuNav';
 import NavIcon from '@components/NavIcon';
+import { AiOutlineClose } from 'react-icons/ai';
 
 type Props = {
   children: React.ReactNode;
@@ -27,6 +28,11 @@ const Sidebar = (props: Props) => {
           <div className="sticky top-1 gap-2 px-4 py-2 items-left hidden lg:block">
             <NavIcon />
           </div>
+          {/* <div className="static h-5 lg:hidden">
+            <label htmlFor="my-drawer" className="btn btn-sm btn-ghost absolute left-2 top-2">
+              <AiOutlineClose />
+            </label>
+          </div> */}
           <div className="lg:hidden">
             <MenuNav />
           </div>

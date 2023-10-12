@@ -23,7 +23,7 @@ const MenuNav = (props: Props) => {
           </span>
           <span>Tables</span>
         </Link>
-        <Link href={`/data/${encodeURIComponent('demo')}/charts`}>
+        <Link href={'/data/charts'}>
           <span>
             <BiBarChart className="text-2xl" />
           </span>

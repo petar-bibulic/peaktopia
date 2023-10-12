@@ -3,8 +3,8 @@
 import { useState, useEffect } from 'react';
 
 export default function useIsMobile() {
-  const wndw: Window | null = typeof window === 'undefined' ? null : window;
-  const widthSm = wndw ? wndw.innerWidth < 768 : false;
+  const windowObj: Window | null = typeof window !== 'undefined' ? window : null;
+  const widthSm = windowObj ? windowObj.innerWidth < 768 : false;
 
   const [isMobile, setIsMobile] = useState(widthSm);
 
@@ -13,10 +13,10 @@ export default function useIsMobile() {
   };
 
   useEffect(() => {
-    window.addEventListener('resize', onResize);
+    windowObj?.addEventListener('resize', onResize);
 
     return () => {
-      window.removeEventListener('resize', onResize);
+      windowObj?.removeEventListener('resize', onResize);
     };
   }, []);
 

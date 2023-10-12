@@ -1,3 +1,5 @@
+'use client';
+
 import {
   LineChart,
   Line,
@@ -9,21 +11,25 @@ import {
   ResponsiveContainer,
   ReferenceArea,
   TooltipProps,
+  Brush,
 } from 'recharts';
 import { ValueType, NameType } from 'recharts/types/component/DefaultTooltipContent';
-import { GraphStateFormat, Peak } from './DataTypes';
+import { ChartDataType, ChartStateType, PointType } from '@components/data/DataTypes';
 import { useMemo } from 'react';
 
 type Props = {
-  state: GraphStateFormat;
-  peaks: Array<Peak>;
+  data: Array<ChartDataType>;
+  chartState: ChartStateType;
+  peaks: Array<PointType>;
   peakWidth: number;
   setState: any;
   zoom: any;
   handleClick: any;
 };
 
-const calcPeakColors = (peaks: Peak[], width: number): Array<string> => {
+const chartColorList = ['#38bdf8', '#818CF8', '#F471B5', '#1E293B', '#1E293B', '#2DD4BF', '#F4BF50', '#FB7085'];
+
+const getPeakColor = (peaks: PointType[], width: number): Array<string> => {
   return peaks.map((item, index, list) => {
     return item.position - list[index - 1]?.position < 2 * width ||
       list[index + 1]?.position - item.position < 2 * width
@@ -32,11 +38,15 @@ const calcPeakColors = (peaks: Peak[], width: number): Array<string> => {
   });
 };
 
+const getChartColor = (index: number) => {
+  return chartColorList[index % chartColorList.length];
+};
+
 const CustomTooltip = ({ active, payload, label }: TooltipProps<ValueType, NameType>) => {
   if (active && payload && payload.length) {
     return (
       <div className="custom-tooltip">
-        <p className="label">{`2Θ: ${label.toFixed(4)} °`}</p>
+        <p className="label">{`2Θ: ${label?.toFixed(4)} °`}</p>
         <p className="intro">{`Intensity: ${payload[0].value}`}</p>
       </div>
     );
@@ -45,17 +55,17 @@ const CustomTooltip = ({ active, payload, label }: TooltipProps<ValueType, NameT
   return null;
 };
 
-const XRDGraph = (props: Props) => {
-  const { state, peaks, peakWidth, setState, zoom, handleClick } = props;
+const XRDChart = (props: Props) => {
+  const { data, chartState, peaks, peakWidth, setState, zoom, handleClick } = props;
   const sortedPeaks = useMemo(() => {
     return [...peaks].sort((a, b) => a.position - b.position);
   }, [peaks]);
-  const peakColors = useMemo(() => calcPeakColors(sortedPeaks, peakWidth), [sortedPeaks, peakWidth]);
+  const peakColors = useMemo(() => getPeakColor(sortedPeaks, peakWidth), [sortedPeaks, peakWidth]);
 
   return (
-    <ResponsiveContainer aspect={1.7} width="100%" className="bg-neutral-focus select-none">
+    <ResponsiveContainer aspect={1.7} width="100%" className="bg-slate-800 rounded-md select-none">
       <LineChart
-        data={state.data}
+        data={data}
         margin={{
           top: 5,
           right: 5,
@@ -64,19 +74,17 @@ const XRDGraph = (props: Props) => {
         }}
         onMouseDown={(e) => {
           e &&
-            setState((prevState: GraphStateFormat) => ({
+            setState((prevState: ChartStateType) => ({
               ...prevState,
-              positionLeft: String(e.activeLabel),
-              indexLeft: Number(e.activeTooltipIndex),
+              zoomLeft: e.activeLabel,
             }));
         }}
         onMouseMove={(e) => {
-          if (state.positionLeft && state.positionLeft !== 'undefined') {
+          if (chartState.zoomLeft) {
             e &&
-              setState((prevState: GraphStateFormat) => ({
+              setState((prevState: ChartStateType) => ({
                 ...prevState,
-                positionRight: String(e.activeLabel),
-                indexRight: Number(e.activeTooltipIndex),
+                zoomRight: e.activeLabel,
               }));
           }
         }}
@@ -88,22 +96,31 @@ const XRDGraph = (props: Props) => {
           dataKey="position"
           type="number"
           allowDataOverflow={true}
-          domain={[Number(state.left), Number(state.right)]}
-          ticks={state.ticks}
+          domain={[chartState.left, chartState.right]}
+          // ticks={chartState.ticks}
+          interval="equidistantPreserveStart"
+          tickCount={20}
+          name="2Theta"
         />
-        <YAxis allowDataOverflow={true} domain={[Number(state.bottom), Number(state.top)]} />
+        <YAxis allowDataOverflow={true} domain={[chartState.bottom, chartState.top]} />
         <Tooltip position={{ x: 80, y: 20 }} content={<CustomTooltip />} />
         <Legend />
-        <Line
-          dataKey="intensity"
-          stroke="#3abff8"
-          isAnimationActive={false}
-          strokeWidth={3}
-          dot={false}
-          activeDot={{ stroke: 'red', r: 8 }}
-        />
-        {state.positionLeft && state.positionRight ? (
-          <ReferenceArea x1={state.positionLeft} x2={state.positionRight} strokeOpacity={1} />
+        {data.map((line, index) => (
+          <Line
+            dataKey="intensity"
+            data={line?.data}
+            name={line?.name}
+            key={line?.name}
+            stroke={getChartColor(index)}
+            isAnimationActive={false}
+            strokeWidth={3}
+            dot={false}
+            activeDot={{ stroke: 'orange' }}
+          />
+        ))}
+        {/* <Brush dataKey="position" data={data[0]?.data} /> */}
+        {chartState.zoomLeft && chartState.zoomRight ? (
+          <ReferenceArea x1={chartState.zoomLeft} x2={chartState.zoomRight} strokeOpacity={1} />
         ) : null}
         {sortedPeaks.map((item, index) => (
           <>
@@ -134,4 +151,4 @@ const XRDGraph = (props: Props) => {
   );
 };
 
-export default XRDGraph;
+export default XRDChart;

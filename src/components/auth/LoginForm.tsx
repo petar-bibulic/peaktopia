@@ -6,7 +6,6 @@ import Link from 'next/link';
 import GoogleLoginButton from './GoogleLoginButton';
 import FacebookLoginButton from './FacebookLoginButton';
 import GithubLoginButton from './GithubLoginButton';
-import { useAuth } from '@store/AuthContext';
 import { GoogleAuthProvider, FacebookAuthProvider, GithubAuthProvider } from 'firebase/auth';
 
 type Props = {};
@@ -18,7 +17,6 @@ const facebookProvider = new FacebookAuthProvider();
 const LoginForm = (props: Props) => {
   const [email, setEmail] = useState(' ');
   const [password, setPassword] = useState('');
-  const authUser = useAuth();
 
   function handleEmail(event: React.FormEvent<HTMLInputElement>): void {
     setEmail(event.currentTarget.value);

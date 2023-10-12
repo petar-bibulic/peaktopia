@@ -8,7 +8,7 @@ import FileInput from '@components/misc/FileInput';
 import CheckMark from '@components/Checkmark';
 import { motion, useMotionValue } from 'framer-motion';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
-import { useAuth } from '@store/AuthContext';
+import { useAuthContext } from '@store/AuthContext';
 import { anonSignIn } from '@firebase/firebaseAuth';
 
 type Props = {};
@@ -18,7 +18,7 @@ const Upload = (props: Props) => {
   const [files, setFiles] = useState<File[]>();
   const [uploaded, setUploaded] = useState(false);
   const [loading, setLoading] = useState(false);
-  let user = useAuth();
+  let user = useAuthContext();
   const router = useRouter();
   const progress = useMotionValue(90);
 
@@ -52,9 +52,11 @@ const Upload = (props: Props) => {
       await anonSignIn();
     }
 
+    const token = await user?.getIdToken();
+
     const headers = {
       contentType: files[0].type,
-      Authorization: `Bearer ${user?.getIdToken()}`,
+      Authorization: `Bearer ${token}`,
     };
 
     const storagePath = files[0].type.startsWith('image/') ? 'images/' : 'datafiles/';
@@ -80,7 +82,7 @@ const Upload = (props: Props) => {
       },
       (error) => {
         setLoading(false);
-        console.error("Shit's on fire, yo");
+        console.error(`Shit's on fire, yo: ${error}`);
         switch (error.code) {
           case 'storage/unauthorized':
             console.warn('Permission denied');
@@ -96,14 +98,15 @@ const Upload = (props: Props) => {
       async () => {
         const fileUUID = crypto.randomUUID();
         const docRef = doc(db, 'files', fileUUID);
-        setDoc(docRef, { url: filePath });
+        setDoc(docRef, {
+          url: filePath,
+          userId: user?.uid,
+          name: files[0].name.split('.')[0],
+        });
         setLoading(false);
         setUploaded(true);
-        if (files[0].name.endsWith('xrdml')) {
-          setTimeout(() => router.push(`/data/${user?.uid}/charts?fileId=${fileUUID}`), 1000);
-        } else {
-          setTimeout(() => router.push(`/data/${user?.uid}/image?fileId=${fileUUID}`), 1000);
-        }
+        const path = files[0].name.endsWith('xrdml') ? 'charts' : 'image';
+        setTimeout(() => router.push(`/data/${path}?fileId=${fileUUID}`), 1000);
       }
     );
   };

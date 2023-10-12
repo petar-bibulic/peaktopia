@@ -1,22 +1,23 @@
-import React from 'react';
+import useActionStore from '@hooks/useActionStore';
 
 type Props = {
-  text: string;
-  isActive: boolean;
+  name: string;
+  clickHandler: (name: string) => void;
 };
 
 const MenuChartElement = (props: Props) => {
-  const { text, isActive } = props;
+  const activeCharts = useActionStore((state) => state.activeCharts);
+  const { name, clickHandler } = props;
 
   return (
     <li>
-      {isActive ? (
-        <div className="flex bg-orange-600 hover:bg-orange-700" onClick={() => console.log('clicked')}>
-          {text}
+      {activeCharts.includes(name) ? (
+        <div className="flex bg-orange-600 hover:bg-orange-700" onClick={() => clickHandler(name)}>
+          {name}
         </div>
       ) : (
-        <div className="flex" onClick={() => console.log('clicked')}>
-          {text}
+        <div className="flex" onClick={() => clickHandler(name)}>
+          {name}
         </div>
       )}
     </li>
