@@ -12,7 +12,7 @@ const MenuChartElement = (props: Props) => {
   return (
     <li>
       {activeCharts.includes(name) ? (
-        <div className="flex bg-orange-600 hover:bg-orange-700" onClick={() => clickHandler(name)}>
+        <div className="flex bg-orange-700 hover:bg-orange-800" onClick={() => clickHandler(name)}>
           {name}
         </div>
       ) : (

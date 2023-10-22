@@ -13,18 +13,20 @@ import {
   TooltipProps,
   Brush,
 } from 'recharts';
+import { CategoricalChartState } from 'recharts/types/chart/generateCategoricalChart';
 import { ValueType, NameType } from 'recharts/types/component/DefaultTooltipContent';
 import { ChartDataType, ChartStateType, PointType } from '@components/data/DataTypes';
-import { useMemo } from 'react';
+import React, { useMemo, Dispatch, SetStateAction, Fragment } from 'react';
+import { divide } from 'lodash';
 
 type Props = {
   data: Array<ChartDataType>;
   chartState: ChartStateType;
   peaks: Array<PointType>;
   peakWidth: number;
-  setState: any;
-  zoom: any;
-  handleClick: any;
+  setState: Dispatch<SetStateAction<ChartStateType>>;
+  zoom: () => void;
+  handleClick: (event: CategoricalChartState) => void;
 };
 
 const chartColorList = ['#38bdf8', '#818CF8', '#F471B5', '#1E293B', '#1E293B', '#2DD4BF', '#F4BF50', '#FB7085'];
@@ -61,6 +63,11 @@ const XRDChart = (props: Props) => {
     return [...peaks].sort((a, b) => a.position - b.position);
   }, [peaks]);
   const peakColors = useMemo(() => getPeakColor(sortedPeaks, peakWidth), [sortedPeaks, peakWidth]);
+  const error = console.error;
+  console.error = (...args: any) => {
+    if (/defaultProps/.test(args[0])) return;
+    error(...args);
+  };
 
   return (
     <ResponsiveContainer aspect={1.7} width="100%" className="bg-slate-800 rounded-md select-none">
@@ -76,7 +83,7 @@ const XRDChart = (props: Props) => {
           e &&
             setState((prevState: ChartStateType) => ({
               ...prevState,
-              zoomLeft: e.activeLabel,
+              zoomLeft: Number(e.activeLabel),
             }));
         }}
         onMouseMove={(e) => {
@@ -84,7 +91,7 @@ const XRDChart = (props: Props) => {
             e &&
               setState((prevState: ChartStateType) => ({
                 ...prevState,
-                zoomRight: e.activeLabel,
+                zoomRight: Number(e.activeLabel),
               }));
           }
         }}
@@ -123,7 +130,7 @@ const XRDChart = (props: Props) => {
           <ReferenceArea x1={chartState.zoomLeft} x2={chartState.zoomRight} strokeOpacity={1} />
         ) : null}
         {sortedPeaks.map((item, index) => (
-          <>
+          <Fragment key={`fragment-${index}`}>
             <ReferenceArea
               x1={item.position - 0.01}
               x2={item.position + 0.01}
@@ -131,9 +138,10 @@ const XRDChart = (props: Props) => {
               fill={peakColors[index]}
               fillOpacity={0.8}
               ifOverflow="visible"
-              key={`peak-${index}`}
               id={`peak-${index}`}
+              key={Math.random()}
             />
+            ,
             <ReferenceArea
               x1={item.position - peakWidth}
               x2={item.position + peakWidth}
@@ -141,10 +149,10 @@ const XRDChart = (props: Props) => {
               fill={peakColors[index]}
               fillOpacity={0.4}
               ifOverflow="visible"
-              key={`peakArea-${index}`}
               id={`peakArea-${index}`}
+              key={Math.random()}
             />
-          </>
+          </Fragment>
         ))}
       </LineChart>
     </ResponsiveContainer>

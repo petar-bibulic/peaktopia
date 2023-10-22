@@ -1,18 +1,13 @@
 'use client';
 
 import { useState } from 'react';
-import { signUp } from '@firebase/firebaseAuth';
+import { signUp } from '@firebaseAuth/authUtils';
+import { facebookProvider, githubProvider, googleProvider } from '@firebaseAuth/config';
+import { oauthSignIn } from '@firebaseAuth/authUtils';
 import Link from 'next/link';
-import GoogleLoginButton from './GoogleLoginButton';
-import FacebookLoginButton from './FacebookLoginButton';
-import GithubLoginButton from './GithubLoginButton';
-import { GoogleAuthProvider, FacebookAuthProvider, GithubAuthProvider } from 'firebase/auth';
+import { GoogleLoginButton, FacebookLoginButton, GithubLoginButton } from '@components/auth/OAuthLoginButton';
 
 type Props = {};
-
-const googleProvider = new GoogleAuthProvider();
-const githubProvider = new GithubAuthProvider();
-const facebookProvider = new FacebookAuthProvider();
 
 const LoginForm = (props: Props) => {
   const [email, setEmail] = useState(' ');
@@ -100,9 +95,9 @@ const LoginForm = (props: Props) => {
         <div className="my-4 flex items-center before:mt-0.5 before:flex-1 before:border-t before:border-neutral-300 after:mt-0.5 after:flex-1 after:border-t after:border-neutral-300">
           <p className="mx-4 mb-0 text-center font-semibold dark:text-neutral-200">OR</p>
         </div>
-        <GoogleLoginButton provider={googleProvider} />
-        <FacebookLoginButton provider={facebookProvider} />
-        <GithubLoginButton provider={githubProvider} />
+        <GoogleLoginButton clickHandler={oauthSignIn.bind(null, googleProvider)} />
+        <FacebookLoginButton clickHandler={oauthSignIn.bind(null, facebookProvider)} />
+        <GithubLoginButton clickHandler={oauthSignIn.bind(null, githubProvider)} />
       </form>
     </div>
   );

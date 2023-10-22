@@ -16,19 +16,19 @@ const Footer = (props: Props) => {
         </Link>
       </div>
       <div className="grid grid-flow-col gap-4 mb-4">
-        <Link href="">
+        <Link href="" target="_blank">
           <AiFillFacebook className="text-2xl hover:text-primary" />
         </Link>
         <Link href="https://github.com/petar-bibulic/peaktopia" target="_blank">
           <AiFillGithub className="text-2xl hover:text-primary" />
         </Link>
-        <Link href="">
+        <Link href="https://www.linkedin.com/in/petar-bibulic/" target="_blank">
           <AiFillLinkedin className="text-2xl hover:text-primary" />
         </Link>
       </div>
       <div className="grid grid-flow-col gap-4 mb-4">
-        <Link href="https://storyset.com/business" className="hover:text-primary" target="_blank">
-          Business illustrations by Storyset
+        <Link href="https://storyset.com/user" className="hover:text-primary" target="_blank">
+          User illustrations by Storyset
         </Link>
       </div>
       {/* <div>

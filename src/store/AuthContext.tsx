@@ -1,8 +1,8 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import { auth } from '@firebase/config';
-import { onAuthStateChanged, User, onIdTokenChanged } from 'firebase/auth';
+import { auth } from '@firebaseAuth/config';
+import { User, onIdTokenChanged } from 'firebase/auth';
 import { useCookies } from 'react-cookie';
 
 export const AuthContext = createContext<User | null>(null);

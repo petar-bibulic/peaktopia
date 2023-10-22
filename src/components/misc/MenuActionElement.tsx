@@ -22,7 +22,7 @@ const MenuActionElement = (props: Props) => {
   return (
     <li>
       {isActive ? (
-        <div className="flex bg-orange-600 hover:bg-orange-700" onClick={() => modifiedClickHandler(action)}>
+        <div className="flex bg-orange-700 hover:bg-orange-800" onClick={() => modifiedClickHandler(action)}>
           {text}
           {keyShortcut ? <kbd className="kbd kbd-sm">{keyShortcut}</kbd> : null}
         </div>

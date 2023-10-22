@@ -2,8 +2,7 @@
 import { initializeApp, getApps } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
-import { getAuth } from "firebase/auth";
-
+import { getAuth, GoogleAuthProvider, FacebookAuthProvider, GithubAuthProvider } from "firebase/auth";
 
 const firebaseConfig = {
     apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -20,5 +19,9 @@ const storage = getStorage(firebaseApp, 'gs://tough-cipher-387114.appspot.com');
 const db = getFirestore(firebaseApp);
 const auth = getAuth(firebaseApp);
 
+const googleProvider = new GoogleAuthProvider();
+const githubProvider = new GithubAuthProvider();
+const facebookProvider = new FacebookAuthProvider();
+
 export default firebaseApp;
-export { storage, db, auth };
+export { storage, db, auth, googleProvider, githubProvider, facebookProvider };

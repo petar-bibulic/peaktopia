@@ -11,6 +11,7 @@ const MenuAction = (props: Props) => {
   return (
     <ul className="menu menu-sm lg:menu-md px-4 py-0 text-base-content">
       {/* Sidebar content */}
+      <li></li>
       <li className="menu-title flex flex-row gap-4 mt-4">
         <span className="text-base-content">
           <HiOutlineCursorClick className="text-2xl text-accent" />

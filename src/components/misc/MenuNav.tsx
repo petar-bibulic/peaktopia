@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { HiTableCells } from 'react-icons/hi2';
 import { BiBarChart, BiInfoSquare, BiBook } from 'react-icons/bi';
 import { getAuth } from 'firebase-admin/auth';
-import firebaseAdminApp from '@firebase/configAdmin';
+import firebaseAdminApp from '@firebaseAuth/configAdmin';
 import { App } from 'firebase-admin/app';
 
 type Props = {};
@@ -10,6 +10,7 @@ type Props = {};
 const MenuNav = (props: Props) => {
   return (
     <ul className="menu menu-md px-4 py-0 mt-4 text-base-content">
+      <li></li>
       <li>
         <Link href="/">
           <span>
@@ -36,7 +37,6 @@ const MenuNav = (props: Props) => {
           <span>About</span>
         </Link>
       </li>
-      <li></li>
     </ul>
   );
 };

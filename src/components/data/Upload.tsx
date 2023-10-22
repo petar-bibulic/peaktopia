@@ -2,14 +2,14 @@
 
 import { ChangeEvent, FormEvent, useState } from 'react';
 import { StorageReference, ref, uploadBytesResumable } from 'firebase/storage';
-import { storage, db } from '@firebase/config';
+import { storage, db } from '@firebaseAuth/config';
 import { useRouter } from 'next/navigation';
 import FileInput from '@components/misc/FileInput';
 import CheckMark from '@components/Checkmark';
 import { motion, useMotionValue } from 'framer-motion';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { useAuthContext } from '@store/AuthContext';
-import { anonSignIn } from '@firebase/firebaseAuth';
+import { anonSignIn } from '@firebaseAuth/authUtils';
 
 type Props = {};
 

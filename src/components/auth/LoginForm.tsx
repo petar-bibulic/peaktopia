@@ -1,22 +1,29 @@
 'use client';
 
-import { useState } from 'react';
-import { signIn } from '@firebase/firebaseAuth';
+import { useEffect, useState } from 'react';
+import { oauthSignIn, signIn } from '@firebaseAuth/authUtils';
 import Link from 'next/link';
-import GoogleLoginButton from './GoogleLoginButton';
-import FacebookLoginButton from './FacebookLoginButton';
-import GithubLoginButton from './GithubLoginButton';
-import { GoogleAuthProvider, FacebookAuthProvider, GithubAuthProvider } from 'firebase/auth';
+import { GoogleLoginButton, FacebookLoginButton, GithubLoginButton } from '@components/auth/OAuthLoginButton';
+import { googleProvider, githubProvider, facebookProvider } from '@firebaseAuth/config';
+import { useRouter } from 'next/navigation';
+import { useAuthContext } from '@store/AuthContext';
 
 type Props = {};
-
-const googleProvider = new GoogleAuthProvider();
-const githubProvider = new GithubAuthProvider();
-const facebookProvider = new FacebookAuthProvider();
 
 const LoginForm = (props: Props) => {
   const [email, setEmail] = useState(' ');
   const [password, setPassword] = useState('');
+  const router = useRouter();
+  const user = useAuthContext();
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    setIsLoading(false);
+    if (!isLoading && user) {
+      // add timeout and toast notification before redirecting
+      router.push('/');
+    }
+  }, [user]);
 
   function handleEmail(event: React.FormEvent<HTMLInputElement>): void {
     setEmail(event.currentTarget.value);
@@ -71,7 +78,7 @@ const LoginForm = (props: Props) => {
               <span className="">Remember me</span>
             </label>
           </div>
-          <Link href="#" className="link-primary">
+          <Link href="/auth/register" className="link-primary">
             Forgot password?
           </Link>
         </div>
@@ -87,9 +94,9 @@ const LoginForm = (props: Props) => {
         <div className="my-4 flex items-center before:mt-0.5 before:flex-1 before:border-t before:border-neutral-300 after:mt-0.5 after:flex-1 after:border-t after:border-neutral-300">
           <p className="mx-4 mb-0 text-center font-semibold dark:text-neutral-200">OR</p>
         </div>
-        <GoogleLoginButton provider={googleProvider} />
-        <FacebookLoginButton provider={facebookProvider} />
-        <GithubLoginButton provider={githubProvider} />
+        <GoogleLoginButton clickHandler={oauthSignIn.bind(null, googleProvider)} />
+        <FacebookLoginButton clickHandler={oauthSignIn.bind(null, facebookProvider)} />
+        <GithubLoginButton clickHandler={oauthSignIn.bind(null, githubProvider)} />
       </form>
     </div>
   );

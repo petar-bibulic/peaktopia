@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import LoginButton from '@components/auth/LoginButton';
 import { getAuth } from 'firebase-admin/auth';
-import firebaseAdminApp from '@firebase/configAdmin';
+import firebaseAdminApp from '@firebaseAuth/configAdmin';
 import { App } from 'firebase-admin/app';
 import { cookies } from 'next/headers';
 import NavIcon from '@components/NavIcon';
@@ -15,7 +15,6 @@ const Nav = async (props: Props) => {
   const userCookie = cookies().get('userToken');
   try {
     const userToken = await getAuth(firebaseAdminApp as App).verifyIdToken(userCookie?.value as string);
-    // const userId = userToken.uid;
   } catch (err) {
     console.log('User not logged in');
   }

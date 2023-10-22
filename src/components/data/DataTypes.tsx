@@ -44,7 +44,7 @@ type ChartStateType = {
   top: number | string;
   bottom: number | string;
   animation: boolean;
-  ticks: string[];
+  ticks: Array<string>;
 };
 
 type DocType = {

@@ -1,11 +1,11 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { db, auth } from '@firebase/config';
+import { db, auth } from '@firebaseAuth/config';
 import _ from 'lodash';
 
 import { ref, getDownloadURL, getBlob } from 'firebase/storage';
-import { storage } from '@firebase/config';
+import { storage } from '@firebaseAuth/config';
 import { doc, getDoc } from 'firebase/firestore';
 
 type Props = {

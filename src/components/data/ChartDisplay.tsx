@@ -1,13 +1,13 @@
 import { ref, getDownloadURL } from 'firebase/storage';
-import { storage } from '@firebase/config';
+import { storage } from '@firebaseAuth/config';
 import { getAuth } from 'firebase-admin/auth';
 import { App } from 'firebase-admin/app';
 import { cookies } from 'next/headers';
 import Image from 'next/image';
-import firebaseAdminApp from '@firebase/configAdmin';
+import firebaseAdminApp from '@firebaseAuth/configAdmin';
 import { redirect } from 'next/navigation';
 import { doc, getDoc } from 'firebase/firestore';
-import { db } from '@firebase/config';
+import { db } from '@firebaseAuth/config';
 
 type Props = {
   fileId?: string;
