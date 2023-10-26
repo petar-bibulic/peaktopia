@@ -17,7 +17,6 @@ import { CategoricalChartState } from 'recharts/types/chart/generateCategoricalC
 import { ValueType, NameType } from 'recharts/types/component/DefaultTooltipContent';
 import { ChartDataType, ChartStateType, PointType } from '@components/data/DataTypes';
 import React, { useMemo, Dispatch, SetStateAction, Fragment } from 'react';
-import { divide } from 'lodash';
 
 type Props = {
   data: Array<ChartDataType>;
@@ -139,7 +138,7 @@ const XRDChart = (props: Props) => {
               fillOpacity={0.8}
               ifOverflow="visible"
               id={`peak-${index}`}
-              key={Math.random()}
+              key={`peak-${index}`}
             />
             ,
             <ReferenceArea
@@ -150,7 +149,7 @@ const XRDChart = (props: Props) => {
               fillOpacity={0.4}
               ifOverflow="visible"
               id={`peakArea-${index}`}
-              key={Math.random()}
+              key={`peakArea-${index}`}
             />
           </Fragment>
         ))}

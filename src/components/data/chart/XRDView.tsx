@@ -1,19 +1,20 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { db } from '@firebaseAuth/config';
+import { db } from '@firebaseApp/config';
 import _, { result } from 'lodash';
 import parser from 'xml2js';
 import { ref, getBlob } from 'firebase/storage';
-import { storage } from '@firebaseAuth/config';
+import { storage } from '@firebaseApp/config';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { CategoricalChartState } from 'recharts/types/chart/generateCategoricalChart';
 import { XRDDataType, ChartDataType, ChartStateType, DocType, PointType } from '@components/data/DataTypes';
 import TableDisplay from '@components/data/TableDisplay';
-import XRDChart from '@components/data/XRDChart';
+import XRDChart from '@components/data/chart/XRDChart';
 import PeakWidthSelector from '@components/data/PeakWidthSelector';
 import useActionStore from '@hooks/useActionStore';
 import { AiOutlineInfoCircle } from 'react-icons/ai';
+import { debug } from 'console';
 
 type Props = {
   fileId: string;
@@ -85,7 +86,7 @@ const XRDView = (props: Props) => {
         if (props.fileId) {
           setActiveCharts([docs.filter((val) => val.id === props.fileId)[0].name]);
         } else {
-          setActiveCharts([docs[0].name]);
+          docs.length > 0 && setActiveCharts([docs[0].name]);
         }
       } else {
         setCharts([
@@ -94,8 +95,8 @@ const XRDView = (props: Props) => {
         ]);
         setActiveCharts(['Example']);
       }
-    } catch (err) {
-      console.error(`Error while fetching from Firestore Database: ${err}`);
+    } catch (e) {
+      console.error(`Error while fetching from Firestore Database: ${e}`);
     }
   };
 
@@ -115,8 +116,8 @@ const XRDView = (props: Props) => {
         });
       }
       return parsedChartData;
-    } catch (err) {
-      console.error(`Error while fetching from Firebase Storage: ${err}`);
+    } catch (e) {
+      console.error(`Error while fetching from Firebase Storage: ${e}`);
     }
   };
 
@@ -248,7 +249,6 @@ const XRDView = (props: Props) => {
             return Math.abs(curr.position - position) < Math.abs(prev.position - position) ? curr : prev;
           })
         : null;
-
     if (closest && Math.abs(closest.position - position) > 1) {
       return;
     }

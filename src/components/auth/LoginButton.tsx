@@ -2,7 +2,7 @@
 
 import { useAuthContext } from '@store/AuthContext';
 import Link from 'next/link';
-import { logOut } from '@firebaseAuth/authUtils';
+import { logOut } from '@firebaseApp/authUtils';
 import Image from 'next/image';
 
 type Props = {};

@@ -1,4 +1,4 @@
-import { auth, googleProvider, githubProvider, facebookProvider } from '@firebaseAuth/config';
+import { auth, googleProvider, githubProvider, facebookProvider } from '@firebaseApp/config';
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -84,7 +84,6 @@ async function oauthSignIn(provider: AuthProvider, isMobile: boolean = false): P
       const firstProvider = providers.find((provider) =>
         [googleProvider.providerId, githubProvider.providerId, facebookProvider.providerId].includes(provider)
       );
-
       if (!firstProvider) {
         throw new Error('Account already linked to a non supported provider.');
       }
@@ -92,9 +91,6 @@ async function oauthSignIn(provider: AuthProvider, isMobile: boolean = false): P
       if (!linkedProvider) {
         throw new Error("Couldn't find a supported provider");
       }
-
-      debugger;
-
       const windowObj = typeof window !== 'undefined' ? window : null;
       const storageObj: Storage | null = windowObj && sessionStorage;
       storageObj &&

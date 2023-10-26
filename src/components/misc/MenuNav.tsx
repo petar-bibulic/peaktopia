@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { HiTableCells } from 'react-icons/hi2';
 import { BiBarChart, BiInfoSquare, BiBook } from 'react-icons/bi';
 import { getAuth } from 'firebase-admin/auth';
-import firebaseAdminApp from '@firebaseAuth/configAdmin';
+import firebaseAdminApp from '@firebaseApp/configAdmin';
 import { App } from 'firebase-admin/app';
 
 type Props = {};

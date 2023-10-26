@@ -1,10 +1,10 @@
 import Link from 'next/link';
 import LoginButton from '@components/auth/LoginButton';
 import { getAuth } from 'firebase-admin/auth';
-import firebaseAdminApp from '@firebaseAuth/configAdmin';
+import firebaseAdminApp from '@firebaseApp/configAdmin';
 import { App } from 'firebase-admin/app';
 import { cookies } from 'next/headers';
-import NavIcon from '@components/NavIcon';
+import NavIcon from '@components/misc/NavIcon';
 import SidebarToggle from '@components/misc/SidebarToggle';
 
 type Props = {
@@ -15,7 +15,7 @@ const Nav = async (props: Props) => {
   const userCookie = cookies().get('userToken');
   try {
     const userToken = await getAuth(firebaseAdminApp as App).verifyIdToken(userCookie?.value as string);
-  } catch (err) {
+  } catch (e) {
     console.log('User not logged in');
   }
 

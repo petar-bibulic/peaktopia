@@ -4,9 +4,9 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { GoogleLoginButton, FacebookLoginButton, GithubLoginButton } from '@components/auth/OAuthLoginButton';
 import { useEffect, useState } from 'react';
-import { linkProvidersSignIn } from '@firebaseAuth/authUtils';
+import { linkProvidersSignIn } from '@firebaseApp/authUtils';
 import { FirebaseError } from '@firebase/util';
-import { getProvider } from '@firebaseAuth/authUtils';
+import { getProvider } from '@firebaseApp/authUtils';
 import { useAuthContext } from '@store/AuthContext';
 
 type Props = {};

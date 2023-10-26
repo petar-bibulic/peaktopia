@@ -7,10 +7,16 @@ const PeakWidthSelector = (props: Props) => {
   const { peakWidth, setPeakWidth } = props;
 
   return (
-    <div className="mt-2 inline-flex w-full gap-5 items-center">
+    <div className="mt-2 flex flex-wrap sm:inline-flex w-full gap-5 items-center">
       <div className="whitespace-nowrap text-base-content">Peak width</div>
-      <input type="text" value={peakWidth} className="input input-bordered input-sm input-primary" readOnly={true} />
       <input
+        className="grow sm:flex-none sm:block input input-bordered input-sm input-primary"
+        type="text"
+        value={peakWidth}
+        readOnly={true}
+      />
+      <input
+        className="w-full sm:w-1 sm:grow range range-primary range-xs sm:range-sm"
         type="range"
         min={0}
         max={1}
@@ -20,7 +26,6 @@ const PeakWidthSelector = (props: Props) => {
           e.preventDefault();
           setPeakWidth(Number(e.target.value));
         }}
-        className="range range-primary range-xs"
       />
     </div>
   );

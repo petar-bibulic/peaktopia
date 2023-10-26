@@ -1,9 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { signUp } from '@firebaseAuth/authUtils';
-import { facebookProvider, githubProvider, googleProvider } from '@firebaseAuth/config';
-import { oauthSignIn } from '@firebaseAuth/authUtils';
+import { signUp } from '@firebaseApp/authUtils';
+import { facebookProvider, githubProvider, googleProvider } from '@firebaseApp/config';
+import { oauthSignIn } from '@firebaseApp/authUtils';
 import Link from 'next/link';
 import { GoogleLoginButton, FacebookLoginButton, GithubLoginButton } from '@components/auth/OAuthLoginButton';
 

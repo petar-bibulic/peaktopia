@@ -8,11 +8,11 @@ export default async function Home() {
   return (
     <MinimalSidebar>
       <Nav />
-      <main className="flex min-h-screen flex-col items-center">
-        <div className="w-full min-h-screen relative">
-          <div className="absolute bottom-0 w-full aspect-video bg-cover bg-bottom bg-no-repeat bg-[url('/assets/images/layer1_peaks.svg')]"></div>
-          <div className="hero min-h-screen backdrop-blur-[2px] z-10 mb-20">
-            <div className="hero-content text-center">
+      <main className="flex flex-col items-center">
+        <div className="w-full relative">
+          <div className="absolute bottom-0 w-full h-[50vh] bg-cover bg-bottom bg-no-repeat bg-[url('/assets/images/layer1_peaks.svg')]"></div>
+          <div className="hero min-h-[calc(100vh-48px)] backdrop-blur-[2px] z-10">
+            <div className="hero-content text-center mb-20">
               <div className="max-w-lg">
                 <h1 className="text-5xl font-bold">Welcome to</h1>
                 <h1 className="text-7xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-pink-500 to-blue-700">
@@ -32,10 +32,10 @@ export default async function Home() {
           </div>
         </div>
         <div className="w-full flex h-full flex-col relative bg-cyan-950">
-          <div className="absolute bottom-0 w-full aspect-video bg-cover bg-bottom bg-no-repeat bg-[url('/assets/images/layer2_peaks.svg')]"></div>
+          <div className="absolute bottom-0 w-full h-[50vh] bg-cover bg-bottom bg-no-repeat bg-[url('/assets/images/layer2_peaks.svg')]"></div>
           <div className="hero min-h-screen backdrop-blur-[2px] z-10">
             <div className="hero-content text-center">
-              <div className="max-w-lg">
+              <div className="max-w-xl">
                 <p className="py-6 mb-[40vh] mx-5 text-left">
                   Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque sit amet lorem neque. Fusce vulputate
                   a ex nec convallis. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos
@@ -60,7 +60,7 @@ export default async function Home() {
           </div>
         </div>
         <div className="w-full min-h-screen relative bg-slate-900">
-          <div className="absolute bottom-0 w-full aspect-video bg-cover bg-bottom bg-no-repeat bg-[url('/assets/images/layer3_peaks.svg')]"></div>
+          <div className="absolute bottom-0 w-full h-[50vh] bg-cover bg-bottom bg-no-repeat bg-[url('/assets/images/layer3_peaks.svg')]"></div>
           <div className="hero min-h-screen backdrop-blur-[2px] z-10">Third chapter</div>
         </div>
       </main>

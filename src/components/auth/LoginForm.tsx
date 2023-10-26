@@ -1,10 +1,10 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { oauthSignIn, signIn } from '@firebaseAuth/authUtils';
+import { oauthSignIn, signIn } from '@firebaseApp/authUtils';
 import Link from 'next/link';
 import { GoogleLoginButton, FacebookLoginButton, GithubLoginButton } from '@components/auth/OAuthLoginButton';
-import { googleProvider, githubProvider, facebookProvider } from '@firebaseAuth/config';
+import { googleProvider, githubProvider, facebookProvider } from '@firebaseApp/config';
 import { useRouter } from 'next/navigation';
 import { useAuthContext } from '@store/AuthContext';
 
@@ -78,7 +78,7 @@ const LoginForm = (props: Props) => {
               <span className="">Remember me</span>
             </label>
           </div>
-          <Link href="/auth/register" className="link-primary">
+          <Link href="/auth/reset" className="link-primary">
             Forgot password?
           </Link>
         </div>

@@ -1,9 +1,5 @@
 import LoginForm from '@components/auth/LoginForm';
 import Image from 'next/image';
-import { cookies } from 'next/headers';
-import { getAuth } from 'firebase-admin/auth';
-import { App } from 'firebase-admin/app';
-import firebaseAdminApp from '@firebaseAuth/configAdmin';
 
 type Props = {};
 
