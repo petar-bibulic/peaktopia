@@ -1,12 +1,14 @@
 import MenuActionElement from '@components/misc/MenuActionElement';
 import { HiOutlineCursorClick } from 'react-icons/hi';
 import useActionStore from '@hooks/useActionStore';
+import useIsMobile from '@hooks/useIsMobile';
 
 type Props = {};
 
-const MenuAction = (props: Props) => {
+const ChartMenuActions = (props: Props) => {
   const action = useActionStore((state) => state.action);
   const setAction = useActionStore((state) => state.setAction);
+  const isMobile = useIsMobile();
 
   return (
     <ul className="menu menu-sm lg:menu-md px-4 py-0 text-base-content">
@@ -46,9 +48,21 @@ const MenuAction = (props: Props) => {
         text="Annotate peaks"
         keyShortcut="A"
       />
+      {isMobile && (
+        <>
+          <MenuActionElement
+            clickHandler={setAction}
+            action="Z"
+            isActive={action.toUpperCase() === 'Z' ? true : false}
+            text="Zoom"
+            keyShortcut="Z"
+          />
+          <MenuActionElement clickHandler={setAction} action="" isActive={false} text="Zoom out" keyShortcut="Ctrl-Z" />
+        </>
+      )}
       <li></li>
     </ul>
   );
 };
 
-export default MenuAction;
+export default ChartMenuActions;

@@ -28,7 +28,7 @@ const Footer = (props: Props) => {
       </div>
       <div className="grid grid-flow-col gap-4 mb-4">
         <Link href="https://storyset.com/user" className="hover:text-primary" target="_blank">
-          User illustrations by Storyset
+          Illustrations by Storyset
         </Link>
       </div>
       {/* <div>

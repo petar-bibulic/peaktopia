@@ -8,6 +8,8 @@ type ActionState = {
   setCharts: (array: Array<DocType>) => void;
   activeCharts: Array<string>;
   setActiveCharts: (array: Array<string>) => void;
+  userInstruction: string;
+  setUserInstruction: (value: string) => void;
 };
 
 const useActionStore = create<ActionState>()((set) => ({
@@ -17,6 +19,8 @@ const useActionStore = create<ActionState>()((set) => ({
   setCharts: (array) => set(() => ({ charts: array })),
   activeCharts: [],
   setActiveCharts: (array) => set(() => ({ activeCharts: array })),
+  userInstruction: '',
+  setUserInstruction: (value) => set(() => ({ userInstruction: value })),
 }));
 
 export default useActionStore;

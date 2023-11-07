@@ -5,7 +5,7 @@ type SearchParams = { fileId: string };
 
 const Data = ({ searchParams }: { searchParams: SearchParams }) => {
   return (
-    <section className="w-full px-6 pb-20 pt-4">
+    <section className="w-full min-h-screen px-6 pb-20 pt-4">
       <ImageView fileId={searchParams?.fileId}>
         <ImageDisplay fileId={searchParams?.fileId} />
       </ImageView>

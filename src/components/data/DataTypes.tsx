@@ -26,14 +26,14 @@ type XRDDataType = {
   };
 };
 
-type PointType = {
+type ChartDataPoint = {
   position: number;
   intensity: number;
 };
 
 type ChartDataType = {
   name: string;
-  data: Array<PointType>;
+  data: Array<ChartDataPoint>;
 };
 
 type ChartStateType = {
@@ -54,4 +54,15 @@ type DocType = {
   id: string;
 };
 
-export type { XRDDataType, PointType, ChartDataType, ChartStateType, DocType };
+type Point = {
+  x: number;
+  y: number;
+};
+
+type Points = {
+  [key: string]: Point;
+};
+
+type PointName = { name: string; point: Point };
+
+export type { XRDDataType, ChartDataPoint, ChartDataType, ChartStateType, DocType, Point, Points, PointName };

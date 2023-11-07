@@ -1,7 +1,7 @@
-import { PointType } from './DataTypes';
+import { ChartDataPoint } from './DataTypes';
 
 type Props = {
-  peaks: Array<PointType>;
+  peaks: Array<ChartDataPoint>;
 };
 
 const TableDisplay = (props: Props) => {

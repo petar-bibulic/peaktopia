@@ -5,7 +5,7 @@ import { oauthSignIn, signIn } from '@firebaseApp/authUtils';
 import Link from 'next/link';
 import { GoogleLoginButton, FacebookLoginButton, GithubLoginButton } from '@components/auth/OAuthLoginButton';
 import { googleProvider, githubProvider, facebookProvider } from '@firebaseApp/config';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuthContext } from '@store/AuthContext';
 
 type Props = {};
@@ -14,6 +14,7 @@ const LoginForm = (props: Props) => {
   const [email, setEmail] = useState(' ');
   const [password, setPassword] = useState('');
   const router = useRouter();
+  const searchParams = useSearchParams();
   const user = useAuthContext();
   const [isLoading, setIsLoading] = useState(true);
 
@@ -21,7 +22,12 @@ const LoginForm = (props: Props) => {
     setIsLoading(false);
     if (!isLoading && user) {
       // add timeout and toast notification before redirecting
-      router.push('/');
+      const query = searchParams.get('next');
+      if (query) {
+        router.push(query);
+      } else {
+        router.push('/');
+      }
     }
   }, [user]);
 

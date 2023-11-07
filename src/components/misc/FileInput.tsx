@@ -37,13 +37,9 @@ const FileInput = (props: Props) => {
           />
         </label>
       </div>
-      {props.selected ? (
-        <button className="btn btn-primary mx-4 w-full max-w-sm md:w-fit" type="submit">
-          Submit
-        </button>
-      ) : (
-        <button className="btn btn-disabled mx-4 w-full max-w-sm md:w-fit">Submit</button>
-      )}
+      <button className="btn btn-primary mx-4 w-full max-w-sm md:w-fit" disabled={!props.selected} type="submit">
+        Submit
+      </button>
     </div>
   );
 };

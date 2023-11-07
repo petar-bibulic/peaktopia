@@ -60,7 +60,7 @@ const Upload = (props: Props) => {
     };
 
     const storagePath = files[0].type.startsWith('image/') ? 'images/' : 'datafiles/';
-    const filePath = storagePath + files[0].name;
+    const filePath = storagePath + files[0].name.replace(/ /g, '_');
     const storageRef = ref(storage, filePath);
     const uploadTask = uploadBytesResumable(storageRef, files[0], headers);
 
@@ -80,10 +80,10 @@ const Upload = (props: Props) => {
             break;
         }
       },
-      (error) => {
+      (e) => {
         setLoading(false);
-        console.error(`Shit's on fire, yo: ${error}`);
-        switch (error.code) {
+        console.error(`Error while uploading file: ${e}`);
+        switch (e.code) {
           case 'storage/unauthorized':
             console.warn('Permission denied');
             break;
@@ -97,15 +97,15 @@ const Upload = (props: Props) => {
       },
       async () => {
         const fileUUID = crypto.randomUUID();
-        const docRef = doc(db, 'files', fileUUID);
+        const docRef = storagePath === 'images/' ? doc(db, 'images', fileUUID) : doc(db, 'files', fileUUID);
         setDoc(docRef, {
           url: filePath,
           userId: user?.uid,
-          name: files[0].name.split('.')[0],
+          name: filePath.split('.')[0],
         });
         setLoading(false);
         setUploaded(true);
-        const path = files[0].name.endsWith('xrdml') ? 'charts' : 'image';
+        const path = storagePath === 'images/' ? 'image' : 'charts';
         setTimeout(() => router.push(`/data/${path}?fileId=${fileUUID}`), 1000);
       }
     );

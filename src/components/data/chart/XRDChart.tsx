@@ -15,32 +15,18 @@ import {
 } from 'recharts';
 import { CategoricalChartState } from 'recharts/types/chart/generateCategoricalChart';
 import { ValueType, NameType } from 'recharts/types/component/DefaultTooltipContent';
-import { ChartDataType, ChartStateType, PointType } from '@components/data/DataTypes';
+import { ChartDataType, ChartStateType, ChartDataPoint } from '@components/data/DataTypes';
 import React, { useMemo, Dispatch, SetStateAction, Fragment } from 'react';
+import { getPeakColor, getChartColor } from '@utils/helperFunctions';
 
 type Props = {
   data: Array<ChartDataType>;
   chartState: ChartStateType;
-  peaks: Array<PointType>;
+  peaks: Array<ChartDataPoint>;
   peakWidth: number;
   setState: Dispatch<SetStateAction<ChartStateType>>;
   zoom: () => void;
   handleClick: (event: CategoricalChartState) => void;
-};
-
-const chartColorList = ['#38bdf8', '#818CF8', '#F471B5', '#1E293B', '#1E293B', '#2DD4BF', '#F4BF50', '#FB7085'];
-
-const getPeakColor = (peaks: PointType[], width: number): Array<string> => {
-  return peaks.map((item, index, list) => {
-    return item.position - list[index - 1]?.position < 2 * width ||
-      list[index + 1]?.position - item.position < 2 * width
-      ? 'yellow'
-      : 'green';
-  });
-};
-
-const getChartColor = (index: number) => {
-  return chartColorList[index % chartColorList.length];
 };
 
 const CustomTooltip = ({ active, payload, label }: TooltipProps<ValueType, NameType>) => {
@@ -62,6 +48,7 @@ const XRDChart = (props: Props) => {
     return [...peaks].sort((a, b) => a.position - b.position);
   }, [peaks]);
   const peakColors = useMemo(() => getPeakColor(sortedPeaks, peakWidth), [sortedPeaks, peakWidth]);
+
   const error = console.error;
   console.error = (...args: any) => {
     if (/defaultProps/.test(args[0])) return;
@@ -69,7 +56,7 @@ const XRDChart = (props: Props) => {
   };
 
   return (
-    <ResponsiveContainer aspect={1.7} width="100%" className="bg-slate-800 rounded-md select-none">
+    <ResponsiveContainer aspect={1.78} width="100%" className="bg-slate-800 rounded-md select-none">
       <LineChart
         data={data}
         margin={{
@@ -104,11 +91,10 @@ const XRDChart = (props: Props) => {
           allowDataOverflow={true}
           domain={[chartState.left, chartState.right]}
           // ticks={chartState.ticks}
-          interval="equidistantPreserveStart"
-          tickCount={20}
           name="2Theta"
+          scale="auto"
         />
-        <YAxis allowDataOverflow={true} domain={[chartState.bottom, chartState.top]} />
+        <YAxis allowDataOverflow={true} domain={[chartState.bottom, chartState.top]} scale="linear" />
         <Tooltip position={{ x: 80, y: 20 }} content={<CustomTooltip />} />
         <Legend />
         {data.map((line, index) => (

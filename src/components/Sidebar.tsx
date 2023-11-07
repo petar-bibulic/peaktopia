@@ -1,7 +1,9 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import MenuAction from '@components/misc/MenuAction';
+import { toTitle } from '@utils/helperFunctions';
+import ChartMenuActions from '@components/misc/ChartMenuActions';
+import ImageMenuActions from '@components/misc/ImageMenuActions';
 import MenuCharts from '@components/misc/MenuCharts';
 import MenuNav from '@components/misc/MenuNav';
 import NavIcon from '@components/misc/NavIcon';
@@ -13,7 +15,16 @@ type Props = {
 
 const Sidebar = (props: Props) => {
   const currentRoute = usePathname();
-  console.log(currentRoute);
+
+  let type;
+  if (currentRoute.includes('chart')) {
+    type = 'chart';
+  } else if (currentRoute.includes('image')) {
+    type = 'image';
+  } else {
+    console.warn('Cannot find supported route to use in sidebar.');
+    type = null;
+  }
 
   return (
     <div className="drawer lg:drawer-open">
@@ -32,8 +43,9 @@ const Sidebar = (props: Props) => {
           <div className="lg:hidden">
             <MenuNav />
           </div>
-          <MenuAction />
-          <MenuCharts />
+          {type === 'chart' && <ChartMenuActions />}
+          {type === 'image' && <ImageMenuActions />}
+          <MenuCharts title={`${toTitle(type as string)}s`} />
         </aside>
       </div>
     </div>

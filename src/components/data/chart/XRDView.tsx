@@ -2,31 +2,30 @@
 
 import { useEffect, useState } from 'react';
 import { db } from '@firebaseApp/config';
-import _, { result } from 'lodash';
+import _ from 'lodash';
 import parser from 'xml2js';
 import { ref, getBlob } from 'firebase/storage';
 import { storage } from '@firebaseApp/config';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { CategoricalChartState } from 'recharts/types/chart/generateCategoricalChart';
-import { XRDDataType, ChartDataType, ChartStateType, DocType, PointType } from '@components/data/DataTypes';
+import { XRDDataType, ChartDataType, ChartStateType, DocType, ChartDataPoint } from '@components/data/DataTypes';
 import TableDisplay from '@components/data/TableDisplay';
 import XRDChart from '@components/data/chart/XRDChart';
 import PeakWidthSelector from '@components/data/PeakWidthSelector';
 import useActionStore from '@hooks/useActionStore';
 import { AiOutlineInfoCircle } from 'react-icons/ai';
-import { debug } from 'console';
+import { OFFSET } from '@utils/constants';
 
 type Props = {
   fileId: string;
 };
 
-const OFFSET = 0.05;
-
 const XRDView = (props: Props) => {
   const user = typeof window !== 'undefined' ? localStorage.getItem('user') : null;
   const userObj = user ? JSON.parse(user) : null;
+  const [isLoading, setIsLoading] = useState(true);
   const [lastClickTime, setLastClickTime] = useState(0);
-  const [peaks, setPeaks] = useState<PointType[]>([]);
+  const [peaks, setPeaks] = useState<ChartDataPoint[]>([]);
   const [peakWidth, setPeakWidth] = useState(0.1);
   const [chartData, setChartData] = useState<Array<ChartDataType>>([]);
   const [chartState, setChartState] = useState<ChartStateType>({
@@ -52,6 +51,7 @@ const XRDView = (props: Props) => {
     };
 
     loadActive();
+    setIsLoading(false);
     return () => {};
   }, []);
 
@@ -68,9 +68,8 @@ const XRDView = (props: Props) => {
       ]);
     };
 
-    getData();
-    return () => {};
-  }, [activeCharts]);
+    !isLoading && getData();
+  }, [activeCharts, isLoading]);
 
   const fetchData = async () => {
     try {
@@ -101,11 +100,12 @@ const XRDView = (props: Props) => {
   };
 
   const fetchStore = async () => {
-    const parsedChartData: { [key: string]: PointType[] } = {};
+    const parsedChartData: { [key: string]: ChartDataPoint[] } = {};
     try {
       for (let ac of activeCharts) {
-        if (chartData.map((val) => val.name).includes(ac)) continue;
-
+        if (chartData.map((val) => val.name).includes(ac)) {
+          continue;
+        }
         const storageRef = ref(storage, charts.filter((val) => val.name === ac)[0]?.url);
         const file = await getBlob(storageRef);
         const rawData = await file.text();
@@ -280,7 +280,11 @@ const XRDView = (props: Props) => {
     if (e.key === 'Escape') {
       setAction('');
     } else {
-      setAction(e.key);
+      if (action === e.key) {
+        setAction('');
+      } else {
+        setAction(e.key);
+      }
     }
   };
 

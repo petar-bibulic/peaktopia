@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { HiTableCells } from 'react-icons/hi2';
-import { BiBarChart, BiInfoSquare, BiBook } from 'react-icons/bi';
+import { BiBarChart, BiInfoSquare, BiBook, BiImage } from 'react-icons/bi';
 import { getAuth } from 'firebase-admin/auth';
 import firebaseAdminApp from '@firebaseApp/configAdmin';
 import { App } from 'firebase-admin/app';
@@ -29,6 +29,12 @@ const MenuNav = (props: Props) => {
             <BiBarChart className="text-2xl" />
           </span>
           <span>Charts</span>
+        </Link>
+        <Link href={'/data/image'}>
+          <span>
+            <BiImage className="text-2xl" />
+          </span>
+          <span>Images</span>
         </Link>
         <Link href="/">
           <span>

@@ -19,8 +19,6 @@ const Nav = async (props: Props) => {
     console.log('User not logged in');
   }
 
-  const graphLink = <Link href={'/data/charts'}>Charts</Link>;
-
   return (
     <nav className="navbar opacity-90 bg-base-100 sticky top-0 z-40 w-full backdrop-blur border-b-2 border-base-content/10">
       <div className="navbar-start">
@@ -41,7 +39,12 @@ const Nav = async (props: Props) => {
           <li>
             <Link href="">Tables</Link>
           </li>
-          <li>{graphLink}</li>
+          <li>
+            <Link href="/data/charts">Charts</Link>
+          </li>
+          <li>
+            <Link href="/data/image">Images</Link>
+          </li>
           <li>
             <Link href="">About</Link>
           </li>
