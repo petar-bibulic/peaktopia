@@ -1,9 +1,9 @@
 'use client';
 
 import _ from 'lodash';
-import { useEffect, useState, useReducer } from 'react';
+import { useEffect, useState, useReducer, useRef, MutableRefObject, forwardRef } from 'react';
 import { useRouter } from 'next/navigation';
-import useActionStore from '@hooks/useActionStore';
+import useGlobalStore from '@hooks/useGlobalStore';
 
 import { db, auth } from '@firebaseApp/config';
 import { collection, getDocs, query, where } from 'firebase/firestore';
@@ -12,6 +12,7 @@ import { AiOutlineInfoCircle } from 'react-icons/ai';
 import { DocType, PointName } from '@components/data/DataTypes';
 
 import TableDisplay from '@components/data/TableDisplay';
+import AxesForm from '@components/data/image/AxesForm';
 import ImageProcess from '@components/data/image/ImageProcess';
 import Steps from '@components/misc/Steps';
 
@@ -20,7 +21,7 @@ type Props = {
   fileId: string;
 };
 
-const ImagePreview = (props: Props) => {
+const ImagePreview = (props: Props, ref: MutableRefObject<HTMLDivElement | null>) => {
   function stepReducer(state: { step: number }, action: { type: string }) {
     if (action.type === 'increment') {
       return {
@@ -33,13 +34,16 @@ const ImagePreview = (props: Props) => {
   const user = typeof window !== 'undefined' ? localStorage.getItem('user') : null;
   const userObj = user ? JSON.parse(user) : null;
   const router = useRouter();
-  const action = useActionStore((state) => state.action);
-  const setAction = useActionStore((state) => state.setAction);
   const [state, dispatch] = useReducer(stepReducer, { step: 1 });
   const [continueBool, setContinueBool] = useState(false);
-  const userInstruction = useActionStore((state) => state.userInstruction);
-  const setCharts = useActionStore((state) => state.setCharts);
-  const setActiveCharts = useActionStore((state) => state.setActiveCharts);
+  const [axesRange, setAxesRange] = useState<{ [key: string]: number } | null>(null);
+  const axesFormRef = useRef<HTMLDivElement | null>(null);
+  const action = useGlobalStore((state) => state.action);
+  const setAction = useGlobalStore((state) => state.setAction);
+  const userInstruction = useGlobalStore((state) => state.userInstruction);
+  const setCharts = useGlobalStore((state) => state.setCharts);
+  const setActiveCharts = useGlobalStore((state) => state.setActiveCharts);
+  const setUserInstruction = useGlobalStore((state) => state.setUserInstruction);
 
   useEffect(() => {
     const fetchFile = async () => {
@@ -100,8 +104,14 @@ const ImagePreview = (props: Props) => {
   };
 
   const continueClickHandler = () => {
+    if (state.step === 1) {
+      setTimeout(() => {
+        axesFormRef.current && axesFormRef.current.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+    }
+
     dispatch({ type: 'increment' });
-    setContinueBool(false);
+    // setContinueBool(false);
   };
 
   return (
@@ -113,11 +123,22 @@ const ImagePreview = (props: Props) => {
         </div>
         <div className="w-full min-h-0 max-h-screen relative">
           {props.children}
-          {props.fileId && <ImageProcess setContinue={setContinueBool} />}
+          {props.fileId && <ImageProcess setContinue={setContinueBool} step={state.step} />}
         </div>
+      </div>
+      {props.fileId && (
+        <AxesForm
+          ref={axesFormRef}
+          setContinue={setContinueBool}
+          setAxes={setAxesRange}
+          className={state.step === 2 ? '' : 'hidden'}
+        />
+      )}
+      {props.fileId && <TableDisplay peaks={[]} className={state.step === 3 ? '' : 'hidden'} />}
+      <div className="xl:col-span-2">
         <div className="flex flex-wrap justify-center items-center mt-6 md:flex-nowrap ">
           <Steps
-            className="w-full"
+            className="w-full text-black dark:text-white"
             step={state.step}
             steps={['Align axes', 'Adjust range values', 'Select peaks', 'Done 🎉']}
           />
@@ -130,7 +151,6 @@ const ImagePreview = (props: Props) => {
           </button>
         </div>
       </div>
-      {props.fileId && <TableDisplay peaks={[]} />}
     </div>
   );
 };

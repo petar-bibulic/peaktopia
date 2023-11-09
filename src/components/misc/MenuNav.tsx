@@ -1,9 +1,9 @@
 import Link from 'next/link';
-import { HiTableCells } from 'react-icons/hi2';
-import { BiBarChart, BiInfoSquare, BiBook, BiImage } from 'react-icons/bi';
+
 import { getAuth } from 'firebase-admin/auth';
 import firebaseAdminApp from '@firebaseApp/configAdmin';
 import { App } from 'firebase-admin/app';
+import { NAV_LINKS } from '@utils/constants';
 
 type Props = {};
 
@@ -12,36 +12,12 @@ const MenuNav = (props: Props) => {
     <ul className="menu menu-md px-4 py-0 mt-4 text-base-content">
       <li></li>
       <li>
-        <Link href="/">
-          <span>
-            <BiBook className="text-2xl" />
-          </span>
-          <span>Use</span>
-        </Link>
-        <Link href="/">
-          <span>
-            <HiTableCells className="text-2xl" />
-          </span>
-          <span>Tables</span>
-        </Link>
-        <Link href={'/data/charts'}>
-          <span>
-            <BiBarChart className="text-2xl" />
-          </span>
-          <span>Charts</span>
-        </Link>
-        <Link href={'/data/image'}>
-          <span>
-            <BiImage className="text-2xl" />
-          </span>
-          <span>Images</span>
-        </Link>
-        <Link href="/">
-          <span>
-            <BiInfoSquare className="text-2xl" />
-          </span>
-          <span>About</span>
-        </Link>
+        {NAV_LINKS.map((item, index) => (
+          <Link href={item.url} key={index}>
+            <span>{item.image}</span>
+            <span>{item.name}</span>
+          </Link>
+        ))}
       </li>
     </ul>
   );

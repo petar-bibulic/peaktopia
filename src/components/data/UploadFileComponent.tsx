@@ -13,7 +13,7 @@ import { anonSignIn } from '@firebaseApp/authUtils';
 
 type Props = {};
 
-const Upload = (props: Props) => {
+const UploadFileComponent = (props: Props) => {
   const [selected, setSelected] = useState(false);
   const [files, setFiles] = useState<File[]>();
   const [uploaded, setUploaded] = useState(false);
@@ -127,4 +127,4 @@ const Upload = (props: Props) => {
   );
 };
 
-export default Upload;
+export default UploadFileComponent;

@@ -1,6 +1,6 @@
 import { HiOutlineClipboardList } from 'react-icons/hi';
 import MenuChartElement from './MenuChartElement';
-import useActionStore from '@hooks/useActionStore';
+import useGlobalStore from '@hooks/useGlobalStore';
 import { useRouter } from 'next/navigation';
 
 type Props = {
@@ -9,9 +9,9 @@ type Props = {
 
 const MenuCharts = (props: Props) => {
   const router = useRouter();
-  const charts = useActionStore((state) => state.charts);
-  const activeCharts = useActionStore((state) => state.activeCharts);
-  const setActiveCharts = useActionStore((state) => state.setActiveCharts);
+  const charts = useGlobalStore((state) => state.charts);
+  const activeCharts = useGlobalStore((state) => state.activeCharts);
+  const setActiveCharts = useGlobalStore((state) => state.setActiveCharts);
 
   const onChartSelect = (name: string) => {
     if (props.title === 'Images') {

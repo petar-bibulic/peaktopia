@@ -1,12 +1,12 @@
 import MenuActionElement from '@components/misc/MenuActionElement';
 import { HiOutlineCursorClick } from 'react-icons/hi';
-import useActionStore from '@hooks/useActionStore';
+import useGlobalStore from '@hooks/useGlobalStore';
 
 type Props = {};
 
 const ImageMenuActions = (props: Props) => {
-  const action = useActionStore((state) => state.action);
-  const setAction = useActionStore((state) => state.setAction);
+  const action = useGlobalStore((state) => state.action);
+  const setAction = useGlobalStore((state) => state.setAction);
 
   return (
     <ul className="menu menu-sm lg:menu-md px-4 py-0 text-base-content">
@@ -20,27 +20,6 @@ const ImageMenuActions = (props: Props) => {
       </li>
       <MenuActionElement
         clickHandler={setAction}
-        action="X"
-        isActive={action.toUpperCase() === 'X' ? true : false}
-        text="Set axes"
-        keyShortcut="X"
-      />
-      <MenuActionElement
-        clickHandler={setAction}
-        action="R"
-        isActive={action.toUpperCase() === 'R' ? true : false}
-        text="Set range"
-        keyShortcut="R"
-      />
-      <MenuActionElement
-        clickHandler={setAction}
-        action=""
-        isActive={false}
-        text="Cancel operations"
-        keyShortcut="Esc"
-      />
-      <MenuActionElement
-        clickHandler={setAction}
         action="S"
         isActive={action.toUpperCase() === 'S' ? true : false}
         text="Select peaks"
@@ -52,6 +31,13 @@ const ImageMenuActions = (props: Props) => {
         isActive={action.toUpperCase() === 'D' ? true : false}
         text="Deselect peaks"
         keyShortcut="D"
+      />
+      <MenuActionElement
+        clickHandler={setAction}
+        action=""
+        isActive={false}
+        text="Cancel operations"
+        keyShortcut="Esc"
       />
       <li></li>
     </ul>

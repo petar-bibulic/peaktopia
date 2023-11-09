@@ -1,4 +1,4 @@
-import Upload from '@components/data/Upload';
+import UploadFileComponent from '@components/data/UploadFileComponent';
 import Link from 'next/link';
 import Nav from '@components/Nav';
 import Footer from '@components/Footer';
@@ -14,11 +14,11 @@ export default async function Home() {
           <div className="hero min-h-[calc(100vh-48px)] backdrop-blur-[2px] z-10">
             <div className="hero-content text-center mb-20">
               <div className="max-w-lg">
-                <h1 className="text-5xl font-bold">Welcome to</h1>
+                <h1 className="text-5xl font-bold text-gray-500 dark:text-white">Welcome to</h1>
                 <h1 className="text-7xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-pink-500 to-blue-700">
                   Peaktopia
                 </h1>
-                <p className="py-6 tracking-wide leading-9">
+                <p className="py-6 tracking-wide leading-9 text-black dark:text-white">
                   Get started by{' '}
                   <Link href="/auth/login" className="underline underline-offset-4 text-primary">
                     logging in
@@ -26,7 +26,7 @@ export default async function Home() {
                   <br />
                   or upload your charts to start selecting and comparing peaks 🚩
                 </p>
-                <Upload />
+                <UploadFileComponent />
               </div>
             </div>
           </div>

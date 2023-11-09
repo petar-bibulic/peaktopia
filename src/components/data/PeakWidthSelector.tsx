@@ -8,7 +8,7 @@ const PeakWidthSelector = (props: Props) => {
 
   return (
     <div className="mt-2 flex flex-wrap sm:inline-flex w-full gap-5 items-center">
-      <div className="whitespace-nowrap text-base-content">Peak width</div>
+      <div className="whitespace-nowrap text-base-content">Peak width [° 2&Theta;]</div>
       <input
         className="grow sm:flex-none sm:block input input-bordered input-sm input-primary"
         type="text"

@@ -6,6 +6,8 @@ import { App } from 'firebase-admin/app';
 import { cookies } from 'next/headers';
 import NavIcon from '@components/misc/NavIcon';
 import SidebarToggle from '@components/misc/SidebarToggle';
+import ThemeSwitch from '@components/ThemeSwitch';
+import { NAV_LINKS } from '@utils/constants';
 
 type Props = {
   inSidebar?: boolean;
@@ -30,24 +32,19 @@ const Nav = async (props: Props) => {
           </div>
         </div>
         {!props.inSidebar ? <NavIcon /> : <NavIcon className="lg:hidden" />}
+        <ThemeSwitch />
       </div>
       <div className="navbar-center hidden lg:flex">
-        <ul className="menu menu-horizontal px-1">
-          <li>
-            <Link href="">Use</Link>
-          </li>
-          <li>
-            <Link href="">Tables</Link>
-          </li>
-          <li>
-            <Link href="/data/charts">Charts</Link>
-          </li>
-          <li>
-            <Link href="/data/image">Images</Link>
-          </li>
-          <li>
-            <Link href="">About</Link>
-          </li>
+        <ul className="menu menu-horizontal p-0">
+          {NAV_LINKS.map((item, index) => (
+            <li key={index}>
+              <div>
+                <Link href={item.url} className="my-[2px] text-black dark:text-white">
+                  {item.name}
+                </Link>
+              </div>
+            </li>
+          ))}
         </ul>
       </div>
       <div className="navbar-end">

@@ -2,14 +2,15 @@ import { ChartDataPoint } from './DataTypes';
 
 type Props = {
   peaks: Array<ChartDataPoint>;
+  className?: string;
 };
 
 const TableDisplay = (props: Props) => {
-  const { peaks } = props;
+  const { peaks, className } = props;
   const sortedPeaks = [...peaks].sort((a, b) => a.position - b.position);
 
   return (
-    <div className="overflow-x-auto h-96">
+    <div className={`overflow-x-auto max-h-[70vh] ${className}`}>
       <table className="table table-pin-rows">
         <thead>
           <tr>

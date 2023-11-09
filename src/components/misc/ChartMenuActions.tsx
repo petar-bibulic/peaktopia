@@ -1,13 +1,13 @@
 import MenuActionElement from '@components/misc/MenuActionElement';
 import { HiOutlineCursorClick } from 'react-icons/hi';
-import useActionStore from '@hooks/useActionStore';
+import useGlobalStore from '@hooks/useGlobalStore';
 import useIsMobile from '@hooks/useIsMobile';
 
 type Props = {};
 
 const ChartMenuActions = (props: Props) => {
-  const action = useActionStore((state) => state.action);
-  const setAction = useActionStore((state) => state.setAction);
+  const action = useGlobalStore((state) => state.action);
+  const setAction = useGlobalStore((state) => state.setAction);
   const isMobile = useIsMobile();
 
   return (

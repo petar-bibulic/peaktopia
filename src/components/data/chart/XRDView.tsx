@@ -12,7 +12,7 @@ import { XRDDataType, ChartDataType, ChartStateType, DocType, ChartDataPoint } f
 import TableDisplay from '@components/data/TableDisplay';
 import XRDChart from '@components/data/chart/XRDChart';
 import PeakWidthSelector from '@components/data/PeakWidthSelector';
-import useActionStore from '@hooks/useActionStore';
+import useGlobalStore from '@hooks/useGlobalStore';
 import { AiOutlineInfoCircle } from 'react-icons/ai';
 import { OFFSET } from '@utils/constants';
 
@@ -38,12 +38,12 @@ const XRDView = (props: Props) => {
     animation: true,
     ticks: _.range(0, 41, 5).map((val) => val.toString()),
   });
-  const action = useActionStore((state) => state.action);
-  const setAction = useActionStore((state) => state.setAction);
-  const charts = useActionStore((state) => state.charts);
-  const setCharts = useActionStore((state) => state.setCharts);
-  const activeCharts = useActionStore((state) => state.activeCharts);
-  const setActiveCharts = useActionStore((state) => state.setActiveCharts);
+  const action = useGlobalStore((state) => state.action);
+  const setAction = useGlobalStore((state) => state.setAction);
+  const charts = useGlobalStore((state) => state.charts);
+  const setCharts = useGlobalStore((state) => state.setCharts);
+  const activeCharts = useGlobalStore((state) => state.activeCharts);
+  const setActiveCharts = useGlobalStore((state) => state.setActiveCharts);
 
   useEffect(() => {
     const loadActive = async () => {

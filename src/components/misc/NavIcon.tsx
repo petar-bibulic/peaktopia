@@ -9,7 +9,7 @@ const NavIcon = (props: Props) => {
   return (
     <Link href="/" className={`flex items-center justify-start btn btn-ghost ${props.className}`}>
       <LiaMountainSolid className="text-4xl text-primary" />
-      <span className="normal-case text-xl px-2 lg:flex">Peaktopia</span>
+      <span className="normal-case text-xl px-2 lg:flex text-black dark:text-white">Peaktopia</span>
     </Link>
   );
 };

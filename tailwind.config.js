@@ -10,14 +10,15 @@ module.exports = {
   ],
   daisyui: {
     themes: [
-      "night",
-      {myTheme: {
-        "primary": "#a991f7",
-        "secondary": "#f6d860",
-        "accent": "#37cdbe",
-        "neutral": "#3d4451",
-        "base-100": "#ffffff",
-      }}
+      "night", "fantasy"
+      // {myTheme: {
+      //   "primary": "#a991f7",
+      //   "secondary": "#f6d860",
+      //   "accent": "#37cdbe",
+      //   "neutral": "#3d4451",
+      //   "base-100": "#ffffff",
+      // }}
     ]
-  }
+  },
+  darkMode: 'class',
 }

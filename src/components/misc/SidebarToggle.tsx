@@ -7,7 +7,7 @@ type Props = {};
 const SidebarToggle = (props: Props) => {
   return (
     <div tabIndex={0} className="btn btn-ghost lg:hidden">
-      <RxHamburgerMenu className="text-xl" />
+      <RxHamburgerMenu className="text-xl text-black dark:text-white" />
     </div>
   );
 };
