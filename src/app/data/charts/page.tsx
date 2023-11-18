@@ -1,4 +1,4 @@
-import XRDView from '@components/data/XRDView';
+import XRDView from '@components/data/chart/XRDView';
 
 type SearchParams = { fileId: string };
 

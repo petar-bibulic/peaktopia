@@ -1,4 +1,4 @@
-type XRDDataType = {
+export type XRDDataType = {
   xrdMeasurements: {
     xrdMeasurement: [
       {
@@ -26,17 +26,17 @@ type XRDDataType = {
   };
 };
 
-type PointType = {
+export type ChartDataPoint = {
   position: number;
   intensity: number;
 };
 
-type ChartDataType = {
+export type ChartDataType = {
   name: string;
-  data: Array<PointType>;
+  data: Array<ChartDataPoint>;
 };
 
-type ChartStateType = {
+export type ChartStateType = {
   left: number;
   right: number;
   zoomLeft: number | null;
@@ -44,14 +44,27 @@ type ChartStateType = {
   top: number | string;
   bottom: number | string;
   animation: boolean;
-  ticks: string[];
+  ticks: Array<string>;
 };
 
-type DocType = {
+export type DocType = {
   name: string;
   url: string;
   userId: string;
   id: string;
 };
 
-export type { XRDDataType, PointType, ChartDataType, ChartStateType, DocType };
+export type Point = {
+  x: number;
+  y: number;
+};
+
+export type NamedPoints = {
+  [key: string]: Point;
+};
+
+export type PointName = { name: string; point: Point };
+
+export type PointIndex = { index: number; point: Point };
+
+export type AxesNames = 'X1' | 'X2' | 'Y1' | 'Y2';

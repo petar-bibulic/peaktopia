@@ -8,15 +8,23 @@ type ActionState = {
   setCharts: (array: Array<DocType>) => void;
   activeCharts: Array<string>;
   setActiveCharts: (array: Array<string>) => void;
+  userInstruction: string;
+  setUserInstruction: (value: string) => void;
+  theme: string;
+  setTheme: (value: string) => void;
 };
 
-const useActionStore = create<ActionState>()((set) => ({
+const useGlobalStore = create<ActionState>()((set) => ({
   action: '',
   setAction: (value) => set(() => ({ action: value })),
   charts: [],
   setCharts: (array) => set(() => ({ charts: array })),
   activeCharts: [],
   setActiveCharts: (array) => set(() => ({ activeCharts: array })),
+  userInstruction: '',
+  setUserInstruction: (value) => set(() => ({ userInstruction: value })),
+  theme: 'dark',
+  setTheme: (value) => set(() => ({ theme: value })),
 }));
 
-export default useActionStore;
+export default useGlobalStore;

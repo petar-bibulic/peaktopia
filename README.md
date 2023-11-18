@@ -1,34 +1,105 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+[`Peaktopia`](https://peaktopia.vercel.app) is an application for peak analysis in 2D charts, built with [Next.js 13](https://nextjs.org/) app router. The idea behind Peaktopia is to provide a simple but powerful tool for peak analysis and peak comparison in 2D charts and a platform for saving and exporting analysed data.
+
+## Workflow
+0. Login (optional)
+1. Upload file for analysis
+    1. Process image if the file is an image[^1]
+        * select peaks manually (under development)
+        * use autoprocess (under development)
+2. Select one or more files for peak comparison
+3. Select unique peaks from each file
+4. Save your peaks to the database or export them as .csv or .json (under development)
+
+[^1]: Image upload only available to signed-in users
+
+## Features
+- [x] File upload and preview
+- [x] User login
+- [x] Peak comparison
+- [ ] Peak analysis from image
+- [ ] Automated image processing (digitization)
+- [ ] User profile preview
+- [ ] Save selected peaks to the database
+- [ ] Export selected peaks
 
 ## Getting Started
 
-First, run the development server:
+Install the dependencies (code snippets are provided for **npm**, but both **yarn** and **pnpm** are suitable alternatives)
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
+npm install
+```
+
+Run the development server. Use **--turbo** flag for the experimental Turbopack feature.
+
+```bash
+npm run dev [--turbo]
+```
+
+To build and start a production-ready server use:
+
+```bash
+npm run build
+npm run start
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+The structure of the app is given below:
+```
+src
+├── app
+│   ├── api
+│   ├── auth
+│   │   ├── authenticate
+│   │   ├── login
+│   │   ├── register
+│   │   └── reset
+│   └── data
+│       ├── charts
+│       └── image
+├── components
+│   ├── auth
+│   ├── data
+│   │   ├── chart
+│   │   └── image
+│   └── misc
+├── firebaseApp
+├── hooks
+├── store
+├── styles
+└── utils
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+- `api`: API routes (**under construction**)
+- `auth`: routes used for user authn & authz
+- `data`: routes used for displaying and processing data (images and XRD files)
+- `components`: various components used throughout the app
+- `firebaseApp`: config files and auth functions
+- `hooks`: custom hooks
+- `store`: Auth context provider
+- `utils`: utility functions and components
 
-## Learn More
+## Tools and libraries
+
+This project uses:
+- [`Tailwind`](https://tailwindcss.com) for styling
+- [`DaisyUI`](https://daisyui.com/) for pre-styled UI components and themes
+- [`Recharts`](https://recharts.org) for creating charts
+- [`Zustand`](https://docs.pmnd.rs/zustand/getting-started/introduction) for global state management
+- [`React hook form`](https://www.react-hook-form.com/) for form validation
+- [`Firebase`](https://firebase.google.com) as a backend (auth, store & NoSQL database)
+
+The project is currently hosted on [`Vercel`](https://vercel.com) as serverless functions. Visit [`Peaktopia`](https://peaktopia.vercel.app) to see it in action.
+
+## Issues & Contributing
+You can check out [Peaktopia Github repository](https://github.com/petar-bibulic/peaktopia) - your feedback and contributions are welcome! 
+
+If there is a feature you would like to see implemented open an issue with an `enhancement` tag and I will try to prioritize it.
+
+## Learn More about Next
 
 To learn more about Next.js, take a look at the following resources:
 
 - [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
 - [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.

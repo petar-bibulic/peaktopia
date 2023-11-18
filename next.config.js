@@ -9,7 +9,17 @@ const nextConfig = {
               hostname: 'firebasestorage.googleapis.com',
             },
           ],
-        domains: ['lh3.googleusercontent.com'],
+        domains: ['lh3.googleusercontent.com', 'avatars.githubusercontent.com'],
+    },
+    async headers() {
+      return [
+        {
+          source: "/:path*",
+          headers: [
+              { key: "Cross-Origin-Opener-Policy", value: "same-origin-allow-popup"},
+          ]
+      }
+      ]
     }
 }
 

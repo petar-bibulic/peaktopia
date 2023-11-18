@@ -13,33 +13,20 @@ import {
   TooltipProps,
   Brush,
 } from 'recharts';
+import { CategoricalChartState } from 'recharts/types/chart/generateCategoricalChart';
 import { ValueType, NameType } from 'recharts/types/component/DefaultTooltipContent';
-import { ChartDataType, ChartStateType, PointType } from '@components/data/DataTypes';
-import { useMemo } from 'react';
+import { ChartDataType, ChartStateType, ChartDataPoint } from '@components/data/DataTypes';
+import React, { useMemo, Dispatch, SetStateAction, Fragment } from 'react';
+import { getPeakColor, getChartColor } from '@utils/helperFunctions';
 
 type Props = {
   data: Array<ChartDataType>;
   chartState: ChartStateType;
-  peaks: Array<PointType>;
+  peaks: Array<ChartDataPoint>;
   peakWidth: number;
-  setState: any;
-  zoom: any;
-  handleClick: any;
-};
-
-const chartColorList = ['#38bdf8', '#818CF8', '#F471B5', '#1E293B', '#1E293B', '#2DD4BF', '#F4BF50', '#FB7085'];
-
-const getPeakColor = (peaks: PointType[], width: number): Array<string> => {
-  return peaks.map((item, index, list) => {
-    return item.position - list[index - 1]?.position < 2 * width ||
-      list[index + 1]?.position - item.position < 2 * width
-      ? 'yellow'
-      : 'green';
-  });
-};
-
-const getChartColor = (index: number) => {
-  return chartColorList[index % chartColorList.length];
+  setState: Dispatch<SetStateAction<ChartStateType>>;
+  zoom: () => void;
+  handleClick: (event: CategoricalChartState) => void;
 };
 
 const CustomTooltip = ({ active, payload, label }: TooltipProps<ValueType, NameType>) => {
@@ -62,8 +49,14 @@ const XRDChart = (props: Props) => {
   }, [peaks]);
   const peakColors = useMemo(() => getPeakColor(sortedPeaks, peakWidth), [sortedPeaks, peakWidth]);
 
+  const error = console.error;
+  console.error = (...args: any) => {
+    if (/defaultProps/.test(args[0])) return;
+    error(...args);
+  };
+
   return (
-    <ResponsiveContainer aspect={1.7} width="100%" className="bg-slate-800 rounded-md select-none">
+    <ResponsiveContainer aspect={1.78} width="100%" className="bg-slate-800 rounded-md select-none">
       <LineChart
         data={data}
         margin={{
@@ -76,7 +69,7 @@ const XRDChart = (props: Props) => {
           e &&
             setState((prevState: ChartStateType) => ({
               ...prevState,
-              zoomLeft: e.activeLabel,
+              zoomLeft: Number(e.activeLabel),
             }));
         }}
         onMouseMove={(e) => {
@@ -84,7 +77,7 @@ const XRDChart = (props: Props) => {
             e &&
               setState((prevState: ChartStateType) => ({
                 ...prevState,
-                zoomRight: e.activeLabel,
+                zoomRight: Number(e.activeLabel),
               }));
           }
         }}
@@ -98,11 +91,10 @@ const XRDChart = (props: Props) => {
           allowDataOverflow={true}
           domain={[chartState.left, chartState.right]}
           // ticks={chartState.ticks}
-          interval="equidistantPreserveStart"
-          tickCount={20}
           name="2Theta"
+          scale="auto"
         />
-        <YAxis allowDataOverflow={true} domain={[chartState.bottom, chartState.top]} />
+        <YAxis allowDataOverflow={true} domain={[chartState.bottom, chartState.top]} scale="linear" />
         <Tooltip position={{ x: 80, y: 20 }} content={<CustomTooltip />} />
         <Legend />
         {data.map((line, index) => (
@@ -123,7 +115,7 @@ const XRDChart = (props: Props) => {
           <ReferenceArea x1={chartState.zoomLeft} x2={chartState.zoomRight} strokeOpacity={1} />
         ) : null}
         {sortedPeaks.map((item, index) => (
-          <>
+          <Fragment key={`fragment-${index}`}>
             <ReferenceArea
               x1={item.position - 0.01}
               x2={item.position + 0.01}
@@ -131,9 +123,10 @@ const XRDChart = (props: Props) => {
               fill={peakColors[index]}
               fillOpacity={0.8}
               ifOverflow="visible"
-              key={`peak-${index}`}
               id={`peak-${index}`}
+              key={`peak-${index}`}
             />
+            ,
             <ReferenceArea
               x1={item.position - peakWidth}
               x2={item.position + peakWidth}
@@ -141,10 +134,10 @@ const XRDChart = (props: Props) => {
               fill={peakColors[index]}
               fillOpacity={0.4}
               ifOverflow="visible"
-              key={`peakArea-${index}`}
               id={`peakArea-${index}`}
+              key={`peakArea-${index}`}
             />
-          </>
+          </Fragment>
         ))}
       </LineChart>
     </ResponsiveContainer>

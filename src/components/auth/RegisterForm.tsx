@@ -1,18 +1,13 @@
 'use client';
 
 import { useState } from 'react';
-import { signUp } from '@firebase/firebaseAuth';
+import { signUp } from '@firebaseApp/authUtils';
+import { facebookProvider, githubProvider, googleProvider } from '@firebaseApp/config';
+import { oauthSignIn } from '@firebaseApp/authUtils';
 import Link from 'next/link';
-import GoogleLoginButton from './GoogleLoginButton';
-import FacebookLoginButton from './FacebookLoginButton';
-import GithubLoginButton from './GithubLoginButton';
-import { GoogleAuthProvider, FacebookAuthProvider, GithubAuthProvider } from 'firebase/auth';
+import { GoogleLoginButton, FacebookLoginButton, GithubLoginButton } from '@components/auth/OAuthLoginButton';
 
 type Props = {};
-
-const googleProvider = new GoogleAuthProvider();
-const githubProvider = new GithubAuthProvider();
-const facebookProvider = new FacebookAuthProvider();
 
 const LoginForm = (props: Props) => {
   const [email, setEmail] = useState(' ');
@@ -45,13 +40,15 @@ const LoginForm = (props: Props) => {
       <form onSubmit={handleSubmit}>
         <div className="relative mb-2">
           <input
+            id="input-email"
             type="text"
             placeholder=" "
-            className="input bg-neutral-focus w-full mb-4 peer z-10"
+            className="input bg-base-200 dark:bg-neutral-focus w-full mb-4 peer z-10 text-base-content"
             onChange={handleEmail}
           />
           <label
-            className={`bg-neutral-focus absolute left-1 rounded-2xl text-focus duration-300
+            htmlFor="input-email"
+            className={`bg-base-200 dark:bg-neutral-focus absolute left-1 rounded-2xl text-base-content duration-300
             transform -translate-y-5 scale-75 top-1.5 origin-[0] px-2 peer-focus:px-2 peer-focus:text-primary 
             peer-placeholder-shown:scale-100 peer-placeholder-shown:top-1/2 peer-focus:top-1.5 peer-focus:scale-75 pointer-events-none `}
           >
@@ -60,13 +57,15 @@ const LoginForm = (props: Props) => {
         </div>
         <div className="relative mb-2">
           <input
+            id="input-password"
             type="password"
             placeholder=" "
-            className="input bg-neutral-focus w-full mb-4 peer z-10"
+            className="input bg-base-200 dark:bg-neutral-focus w-full mb-4 peer z-10 text-base-content"
             onChange={handlePassword}
           />
           <label
-            className={`bg-neutral-focus absolute left-1 rounded-2xl text-focus duration-300
+            htmlFor="input-password"
+            className={`bg-base-200 dark:bg-neutral-focus absolute left-1 rounded-2xl text-base-content duration-300
             transform -translate-y-5 scale-75 top-1.5 origin-[0] px-2 peer-focus:px-2 peer-focus:text-primary 
             peer-placeholder-shown:scale-100 peer-placeholder-shown:top-1/2 peer-focus:top-1.5 peer-focus:scale-75 pointer-events-none `}
           >
@@ -75,13 +74,15 @@ const LoginForm = (props: Props) => {
         </div>
         <div className="relative mb-2">
           <input
+            id="input-confirm-password"
             type="password"
             placeholder=" "
-            className="input bg-neutral-focus w-full mb-4 peer z-10"
+            className="input bg-base-200 dark:bg-neutral-focus w-full mb-4 peer z-10 text-base-content"
             onChange={handleConfirmPassword}
           />
           <label
-            className={`bg-neutral-focus absolute left-1 rounded-2xl text-focus duration-300
+            htmlFor="input-confirm-password"
+            className={`bg-base-200 dark:bg-neutral-focus absolute left-1 rounded-2xl text-base-content duration-300
             transform -translate-y-5 scale-75 top-1.5 origin-[0] px-2 peer-focus:px-2 peer-focus:text-primary 
             peer-placeholder-shown:scale-100 peer-placeholder-shown:top-1/2 peer-focus:top-1.5 peer-focus:scale-75 pointer-events-none `}
           >
@@ -89,7 +90,7 @@ const LoginForm = (props: Props) => {
           </label>
         </div>
         <div className="mb-6 flex items-center justify-between">
-          Already have an account?
+          <span className="text-base-content">Already have an account?</span>
           <Link href="/auth/login" className="link-primary">
             Login
           </Link>
@@ -98,11 +99,11 @@ const LoginForm = (props: Props) => {
           Register
         </button>
         <div className="my-4 flex items-center before:mt-0.5 before:flex-1 before:border-t before:border-neutral-300 after:mt-0.5 after:flex-1 after:border-t after:border-neutral-300">
-          <p className="mx-4 mb-0 text-center font-semibold dark:text-neutral-200">OR</p>
+          <p className="mx-4 mb-0 text-center font-semibold text-base-content">OR</p>
         </div>
-        <GoogleLoginButton provider={googleProvider} />
-        <FacebookLoginButton provider={facebookProvider} />
-        <GithubLoginButton provider={githubProvider} />
+        <GoogleLoginButton clickHandler={oauthSignIn.bind(null, googleProvider)} />
+        <FacebookLoginButton clickHandler={oauthSignIn.bind(null, facebookProvider)} />
+        <GithubLoginButton clickHandler={oauthSignIn.bind(null, githubProvider)} />
       </form>
     </div>
   );

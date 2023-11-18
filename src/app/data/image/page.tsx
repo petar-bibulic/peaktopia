@@ -1,16 +1,14 @@
-import ImagePreview from '@components/data/ImagePreview';
-import ChartDisplay from '@components/data/ChartDisplay';
+import ImageView from '@components/data/image/ImageView';
+import ImageDisplay from '@components/data/image/ImageDisplay';
 
 type SearchParams = { fileId: string };
 
 const Data = ({ searchParams }: { searchParams: SearchParams }) => {
-  const Graph = ChartDisplay as any;
-
   return (
-    <section className="w-full px-6 pb-20 pt-4">
-      <ImagePreview fileId={searchParams?.fileId}>
-        <Graph fileId={searchParams?.fileId} />
-      </ImagePreview>
+    <section className="w-full min-h-screen px-6 pb-20 pt-4">
+      <ImageView fileId={searchParams?.fileId}>
+        <ImageDisplay fileId={searchParams?.fileId} />
+      </ImageView>
     </section>
   );
 };

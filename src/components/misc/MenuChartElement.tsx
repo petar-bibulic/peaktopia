@@ -1,4 +1,4 @@
-import useActionStore from '@hooks/useActionStore';
+import useGlobalStore from '@hooks/useGlobalStore';
 
 type Props = {
   name: string;
@@ -6,13 +6,16 @@ type Props = {
 };
 
 const MenuChartElement = (props: Props) => {
-  const activeCharts = useActionStore((state) => state.activeCharts);
+  const activeCharts = useGlobalStore((state) => state.activeCharts);
   const { name, clickHandler } = props;
 
   return (
     <li>
       {activeCharts.includes(name) ? (
-        <div className="flex bg-orange-600 hover:bg-orange-700" onClick={() => clickHandler(name)}>
+        <div
+          className="flex bg-green-500 hover:bg-green-600  dark:bg-green-700 dark:hover:bg-green-800"
+          onClick={() => clickHandler(name)}
+        >
           {name}
         </div>
       ) : (

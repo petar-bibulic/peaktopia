@@ -1,18 +1,28 @@
 import { HiOutlineClipboardList } from 'react-icons/hi';
-import MenuChartElement from './MenuChartElement';
-import useActionStore from '@hooks/useActionStore';
+import MenuChartElement from '@components/misc/MenuChartElement';
+import useGlobalStore from '@hooks/useGlobalStore';
+import { useRouter } from 'next/navigation';
 
-type Props = {};
+type Props = {
+  title: string;
+};
 
 const MenuCharts = (props: Props) => {
-  const charts = useActionStore((state) => state.charts);
-  const activeCharts = useActionStore((state) => state.activeCharts);
-  const setActiveCharts = useActionStore((state) => state.setActiveCharts);
+  const router = useRouter();
+  const charts = useGlobalStore((state) => state.charts);
+  const activeCharts = useGlobalStore((state) => state.activeCharts);
+  const setActiveCharts = useGlobalStore((state) => state.setActiveCharts);
 
   const onChartSelect = (name: string) => {
-    activeCharts.includes(name)
-      ? setActiveCharts(activeCharts.filter((val) => val !== name))
-      : setActiveCharts([...activeCharts, name]);
+    if (props.title === 'Images') {
+      setActiveCharts([name]);
+      const fileId = charts.filter((entry) => entry.name === name)[0].id;
+      router.push(`/data/image?fileId=${fileId}`);
+    } else {
+      activeCharts.includes(name)
+        ? setActiveCharts(activeCharts.filter((val) => val !== name))
+        : setActiveCharts([...activeCharts, name]);
+    }
   };
 
   return (
@@ -22,7 +32,7 @@ const MenuCharts = (props: Props) => {
         <span className="text-base-content">
           <HiOutlineClipboardList className="text-2xl text-success" />
         </span>
-        <span>Charts</span>
+        <span>{props.title}</span>
       </li>
       {charts.map((chart, i) => (
         <MenuChartElement name={chart.name} key={i} clickHandler={onChartSelect} />

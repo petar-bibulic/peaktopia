@@ -10,14 +10,19 @@ module.exports = {
   ],
   daisyui: {
     themes: [
-      "night",
-      {myTheme: {
-        "primary": "#a991f7",
-        "secondary": "#f6d860",
-        "accent": "#37cdbe",
-        "neutral": "#3d4451",
-        "base-100": "#ffffff",
-      }}
+      {
+        dark: {
+          ...require("daisyui/src/theming/themes")["[data-theme=dark]"],
+          primary: "#38bdf8",
+        },
+      },
+      {
+        light: {
+          ...require("daisyui/src/theming/themes")["[data-theme=light]"],
+          primary: "#38bdf8",
+        },
+      },
     ]
-  }
+  },
+  darkMode: 'class',
 }
