@@ -74,7 +74,7 @@ const ImageDisplay = async (props: Props) => {
       fill={true}
     />
   ) : (
-    <NoItemComponent fileId={props.fileId} className="my-8 text-black dark:text-white" />
+    <NoItemComponent fileId={props.fileId} className="my-8 text-base-content" />
   );
 };
 

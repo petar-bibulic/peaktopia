@@ -1,24 +1,29 @@
 import { Fragment } from 'react';
 import { Cross, Rectangle } from 'recharts';
-import { taxicabDist, getClosestPoint } from '@utils/helperFunctions';
+import { XDOMAIN_RANGE, YDOMAIN_RANGE } from '@utils/constants';
 
 type PointPayloadType = {
   x: number;
   y: number;
-  payload: { name: string; x: number; y: number };
+  name: string;
 };
 
 const CustomCross = (props: any) => {
-  const { formattedGraphicalItems, styling, active, mouseDownHandler, mouseUpHandler } = props;
+  const { styling, active, step, rangeData, width, height } = props;
   const strokeStyle = styling.stroke;
   const strokeStyleActive = styling.activeStroke;
-  const points = formattedGraphicalItems
-    .map((series: any) => series.props.points.map((point: any) => ({ x: point.x, y: point.y, payload: point.payload })))
-    .flat();
+
+  const nativePeaks = rangeData.map((value: { name: string; x: number; y: number }) => {
+    return {
+      x: (value.x / XDOMAIN_RANGE[1]) * width,
+      y: (1 - value.y / YDOMAIN_RANGE[1]) * height,
+      name: value.name,
+    };
+  });
 
   return (
     <>
-      {points.map((point: PointPayloadType, index: number) => (
+      {nativePeaks.map((point: PointPayloadType, index: number) => (
         <Fragment key={`div-${index}`}>
           <Cross
             x={point.x}
@@ -27,8 +32,7 @@ const CustomCross = (props: any) => {
             height={20}
             top={point.y - 10}
             left={point.x - 10}
-            stroke={point.payload.name.toLowerCase() === active?.name ? strokeStyleActive : strokeStyle}
-            key={index}
+            stroke={point.name.toLowerCase() === active?.name.toLowerCase() ? strokeStyleActive : strokeStyle}
           />
           <Rectangle
             x={point.x - 10}
@@ -36,8 +40,8 @@ const CustomCross = (props: any) => {
             width={20}
             height={20}
             fillOpacity={0}
-            stroke={point.payload.name.toLowerCase() === active?.name ? strokeStyleActive : strokeStyle}
-            style={{ cursor: 'pointer' }}
+            stroke={point.name.toLowerCase() === active?.name.toLowerCase() ? strokeStyleActive : strokeStyle}
+            style={step < 3 ? { cursor: 'pointer' } : {}}
           />
         </Fragment>
       ))}

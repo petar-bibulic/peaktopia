@@ -13,7 +13,7 @@ const GoogleLoginButton = (props: Props) => {
 
   return (
     <button
-      className="btn border-none text-black bg-white hover:bg-stone-100 w-full mb-2 justify-center"
+      className="btn border-black text-black bg-white hover:bg-stone-100 w-full mb-2 justify-center"
       type="button"
       onClick={() => {
         props.clickHandler(isWidthSmall);
@@ -30,7 +30,7 @@ const FacebookLoginButton = (props: Props) => {
 
   return (
     <button
-      className="btn border-none text-white bg-blue-800 hover:bg-blue-900 w-full mb-2 justify-center"
+      className="btn text-white bg-blue-800 hover:bg-blue-900 w-full mb-2 justify-center"
       type="button"
       onClick={() => {
         props.clickHandler(isWidthSmall);
@@ -47,7 +47,7 @@ const GithubLoginButton = (props: Props) => {
 
   return (
     <button
-      className="btn border-none text-white bg-neutral hover:bg-gray-950 w-full"
+      className="btn text-white bg-neutral hover:bg-gray-950 w-full"
       type="button"
       onClick={() => {
         props.clickHandler(isWidthSmall);

@@ -1,4 +1,4 @@
-import { ChartDataPoint } from './DataTypes';
+import { ChartDataPoint } from '@components/data/DataTypes';
 
 type Props = {
   peaks: Array<ChartDataPoint>;
@@ -11,7 +11,7 @@ const TableDisplay = (props: Props) => {
 
   return (
     <div className={`overflow-x-auto max-h-[70vh] ${className}`}>
-      <table className="table table-pin-rows">
+      <table className="table table-pin-rows text-base-content">
         <thead>
           <tr>
             <th></th>

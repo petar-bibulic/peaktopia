@@ -1,5 +1,3 @@
-import React from 'react';
-
 type Props = {
   clickHandler: (action: string) => void;
   action: string;
@@ -23,16 +21,16 @@ const MenuActionElement = (props: Props) => {
     <li>
       {isActive ? (
         <div
-          className="flex  bg-green-500 hover:bg-green-600  dark:bg-green-700 dark:hover:bg-green-800"
+          className="flex bg-green-500 hover:bg-green-600  dark:bg-green-700 dark:hover:bg-green-800"
           onClick={() => modifiedClickHandler(action)}
         >
           {text}
-          {keyShortcut ? <kbd className="kbd kbd-sm">{keyShortcut}</kbd> : null}
+          {keyShortcut && <kbd className="kbd kbd-sm">{keyShortcut}</kbd>}
         </div>
       ) : (
         <div className="flex" onClick={() => modifiedClickHandler(action)}>
           {text}
-          {keyShortcut ? <kbd className="kbd kbd-sm">{keyShortcut}</kbd> : null}
+          {keyShortcut && <kbd className="kbd kbd-sm">{keyShortcut}</kbd>}
         </div>
       )}
     </li>

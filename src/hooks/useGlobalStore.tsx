@@ -23,7 +23,7 @@ const useGlobalStore = create<ActionState>()((set) => ({
   setActiveCharts: (array) => set(() => ({ activeCharts: array })),
   userInstruction: '',
   setUserInstruction: (value) => set(() => ({ userInstruction: value })),
-  theme: 'night',
+  theme: 'dark',
   setTheme: (value) => set(() => ({ theme: value })),
 }));
 

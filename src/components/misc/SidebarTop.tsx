@@ -12,7 +12,7 @@ const SidebarTop = (props: Props) => {
         </div>
       </div>
       <label htmlFor="my-drawer" className="btn btn-ghost absolute right-2 top-4">
-        <AiOutlineClose className="text-lg" />
+        <AiOutlineClose className="text-lg text-base-content" />
       </label>
     </div>
   );

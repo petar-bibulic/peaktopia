@@ -1,38 +1,83 @@
-import { forwardRef, Fragment } from 'react';
+'use client';
+
+import { forwardRef, useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+import { AxesNames } from '@components/data/DataTypes';
 
 type Props = {
   className?: string;
+  step: number;
   setContinue: (value: boolean) => void;
-  setAxes: (value: { [key: string]: number }) => void;
+  axes: { current: { [key in AxesNames]: number } | null };
 };
 
-const AxesForm = forwardRef<HTMLDivElement | null, Props>((props, ref) => {
-  const { setContinue, setAxes, className } = props;
+const axesRangeNames: AxesNames[][] = [
+  ['X1', 'X2'],
+  ['Y1', 'Y2'],
+];
 
-  const axesRangeNames = [
-    ['X1', 'X2'],
-    ['Y1', 'Y2'],
-  ];
+const AxesForm = forwardRef<HTMLDivElement | null, Props>((props, ref) => {
+  const { setContinue, step, className, axes } = props;
+  const { register, watch, formState, getValues } = useForm({
+    mode: 'onChange',
+    defaultValues: { X1: '', X2: '', Y1: '', Y2: '' },
+  });
+
+  useEffect(() => {
+    if (step !== 2) return;
+
+    if (formState.dirtyFields) {
+      if (formState.isValid) {
+        setContinue(true);
+        let numberValues: { [key in AxesNames]: number } = { X1: 0, X2: 0, Y1: 0, Y2: 0 };
+        for (const [key, value] of Object.entries(getValues())) {
+          numberValues[key as AxesNames] = Number(value);
+        }
+        axes.current = numberValues;
+      } else {
+        setContinue(false);
+      }
+    }
+  }, [formState, watch]);
 
   return (
     <div ref={ref} className={`mt-6 mb-4 ${className}`}>
-      <h1 className="text-lg mb-4 text-black dark:text-white">Set axes range values</h1>
-      <form onSubmit={(e) => e.preventDefault()}>
+      <h1 className="text-lg mb-4 text-base-content">Set axes range values</h1>
+      <form>
         {axesRangeNames.map((axis, index) => (
-          <div key={index} className="mb-2 grid grid-cols-6 ">
+          <div key={index} className="mb-2 grid grid-cols-2">
             {axis.map((label) => {
               return (
-                <Fragment key={label}>
-                  <label htmlFor={label} className="flex justify-center items-center text-black dark:text-white">
-                    {label}
-                  </label>
-                  <input
-                    id={label}
-                    className="col-span-2 input input-bordered w-full max-w-xs"
-                    required
-                    onChange={(e) => console.log(e)}
-                  />
-                </Fragment>
+                <div key={label}>
+                  <div className="inline-flex items-center w-full">
+                    <label htmlFor={label} className="text-base-content mx-6">
+                      {label}
+                    </label>
+                    <input
+                      id={label}
+                      className="input input-bordered w-full text-base-content"
+                      autoComplete="off"
+                      onKeyDown={(e) => {
+                        e.stopPropagation();
+                      }}
+                      {...register(label, {
+                        required: { value: true, message: 'This field is required' },
+                        validate: (value) => {
+                          if (value) {
+                            if (isNaN(Number(value))) {
+                              return 'Plese enter a valid number';
+                            } else {
+                              return undefined;
+                            }
+                          } else {
+                            return undefined;
+                          }
+                        },
+                      })}
+                    />
+                  </div>
+                  <p className="pt-1 ml-6 text-error">{formState.errors[label]?.message}</p>
+                </div>
               );
             })}
           </div>

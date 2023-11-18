@@ -14,7 +14,7 @@ import XRDChart from '@components/data/chart/XRDChart';
 import PeakWidthSelector from '@components/data/PeakWidthSelector';
 import useGlobalStore from '@hooks/useGlobalStore';
 import { AiOutlineInfoCircle } from 'react-icons/ai';
-import { OFFSET } from '@utils/constants';
+import { OFFSET, SEARCH_MAX_WIDTH } from '@utils/constants';
 
 type Props = {
   fileId: string;
@@ -28,6 +28,7 @@ const XRDView = (props: Props) => {
   const [peaks, setPeaks] = useState<ChartDataPoint[]>([]);
   const [peakWidth, setPeakWidth] = useState(0.1);
   const [chartData, setChartData] = useState<Array<ChartDataType>>([]);
+  const [detectMax, setDetectMax] = useState(false);
   const [chartState, setChartState] = useState<ChartStateType>({
     zoomLeft: null,
     zoomRight: null,
@@ -71,6 +72,7 @@ const XRDView = (props: Props) => {
     !isLoading && getData();
   }, [activeCharts, isLoading]);
 
+  // fetch all available charts from DB
   const fetchData = async () => {
     try {
       if (userObj) {
@@ -99,6 +101,7 @@ const XRDView = (props: Props) => {
     }
   };
 
+  // fetch data for selected charts from storage
   const fetchStore = async () => {
     const parsedChartData: { [key: string]: ChartDataPoint[] } = {};
     try {
@@ -121,6 +124,7 @@ const XRDView = (props: Props) => {
     }
   };
 
+  // parse fetched data
   const getParsedData = (name: string, data: XRDDataType) => {
     const common = data?.xrdMeasurements.xrdMeasurement[0].scan[0].dataPoints[0];
     const intensities = _.map(common?.intensities[0]._.split(' '), Number);
@@ -133,6 +137,7 @@ const XRDView = (props: Props) => {
     return parsedData;
   };
 
+  // find the closest index of a provided value in a list of 2Th positions
   const findClosestIndex = (val: number, data: number[]) => {
     return data.reduce((prevIndex, currentNumber, currentIndex) => {
       const prevDifference = Math.abs(data[prevIndex] - val);
@@ -141,6 +146,44 @@ const XRDView = (props: Props) => {
     }, 0);
   };
 
+  // adds a new peak (based on cursor position) to the peak list
+  const addPeak = (position: number) => {
+    // TODO: add option to find peaks per chart or option to choose chart
+    const data = chartData[0].data;
+    const dataValues = data.map((val) => val.position);
+    const positionIndex = findClosestIndex(position, dataValues);
+
+    if (!detectMax) {
+      const newPeak = { position: data[positionIndex].position, intensity: data[positionIndex].intensity };
+      setPeaks([...peaks, newPeak]);
+      return;
+    }
+
+    const low = findClosestIndex(position - SEARCH_MAX_WIDTH, dataValues);
+    const high = findClosestIndex(position + SEARCH_MAX_WIDTH, dataValues);
+
+    const newPeak = data.slice(low, high + 1).reduce((maxVal, current) => {
+      return current.intensity > maxVal.intensity ? current : maxVal;
+    }, data[0]);
+    setPeaks([...peaks, newPeak]);
+  };
+
+  // removes peak closes to the cursor position from the peak list
+  const removePeak = (position: number) => {
+    // TODO: add option to find peaks per chart or option to choose chart
+    const closest =
+      peaks.length > 0
+        ? peaks.reduce((prev, curr) => {
+            return Math.abs(curr.position - position) < Math.abs(prev.position - position) ? curr : prev;
+          })
+        : null;
+    if (closest && Math.abs(closest.position - position) > 1) {
+      return;
+    }
+    setPeaks([...peaks].filter((peak) => peak !== closest));
+  };
+
+  // calculate data range for X-axis, given lower and higher bounds
   const getRange = (a: number, b: number): string[] => {
     const step = ((b - a) / 10).toExponential(1);
     const exp = Math.abs(Number(step.split('e')[1]));
@@ -154,6 +197,7 @@ const XRDView = (props: Props) => {
     }
   };
 
+  // calculate data range for both X and Y axes
   const getChartDomain = (
     fromZoom?: number,
     toZoom?: number,
@@ -193,6 +237,7 @@ const XRDView = (props: Props) => {
     return [bottom - offset, top + offset, range];
   };
 
+  // zoom in function, gets called onMouseUp
   function zoom() {
     let { zoomLeft, zoomRight, left, right } = chartState;
     const span = right - left;
@@ -219,6 +264,7 @@ const XRDView = (props: Props) => {
     }));
   }
 
+  // zoom out function, gets called on double-click
   function zoomOut() {
     const [bottom, top, rangeX] = getChartDomain();
     setChartState((prev) => ({
@@ -233,29 +279,9 @@ const XRDView = (props: Props) => {
     }));
   }
 
-  const addPeak = (position: number) => {
-    const data = chartData[0].data;
-    const closest = findClosestIndex(
-      position,
-      data.map((val) => val.position)
-    );
-    setPeaks([...peaks, { position: data[closest].position, intensity: data[closest].intensity }]);
-  };
-
-  const removePeak = (position: number) => {
-    const closest =
-      peaks.length > 0
-        ? peaks.reduce((prev, curr) => {
-            return Math.abs(curr.position - position) < Math.abs(prev.position - position) ? curr : prev;
-          })
-        : null;
-    if (closest && Math.abs(closest.position - position) > 1) {
-      return;
-    }
-    setPeaks([...peaks].filter((peak) => peak !== closest));
-  };
-
+  // click handler function
   const handleClick = (e: CategoricalChartState) => {
+    // TODO: add support to set timeout on mouse down and clear it on mouse up, preventing add peaks on zoom
     const currentTime = new Date().getTime();
     if (currentTime - lastClickTime < 300) {
       zoomOut();
@@ -276,6 +302,7 @@ const XRDView = (props: Props) => {
     setLastClickTime(currentTime);
   };
 
+  // handle action state on key press
   const handleKeyPress = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === 'Escape') {
       setAction('');
@@ -307,6 +334,18 @@ const XRDView = (props: Props) => {
           />
         </div>
         <PeakWidthSelector peakWidth={peakWidth} setPeakWidth={setPeakWidth} />
+        <div className="mt-4 inline-flex gap-5">
+          <div className="text-base-content">Detect peak maximum</div>
+          <input
+            name="detect-max-checkbox"
+            type="checkbox"
+            checked={detectMax}
+            onChange={() => {
+              setDetectMax(detectMax ? false : true);
+            }}
+            className="checkbox checkbox-primary"
+          />
+        </div>
       </div>
       <TableDisplay peaks={peaks} />
     </div>

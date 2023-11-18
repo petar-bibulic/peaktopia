@@ -1,4 +1,4 @@
-[`Peaktopia`](https://peaktopia.vercel.app) is an application for peak analysis in 2D charts, built with [Next.js 13](https://nextjs.org/) using app router. The idea behind Peaktopia is to provide a simple but powerful tool for peak analysis and comparison in 
+[`Peaktopia`](https://peaktopia.vercel.app) is an application for peak analysis in 2D charts, built with [Next.js 13](https://nextjs.org/) app router. The idea behind Peaktopia is to provide a simple but powerful tool for peak analysis and peak comparison in 2D charts and a platform for saving and exporting analysed data.
 
 ## Workflow
 0. Login (optional)
@@ -7,8 +7,8 @@
         * select peaks manually (under development)
         * use autoprocess (under development)
 2. Select one or more files for peak comparison
-3. Select unique peaks for each file
-4. Save your peaks to the database or export them as .csv or .json
+3. Select unique peaks from each file
+4. Save your peaks to the database or export them as .csv or .json (under development)
 
 [^1]: Image upload only available to signed-in users
 
@@ -24,17 +24,20 @@
 
 ## Getting Started
 
-First, install the dependencies (code snippets are provided for **npm**, but both **yarn** and **pnpm** are suitable alternatives)
+Install the dependencies (code snippets are provided for **npm**, but both **yarn** and **pnpm** are suitable alternatives)
 
 ```bash
 npm install
 ```
-After that, run the development server. Use **--turbo** flag for the experimental Turbopack feature.
+
+Run the development server. Use **--turbo** flag for the experimental Turbopack feature.
 
 ```bash
 npm run dev [--turbo]
 ```
-To build and start a production-ready server use
+
+To build and start a production-ready server use:
+
 ```bash
 npm run build
 npm run start
@@ -82,8 +85,9 @@ src
 This project uses:
 - [`Tailwind`](https://tailwindcss.com) for styling
 - [`DaisyUI`](https://daisyui.com/) for pre-styled UI components and themes
-- [`Recharts`](https://recharts.org) as a charting library.
+- [`Recharts`](https://recharts.org) for creating charts
 - [`Zustand`](https://docs.pmnd.rs/zustand/getting-started/introduction) for global state management
+- [`React hook form`](https://www.react-hook-form.com/) for form validation
 - [`Firebase`](https://firebase.google.com) as a backend (auth, store & NoSQL database)
 
 The project is currently hosted on [`Vercel`](https://vercel.com) as serverless functions. Visit [`Peaktopia`](https://peaktopia.vercel.app) to see it in action.
@@ -91,7 +95,7 @@ The project is currently hosted on [`Vercel`](https://vercel.com) as serverless 
 ## Issues & Contributing
 You can check out [Peaktopia Github repository](https://github.com/petar-bibulic/peaktopia) - your feedback and contributions are welcome! 
 
-If there is a feature you would like to see implemented open an issue with an `enhancement` tag and I will try to prioritise it.
+If there is a feature you would like to see implemented open an issue with an `enhancement` tag and I will try to prioritize it.
 
 ## Learn More about Next
 

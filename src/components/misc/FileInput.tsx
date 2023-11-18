@@ -10,12 +10,12 @@ type Props = {
 
 const FileInput = (props: Props) => {
   return (
-    <div className="flex flex-wrap justify-center md:flex-nowrap w-full items-center">
+    <div className="flex flex-wrap justify-center w-full items-center">
       <div className="flex items-center justify-center w-full max-w-sm mb-2">
         <label className="flex flex-col items-center justify-center w-full h-64 border-2 border-primary border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-neutral hover:bg-gray-100 dark:hover:bg-neutral-focus">
           <div className="flex flex-col items-center justify-center py-5 px-2">
             <FaCloudUploadAlt className="text-4xl pb-2 text-primary" />
-            <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
+            <p className="mb-2 text-sm text-gray-500 dark:text-gray-300">
               <span className="font-semibold">Click to upload or drop files</span>
             </p>
             {props.files?.length ? (
@@ -35,7 +35,7 @@ const FileInput = (props: Props) => {
           />
         </label>
       </div>
-      <button className="btn btn-primary mx-4 w-full max-w-sm md:w-fit" disabled={!props.selected} type="submit">
+      <button className="btn btn-primary mx-4 w-full max-w-sm" disabled={!props.selected} type="submit">
         Submit
       </button>
     </div>

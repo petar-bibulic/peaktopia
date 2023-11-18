@@ -21,8 +21,9 @@ const Nav = async (props: Props) => {
     console.log('User not logged in');
   }
 
+  // bg-base color is not compatible with backdrop-blur
   return (
-    <nav className="navbar opacity-90 bg-base-100 sticky top-0 z-40 w-full backdrop-blur border-b-2 border-base-content/10">
+    <nav className="navbar bg-base-100 sticky top-0 z-40 w-full border-b-2 border-base-content/10">
       <div className="navbar-start">
         <div className="dropdown">
           <div className="flex flex-row items-center">
@@ -39,7 +40,7 @@ const Nav = async (props: Props) => {
           {NAV_LINKS.map((item, index) => (
             <li key={index}>
               <div>
-                <Link href={item.url} className="my-[2px] text-black dark:text-white">
+                <Link href={item.url} className="my-[2px] text-base-content">
                   {item.name}
                 </Link>
               </div>

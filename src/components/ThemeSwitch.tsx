@@ -9,10 +9,10 @@ type Props = {};
 const ThemeSwitch = (props: Props) => {
   const theme = useGlobalStore((state) => state.theme);
   const setTheme = useGlobalStore((state) => state.setTheme);
-  let isDark = theme === 'night';
+  let isDark = theme === 'dark';
 
   const toggleTheme = () => {
-    setTheme(theme === 'night' ? 'fantasy' : 'night');
+    setTheme(theme === 'dark' ? 'light' : 'dark');
   };
 
   useEffect(() => {
@@ -22,14 +22,10 @@ const ThemeSwitch = (props: Props) => {
   }, [theme]);
 
   return (
-    <label className="swap swap-rotate mx-2">
-      <input type="checkbox" onClick={toggleTheme} />
-
-      {!isDark ? (
-        <MdOutlineLightMode className=" text-2xl text-black" />
-      ) : (
-        <MdOutlineNightlight className=" text-2xl text-white" />
-      )}
+    <label htmlFor="theme-switch" className="swap swap-rotate mx-2">
+      <input id="theme-switch" type="checkbox" onClick={toggleTheme} defaultChecked={!isDark} />
+      <MdOutlineLightMode className="swap-on text-2xl text-base-content" />
+      <MdOutlineNightlight className="swap-off text-2xl text-base-content" />
     </label>
   );
 };

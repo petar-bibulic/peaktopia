@@ -1,5 +1,5 @@
 import { HiOutlineClipboardList } from 'react-icons/hi';
-import MenuChartElement from './MenuChartElement';
+import MenuChartElement from '@components/misc/MenuChartElement';
 import useGlobalStore from '@hooks/useGlobalStore';
 import { useRouter } from 'next/navigation';
 
