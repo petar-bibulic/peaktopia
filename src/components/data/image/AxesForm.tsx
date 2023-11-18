@@ -17,7 +17,7 @@ const axesRangeNames: AxesNames[][] = [
 ];
 
 const AxesForm = forwardRef<HTMLDivElement | null, Props>((props, ref) => {
-  const { setContinue, step, className, axes } = props;
+  const { setContinue, step, axes, className } = props;
   const { register, watch, formState, getValues } = useForm({
     mode: 'onChange',
     defaultValues: { X1: '', X2: '', Y1: '', Y2: '' },
@@ -86,5 +86,7 @@ const AxesForm = forwardRef<HTMLDivElement | null, Props>((props, ref) => {
     </div>
   );
 });
+
+AxesForm.displayName = 'AxesForm';
 
 export default AxesForm;
