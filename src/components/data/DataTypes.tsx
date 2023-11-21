@@ -52,6 +52,7 @@ export type DocType = {
   url: string;
   userId: string;
   id: string;
+  data?: Array<ChartDataPoint>;
 };
 
 export type Point = {

@@ -8,6 +8,7 @@ import MenuCharts from '@components/misc/MenuCharts';
 import MenuNav from '@components/misc/MenuNav';
 import NavIcon from '@components/misc/NavIcon';
 import SidebarTop from '@components/misc/SidebarTop';
+import MenuImages from './misc/MenuImages';
 
 type Props = {
   children: React.ReactNode;
@@ -43,9 +44,18 @@ const Sidebar = (props: Props) => {
           <div className="lg:hidden">
             <MenuNav />
           </div>
-          {type === 'chart' && <ChartMenuActions />}
-          {type === 'image' && <ImageMenuActions />}
-          <MenuCharts title={`${toTitle(type as string)}s`} />
+          {type === 'chart' && (
+            <>
+              <ChartMenuActions />
+              <MenuCharts />
+            </>
+          )}
+          {type === 'image' && (
+            <>
+              <ImageMenuActions />
+              <MenuImages />
+            </>
+          )}
         </aside>
       </div>
     </div>

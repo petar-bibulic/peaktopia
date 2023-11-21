@@ -21,14 +21,15 @@ const MenuActionElement = (props: Props) => {
     <li>
       {isActive ? (
         <div
-          className="flex bg-green-500 hover:bg-green-600  dark:bg-green-700 dark:hover:bg-green-800"
+          // className="flex bg-green-500 hover:bg-green-600  dark:bg-green-700 dark:hover:bg-green-800"
+          className="flex ease-in-out font-semibold border-solid border-l-4 border-l-green-500 hover:border-l-green-600 dark:border-green-700 dark:hover:border-gree-800"
           onClick={() => modifiedClickHandler(action)}
         >
           {text}
           {keyShortcut && <kbd className="kbd kbd-sm">{keyShortcut}</kbd>}
         </div>
       ) : (
-        <div className="flex" onClick={() => modifiedClickHandler(action)}>
+        <div className="flex ml-1" onClick={() => modifiedClickHandler(action)}>
           {text}
           {keyShortcut && <kbd className="kbd kbd-sm">{keyShortcut}</kbd>}
         </div>

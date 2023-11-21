@@ -1,8 +1,5 @@
 import Link from 'next/link';
 
-import { getAuth } from 'firebase-admin/auth';
-import firebaseAdminApp from '@firebaseApp/configAdmin';
-import { App } from 'firebase-admin/app';
 import { NAV_LINKS } from '@utils/constants';
 
 type Props = {};

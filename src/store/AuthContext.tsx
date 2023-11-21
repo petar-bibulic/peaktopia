@@ -9,7 +9,7 @@ export const AuthContext = createContext<User | null>(null);
 
 export const AuthContextProvider = ({ children }: { children: React.ReactNode }) => {
   const [userAuth, setUserAuth] = useState<User | null>(null);
-  const [userToken, setUserToken] = useCookies(['userToken']);
+  const [cookies, setCookie, removeCookie] = useCookies(['userToken']);
   const storageObj: Storage | null = typeof window !== 'undefined' ? localStorage : null;
 
   useEffect(() => {
@@ -18,7 +18,7 @@ export const AuthContextProvider = ({ children }: { children: React.ReactNode })
         try {
           const token = await user.getIdToken();
           setUserAuth(user);
-          setUserToken('userToken', token, { path: '/' });
+          setCookie('userToken', token, { path: '/' });
           storageObj?.setItem(
             'user',
             JSON.stringify({
@@ -33,7 +33,7 @@ export const AuthContextProvider = ({ children }: { children: React.ReactNode })
         }
       } else {
         setUserAuth(null);
-        setUserToken('userToken', '', { path: '/' });
+        setCookie('userToken', '', { path: '/' });
         storageObj?.removeItem('user');
       }
     });
