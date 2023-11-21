@@ -124,7 +124,6 @@ const ImagePreview = (props: Props, ref: MutableRefObject<HTMLDivElement | null>
         axesFormRef.current && axesFormRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
       }, 100);
     } else if (state.step === 2) {
-      console.log('Axes range: ', axesRange.current);
       setTimeout(() => {
         chartDivRef.current && chartDivRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
       }, 100);
@@ -151,24 +150,25 @@ const ImagePreview = (props: Props, ref: MutableRefObject<HTMLDivElement | null>
               peaks={peaks}
               setPeaks={setPeaks}
               onlyPeaks={onlyPeaks}
+              axesRange={axesRange.current}
             />
           )}
         </div>
+        {state.step === 3 && (
+          <div className="mt-6 inline-flex gap-5">
+            <div className="text-base-content">Only select peaks</div>
+            <input
+              name="only-peaks"
+              type="checkbox"
+              checked={onlyPeaks}
+              onChange={() => {
+                setOnlyPeaks(onlyPeaks ? false : true);
+              }}
+              className="checkbox checkbox-primary"
+            />
+          </div>
+        )}
       </div>
-      {state.step === 3 && (
-        <div className="mt-4 inline-flex gap-5">
-          <div className="text-base-content">Only select peaks</div>
-          <input
-            name="only-peaks"
-            type="checkbox"
-            checked={onlyPeaks}
-            onChange={() => {
-              setOnlyPeaks(onlyPeaks ? false : true);
-            }}
-            className="checkbox checkbox-primary"
-          />
-        </div>
-      )}
       {props.fileId && (
         <AxesForm
           ref={axesFormRef}
@@ -189,14 +189,8 @@ const ImagePreview = (props: Props, ref: MutableRefObject<HTMLDivElement | null>
           {state.step < 4 ? (
             <ContinueButton continue={continueBool} continueClickHandler={continueClickHandler} />
           ) : (
-            <SubmitPeaksButton data={peaks} />
+            <SubmitPeaksButton data={peaks} onlyPeaks={onlyPeaks} axesRange={axesRange.current} />
           )}
-          {/* <button
-            className="btn btn-primary w-full max-w-[50vw] md:w-fit mt-6 md:mt-0"
-            onClick={() => dispatch({ type: 'decrement' })}
-          >
-            Step -1
-          </button> */}
         </div>
       </div>
       {props.fileId && <TableDisplay peaks={peaks} className={state.step === 3 ? 'block xl:hidden' : 'hidden'} />}

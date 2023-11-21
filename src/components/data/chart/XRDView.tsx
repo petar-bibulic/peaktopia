@@ -29,6 +29,7 @@ const XRDView = (props: Props) => {
   const [peakWidth, setPeakWidth] = useState(0.1);
   const [chartData, setChartData] = useState<Array<ChartDataType>>([]);
   const [detectMax, setDetectMax] = useState(false);
+  const [scaleCharts, setScaleCharts] = useState(false);
   const [chartState, setChartState] = useState<ChartStateType>({
     zoomLeft: null,
     zoomRight: null,
@@ -45,10 +46,15 @@ const XRDView = (props: Props) => {
   const setCharts = useGlobalStore((state) => state.setCharts);
   const activeCharts = useGlobalStore((state) => state.activeCharts);
   const setActiveCharts = useGlobalStore((state) => state.setActiveCharts);
+  const processedImages = useGlobalStore((state) => state.processedImages);
+  const setProcessedImages = useGlobalStore((state) => state.setProcessedImages);
+  const activeImages = useGlobalStore((state) => state.activeImages);
+  const setActiveImages = useGlobalStore((state) => state.setActiveImages);
 
   useEffect(() => {
     const loadActive = async () => {
-      await fetchData();
+      await fetchChartData();
+      await fetchImageData();
     };
 
     loadActive();
@@ -63,7 +69,7 @@ const XRDView = (props: Props) => {
 
       setChartData((prev) => [
         ...prev
-          .filter((val) => activeCharts.includes(val.name))
+          .filter((val) => activeCharts.includes(val.name) || activeImages.includes(val.name))
           .filter((val) => !resultObject.map((val) => val.name).includes(val.name)),
         ...resultObject,
       ]);
@@ -72,8 +78,22 @@ const XRDView = (props: Props) => {
     !isLoading && getData();
   }, [activeCharts, isLoading]);
 
+  useEffect(() => {
+    console.log(processedImages);
+    const newProcessedImages = processedImages
+      .filter((val) => activeImages.includes(val.name))
+      .map((val) => ({ name: val.name, data: val.data as Array<ChartDataPoint> }));
+
+    setChartData((prev) => [
+      ...prev
+        .filter((val) => activeCharts.includes(val.name) || activeImages.includes(val.name))
+        .filter((val) => !newProcessedImages.map((val) => val.name).includes(val.name)),
+      ...newProcessedImages,
+    ]);
+  }, [activeImages]);
+
   // fetch all available charts from DB
-  const fetchData = async () => {
+  const fetchChartData = async () => {
     try {
       if (userObj) {
         const q = query(collection(db, 'files'), where('userId', '==', userObj?.uid));
@@ -95,6 +115,27 @@ const XRDView = (props: Props) => {
           { name: 'Example 2', url: 'datafiles/4,4-Bipyridine.xrdml', userId: '', id: '' },
         ]);
         setActiveCharts(['Example']);
+      }
+    } catch (e) {
+      console.error(`Error while fetching from Firestore Database: ${e}`);
+    }
+  };
+
+  // fetch all available processed images from DB
+  const fetchImageData = async () => {
+    try {
+      if (userObj) {
+        const q = query(collection(db, 'data'), where('userId', '==', userObj?.uid));
+        const qSnapshot = await getDocs(q);
+        let docs: Array<DocType> = [];
+        qSnapshot.forEach((doc) => {
+          docs.push({ ...doc.data(), id: doc.id } as DocType);
+        });
+        setProcessedImages(docs);
+
+        if (props.fileId) {
+          setActiveImages([docs.filter((val) => val.id === props.fileId)[0].name]);
+        }
       }
     } catch (e) {
       console.error(`Error while fetching from Firestore Database: ${e}`);
@@ -334,17 +375,31 @@ const XRDView = (props: Props) => {
           />
         </div>
         <PeakWidthSelector peakWidth={peakWidth} setPeakWidth={setPeakWidth} />
-        <div className="mt-4 inline-flex gap-5">
-          <div className="text-base-content">Detect peak maximum</div>
-          <input
-            name="detect-max-checkbox"
-            type="checkbox"
-            checked={detectMax}
-            onChange={() => {
-              setDetectMax(detectMax ? false : true);
-            }}
-            className="checkbox checkbox-primary"
-          />
+        <div className="mt-4 flex flex-wrap gap-x-10 gap-y-2">
+          <div className="inline-flex gap-5">
+            <div className="text-base-content">Detect peak maximum</div>
+            <input
+              name="detect-max-checkbox"
+              type="checkbox"
+              checked={detectMax}
+              onChange={() => {
+                setDetectMax(detectMax ? false : true);
+              }}
+              className="checkbox checkbox-primary"
+            />
+          </div>
+          <div className="inline-flex gap-5">
+            <div className="text-base-content">Scale all charts</div>
+            <input
+              name="detect-max-checkbox"
+              type="checkbox"
+              checked={scaleCharts}
+              onChange={() => {
+                setScaleCharts(scaleCharts ? false : true);
+              }}
+              className="checkbox checkbox-primary"
+            />
+          </div>
         </div>
       </div>
       <TableDisplay peaks={peaks} />

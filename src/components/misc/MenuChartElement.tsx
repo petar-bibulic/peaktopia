@@ -1,25 +1,23 @@
-import useGlobalStore from '@hooks/useGlobalStore';
-
 type Props = {
   name: string;
   clickHandler: (name: string) => void;
+  active: string[];
 };
 
 const MenuChartElement = (props: Props) => {
-  const activeCharts = useGlobalStore((state) => state.activeCharts);
-  const { name, clickHandler } = props;
+  const { name, clickHandler, active } = props;
 
   return (
     <li>
-      {activeCharts.includes(name) ? (
+      {active.includes(name) ? (
         <div
-          className="flex bg-green-500 hover:bg-green-600  dark:bg-green-700 dark:hover:bg-green-800"
+          className="flex font-semibold border-solid border-l-4 border-l-green-500 hover:border-l-green-600 dark:border-green-700 dark:hover:border-gree-800"
           onClick={() => clickHandler(name)}
         >
           {name}
         </div>
       ) : (
-        <div className="flex" onClick={() => clickHandler(name)}>
+        <div className="flex ml-1" onClick={() => clickHandler(name)}>
           {name}
         </div>
       )}

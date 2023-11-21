@@ -24,7 +24,7 @@ const TableDisplay = (props: Props) => {
             <tr className="hover" key={`peakTable-${index}`}>
               <th>{index + 1}</th>
               <td>{item.position.toFixed(4)}</td>
-              <td>{item.intensity}</td>
+              <td>{item.intensity.toFixed(2)}</td>
             </tr>
           ))}
         </tbody>

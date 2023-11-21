@@ -8,7 +8,7 @@ import { getChartColor, taxicabDist, getClosestPoint, getNearestPeak } from '@ut
 
 import CustomCross from '@components/data/image/CustomCross';
 import CustomPeakMark from '@components/data/image/CustomPeakMark';
-import { Point, NamedPoints, PointName, ChartDataPoint } from '@components/data/DataTypes';
+import { Point, NamedPoints, PointName, ChartDataPoint, AxesNames } from '@components/data/DataTypes';
 import {
   FAST_SHIFT,
   SLOW_SHIFT,
@@ -25,6 +25,7 @@ type Props = {
   peaks: ChartDataPoint[];
   setPeaks: (value: ChartDataPoint[]) => void;
   onlyPeaks: boolean;
+  axesRange: { [key in AxesNames]: number } | null;
 };
 const ImageProcess = (props: Props) => {
   const [range, setRange] = useState<NamedPoints>({}); // axes range
@@ -35,7 +36,7 @@ const ImageProcess = (props: Props) => {
   const setUserInstruction = useGlobalStore((state) => state.setUserInstruction);
   const action = useGlobalStore((state) => state.action);
   const chartRef = useRef<any>(null);
-  const { setContinue, step, peaks, setPeaks } = props;
+  const { setContinue, step, peaks, setPeaks, axesRange } = props;
 
   const error = console.error;
   console.error = (...args: any) => {
@@ -54,7 +55,7 @@ const ImageProcess = (props: Props) => {
   ];
 
   // add y-0 points left and right from every peak to get a decent looking chart
-  // works if only peaks are selected (how to check this?)
+  // when only-peaks option is selected
   let showDataPoints: Point[] = [];
   if (step === 4) {
     const slope = (range.x2.y - range.x1.y) / (range.x2.x - range.x1.x);
@@ -120,7 +121,10 @@ const ImageProcess = (props: Props) => {
   // orthogonal projection based to previously defined X and Y axes
   const addPeak = (point: Point) => {
     //TODO: make orthogonal projection of position onto X and Y axes
-    const newPeak: ChartDataPoint = { position: point.x, intensity: point.y };
+    if (!axesRange) return;
+    const newX = ((point.x - range.x1.x) / (range.x2.x - range.x1.x)) * (axesRange.X2 - axesRange.X1) + axesRange.X1;
+    const newY = ((point.y - range.y1.y) / (range.y2.y - range.y1.y)) * (axesRange.Y2 - axesRange.Y1) + axesRange.Y1;
+    const newPeak: ChartDataPoint = { position: newX, intensity: newY };
     setPeaks([...peaks, newPeak]);
     setPeakPoints([...peakPoints, point]);
     setContinue(true);
@@ -130,8 +134,8 @@ const ImageProcess = (props: Props) => {
   const removePeak = (position: Point) => {
     const nearest = getNearestPeak(position, peakPoints);
     if (nearest && taxicabDist(position, nearest.point) < SELECT_RANGE_CUTOFF) {
-      setPeakPoints(peakPoints.filter((peak, i) => i !== nearest.index));
-      setPeaks(peaks.filter((peak, index) => peak.position !== nearest.point.x && peak.intensity !== nearest.point.y));
+      setPeakPoints(peakPoints.filter((peak, index) => index !== nearest.index));
+      setPeaks(peaks.filter((peak, index) => index !== nearest.index));
       if (peaks.length <= 1) setContinue(false);
     }
   };
@@ -250,7 +254,7 @@ const ImageProcess = (props: Props) => {
     }
   };
 
-  // handle mose move, ignore once the range is set
+  // handle mouse move, ignore once the range is set
   const handleMouseMove = (e: CategoricalChartState) => {
     const newPosition = getPosition(e);
     if (Object.keys(range).length < 4) setCurrentPosition(newPosition);

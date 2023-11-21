@@ -60,7 +60,8 @@ const UploadFileComponent = (props: Props) => {
     };
 
     const storagePath = files[0].type.startsWith('image/') ? 'images/' : 'datafiles/';
-    const filePath = storagePath + files[0].name.replace(/ /g, '_');
+    const fileName = files[0].name.replace(/ /g, '_');
+    const filePath = storagePath + fileName;
     const storageRef = ref(storage, filePath);
     const uploadTask = uploadBytesResumable(storageRef, files[0], headers);
 
@@ -101,7 +102,7 @@ const UploadFileComponent = (props: Props) => {
         setDoc(docRef, {
           url: filePath,
           userId: user?.uid,
-          name: filePath.split('.')[0],
+          name: fileName.split('.')[0],
         });
         setLoading(false);
         setUploaded(true);
