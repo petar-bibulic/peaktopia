@@ -2,6 +2,7 @@ import MenuActionElement from '@components/misc/MenuActionElement';
 import { HiOutlineCursorClick } from 'react-icons/hi';
 import useGlobalStore from '@hooks/useGlobalStore';
 import useIsMobile from '@hooks/useIsMobile';
+import { useEffect, useState } from 'react';
 
 type Props = {};
 
@@ -9,6 +10,15 @@ const ChartMenuActions = (props: Props) => {
   const action = useGlobalStore((state) => state.action);
   const setAction = useGlobalStore((state) => state.setAction);
   const isMobile = useIsMobile();
+  const [render, setRender] = useState(false);
+
+  useEffect(() => {
+    // use effect to prevent different server and client side props
+    console.log('should render?', render, isMobile);
+    setRender(isMobile);
+
+    return () => {};
+  }, [isMobile]);
 
   return (
     <ul className="menu menu-sm lg:menu-md px-4 py-0 text-base-content">
@@ -48,7 +58,7 @@ const ChartMenuActions = (props: Props) => {
         text="Annotate peaks"
         keyShortcut="A"
       />
-      <div className={isMobile ? 'block' : 'hidden'}>
+      <div className={render === true ? 'block' : 'hidden'}>
         <MenuActionElement clickHandler={setAction} action="" isActive={false} text="Zoom out" sideEffect="zoomOut" />
       </div>
       <li></li>
