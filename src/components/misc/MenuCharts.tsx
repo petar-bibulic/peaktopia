@@ -40,7 +40,7 @@ const MenuCharts = (props: Props) => {
         ))}
         <li></li>
       </ul>
-      {'images.length > 0' && (
+      {images.length > 0 && (
         <ul className="menu menu-sm lg:menu-md px-4 py-0 text-base-content">
           {/* Sidebar content */}
           <li className="menu-title flex flex-row gap-4 mt-4">

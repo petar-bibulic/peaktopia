@@ -69,3 +69,5 @@ export type PointName = { name: string; point: Point };
 export type PointIndex = { index: number; point: Point };
 
 export type AxesNames = 'X1' | 'X2' | 'Y1' | 'Y2';
+
+export type SideEffectsType = { [key: string]: (...params: any[]) => void };

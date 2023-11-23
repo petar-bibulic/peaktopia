@@ -6,6 +6,7 @@ import { facebookProvider, githubProvider, googleProvider } from '@firebaseApp/c
 import { oauthSignIn } from '@firebaseApp/authUtils';
 import Link from 'next/link';
 import { GoogleLoginButton, FacebookLoginButton, GithubLoginButton } from '@components/auth/OAuthLoginButton';
+import { toast, Theme } from 'react-toastify';
 
 type Props = {};
 
@@ -28,11 +29,43 @@ const LoginForm = (props: Props) => {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (password === confirmPassword) {
-      const { result, error } = await signUp(email, password);
+    const html = document && document.documentElement;
+    const theme = html?.getAttribute('data-theme');
+    if (password !== confirmPassword) {
+      toast.error("Passwords don't match", {
+        theme: theme as Theme,
+      });
       return;
     }
-    console.error("Paswords don't match");
+    const toastId = toast.loading('Please wait...', { theme: theme as Theme });
+    const { result, error } = await signUp(email, password);
+    if (result) {
+      toast.update(toastId, {
+        render: 'Registration successful',
+        type: 'success',
+        isLoading: false,
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: theme as Theme,
+      });
+    } else if (error) {
+      toast.update(toastId, {
+        render: error.message,
+        type: 'error',
+        isLoading: false,
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: theme as Theme,
+      });
+    }
   };
 
   return (

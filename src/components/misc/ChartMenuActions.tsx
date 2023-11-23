@@ -48,18 +48,9 @@ const ChartMenuActions = (props: Props) => {
         text="Annotate peaks"
         keyShortcut="A"
       />
-      {isMobile && (
-        <>
-          <MenuActionElement
-            clickHandler={setAction}
-            action="Z"
-            isActive={action.toUpperCase() === 'Z' ? true : false}
-            text="Zoom"
-            keyShortcut="Z"
-          />
-          <MenuActionElement clickHandler={setAction} action="" isActive={false} text="Zoom out" keyShortcut="Ctrl-Z" />
-        </>
-      )}
+      <div className={isMobile ? 'block' : 'hidden'}>
+        <MenuActionElement clickHandler={setAction} action="" isActive={false} text="Zoom out" sideEffect="zoomOut" />
+      </div>
       <li></li>
     </ul>
   );

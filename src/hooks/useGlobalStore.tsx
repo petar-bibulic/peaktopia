@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { DocType } from '@components/data/DataTypes';
+import { DocType, SideEffectsType } from '@components/data/DataTypes';
 
 type ActionState = {
   action: string;
@@ -16,6 +16,8 @@ type ActionState = {
   setUserInstruction: (value: string) => void;
   theme: string;
   setTheme: (value: string) => void;
+  sideEffects: SideEffectsType;
+  setSideEffects: (effects: SideEffectsType) => void;
 };
 
 const useGlobalStore = create<ActionState>()((set) => ({
@@ -33,6 +35,8 @@ const useGlobalStore = create<ActionState>()((set) => ({
   setUserInstruction: (value) => set(() => ({ userInstruction: value })),
   theme: 'dark',
   setTheme: (value) => set(() => ({ theme: value })),
+  sideEffects: {},
+  setSideEffects: (effects: SideEffectsType) => set(() => ({ sideEffects: effects })),
 }));
 
 export default useGlobalStore;

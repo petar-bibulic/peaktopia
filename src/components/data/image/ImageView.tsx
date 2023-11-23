@@ -4,6 +4,7 @@ import _ from 'lodash';
 import { useEffect, useState, useReducer, useRef, MutableRefObject } from 'react';
 import { useRouter } from 'next/navigation';
 import useGlobalStore from '@hooks/useGlobalStore';
+import { toast, Theme } from 'react-toastify';
 
 import { db } from '@firebaseApp/config';
 import { collection, getDocs, query, where } from 'firebase/firestore';
@@ -51,6 +52,7 @@ const ImagePreview = (props: Props, ref: MutableRefObject<HTMLDivElement | null>
   const setCharts = useGlobalStore((state) => state.setCharts);
   const setActiveCharts = useGlobalStore((state) => state.setActiveCharts);
   const setUserInstruction = useGlobalStore((state) => state.setUserInstruction);
+  const theme = useGlobalStore((state) => state.theme);
 
   useEffect(() => {
     // fetch file from the firebase storage
@@ -62,10 +64,12 @@ const ImagePreview = (props: Props, ref: MutableRefObject<HTMLDivElement | null>
           setActiveCharts([docSnap.data().name]);
         } else {
           setActiveCharts([]);
-          console.warn('File not found');
+          toast.warn('File not found', { theme: theme as Theme });
         }
       } catch (e) {
-        console.error(e);
+        if (e instanceof Error) {
+          toast.error(e.message, { theme: theme as Theme });
+        }
       }
     };
     if (props.fileId) {
@@ -99,7 +103,9 @@ const ImagePreview = (props: Props, ref: MutableRefObject<HTMLDivElement | null>
         router.push('/data/image?fileId=test');
       }
     } catch (e) {
-      console.error(`Error while fetching from Firestore Database: ${e}`);
+      if (e instanceof Error) {
+        toast.error(e.message, { theme: theme as Theme });
+      }
     }
   };
 
@@ -129,9 +135,7 @@ const ImagePreview = (props: Props, ref: MutableRefObject<HTMLDivElement | null>
       }, 100);
     }
     dispatch({ type: 'increment' });
-    // setContinueBool(false);
-
-    // on step 4 (Done) upload peak data to firestore DB and show button to redirect to peaks page
+    setContinueBool(false);
   };
 
   return (

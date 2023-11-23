@@ -11,7 +11,7 @@ const MenuChartElement = (props: Props) => {
     <li>
       {active.includes(name) ? (
         <div
-          className="flex font-semibold border-solid border-l-4 border-l-green-500 hover:border-l-green-600 dark:border-green-700 dark:hover:border-gree-800"
+          className="flex font-semibold border-solid border-l-4 border-green-500 hover:border-green-600 dark:border-green-700 dark:hover:border-green-800"
           onClick={() => clickHandler(name)}
         >
           {name}

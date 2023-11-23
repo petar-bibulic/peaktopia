@@ -4,11 +4,19 @@ import { useAuthContext } from '@store/AuthContext';
 import Link from 'next/link';
 import { logOut } from '@firebaseApp/authUtils';
 import Image from 'next/image';
+import { toast, Theme } from 'react-toastify';
+import useGlobalStore from '@hooks/useGlobalStore';
 
 type Props = {};
 
 const LoginButton = (props: Props) => {
   const user = useAuthContext();
+  const theme = useGlobalStore((state) => state.theme);
+
+  const logoutHandler = async () => {
+    await logOut();
+    toast.success('User logged out', { theme: theme as Theme });
+  };
 
   return user && !user.isAnonymous ? (
     <div className="dropdown dropdown-hover dropdown-bottom dropdown-end">
@@ -17,9 +25,9 @@ const LoginButton = (props: Props) => {
           {user?.photoURL && <Image width={100} height={100} alt="Avatar image" src={user.photoURL} />}
           <ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
             <li className="text-base-content">
-              <button onClick={logOut}>Logout</button>
+              <button onClick={logoutHandler}>Logout</button>
             </li>
-            <li className="text-base-content">
+            <li className="text-base-content disabled">
               <a>Profile</a>
             </li>
           </ul>

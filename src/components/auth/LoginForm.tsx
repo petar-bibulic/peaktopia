@@ -7,6 +7,9 @@ import { GoogleLoginButton, FacebookLoginButton, GithubLoginButton } from '@comp
 import { googleProvider, githubProvider, facebookProvider } from '@firebaseApp/config';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuthContext } from '@store/AuthContext';
+import { toast, Theme } from 'react-toastify';
+import { FacebookAuthProvider, GithubAuthProvider, GoogleAuthProvider } from 'firebase/auth';
+import useGlobalStore from '@hooks/useGlobalStore';
 
 type Props = {};
 
@@ -17,6 +20,7 @@ const LoginForm = (props: Props) => {
   const searchParams = useSearchParams();
   const user = useAuthContext();
   const [isLoading, setIsLoading] = useState(true);
+  const theme = useGlobalStore((state) => state.theme);
 
   useEffect(() => {
     setIsLoading(false);
@@ -41,7 +45,49 @@ const LoginForm = (props: Props) => {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    const toastId = toast.loading('Please wait...', { theme: theme as Theme });
     const { result, error } = await signIn(email, password);
+    if (result) {
+      toast.update(toastId, {
+        render: 'Sign in successful',
+        type: 'success',
+        isLoading: false,
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: theme as Theme,
+      });
+    } else if (error) {
+      toast.update(toastId, {
+        render: error.message,
+        type: 'error',
+        isLoading: false,
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: theme as Theme,
+      });
+    }
+  };
+
+  const toastyClickHandler = async (provider: GoogleAuthProvider | FacebookAuthProvider | GithubAuthProvider) => {
+    const promiseFunc = oauthSignIn.bind(null, provider)();
+    toast.promise(
+      promiseFunc,
+      {
+        pending: 'Waiting to log in...',
+        success: 'Log in successful',
+        error: 'Failed to log in',
+      },
+      { theme: theme as Theme }
+    );
+    return promiseFunc;
   };
 
   return (
@@ -104,9 +150,9 @@ const LoginForm = (props: Props) => {
         <div className="my-4 flex items-center before:mt-0.5 before:flex-1 before:border-t before:border-neutral-300 after:mt-0.5 after:flex-1 after:border-t after:border-neutral-300">
           <p className="mx-4 mb-0 text-center font-semibold text-base-content">OR</p>
         </div>
-        <GoogleLoginButton clickHandler={oauthSignIn.bind(null, googleProvider)} />
-        <FacebookLoginButton clickHandler={oauthSignIn.bind(null, facebookProvider)} />
-        <GithubLoginButton clickHandler={oauthSignIn.bind(null, githubProvider)} />
+        <GoogleLoginButton clickHandler={() => toastyClickHandler(googleProvider)} />
+        <FacebookLoginButton clickHandler={() => toastyClickHandler(facebookProvider)} />
+        <GithubLoginButton clickHandler={() => toastyClickHandler(githubProvider)} />
       </form>
     </div>
   );

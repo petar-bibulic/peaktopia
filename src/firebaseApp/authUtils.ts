@@ -13,30 +13,27 @@ import {
   OAuthProvider,
   Auth,
   UserCredential,
-  AuthCredential,
-  OAuthCredential,
-  GoogleAuthProvider,
 } from 'firebase/auth';
 import { FirebaseError } from '@firebase/util';
 
 async function signUp(email: string, password: string) {
-  let result = null,
-    error = null;
+  let result: any = null,
+    error: FirebaseError | null = null;
   try {
     result = await createUserWithEmailAndPassword(auth, email, password);
   } catch (e) {
-    error = e;
+    if (e instanceof FirebaseError) error = e;
   }
   return { result, error };
 }
 
 async function signIn(email: string, password: string) {
-  let result = null,
-    error = null;
+  let result: any = null,
+    error: FirebaseError | null = null;
   try {
     result = await signInWithEmailAndPassword(auth, email, password);
   } catch (e) {
-    error = e;
+    if (e instanceof FirebaseError) error = e;
   }
   return { result, error };
 }
@@ -74,8 +71,8 @@ async function signInPopupOrRedirect(
 }
 
 async function oauthSignIn(provider: AuthProvider, isMobile: boolean = false): Promise<{ result: any; error: any }> {
-  let result = null,
-    error = null;
+  let result: any = null,
+    error: FirebaseError | null = null;
   try {
     result = await signInPopupOrRedirect(auth, provider, isMobile);
   } catch (e: any) {
@@ -105,7 +102,6 @@ async function oauthSignIn(provider: AuthProvider, isMobile: boolean = false): P
       newRoute && (windowObj.location.href = newRoute as string);
     } catch (e: any) {
       error = e;
-      console.error(`Error occured on oAuth login: ${e}`);
     }
   }
   return { result, error };
@@ -125,7 +121,6 @@ async function linkProvidersSignIn(
       linkedProviderResult && credential ? await linkWithCredential(linkedProviderResult.user, credential) : null;
   } catch (e: any) {
     error = e;
-    console.error(`Error occured on oAuth login: ${e}`);
   }
   return { result, error };
 }

@@ -1,7 +1,7 @@
 'use client';
 
 import useGlobalStore from '@hooks/useGlobalStore';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { MdOutlineLightMode, MdOutlineNightlight } from 'react-icons/md';
 
 type Props = {};
@@ -16,7 +16,7 @@ const ThemeSwitch = (props: Props) => {
   };
 
   useEffect(() => {
-    const html = document && document.querySelector('html');
+    const html = document && document.documentElement;
     html?.setAttribute('data-theme', theme);
     isDark ? html?.setAttribute('class', 'dark') : html?.setAttribute('class', '');
   }, [theme]);

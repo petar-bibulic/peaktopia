@@ -1,6 +1,4 @@
 import Image from 'next/image';
-import { AuthProvider } from 'firebase/auth';
-import { oauthSignIn } from '@firebaseApp/authUtils';
 import { AiFillFacebook, AiFillGithub } from 'react-icons/ai';
 import useIsMobile from '@hooks/useIsMobile';
 

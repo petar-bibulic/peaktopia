@@ -50,6 +50,7 @@ const XRDView = (props: Props) => {
   const setProcessedImages = useGlobalStore((state) => state.setProcessedImages);
   const activeImages = useGlobalStore((state) => state.activeImages);
   const setActiveImages = useGlobalStore((state) => state.setActiveImages);
+  const setSideEffects = useGlobalStore((state) => state.setSideEffects);
 
   useEffect(() => {
     const loadActive = async () => {
@@ -59,6 +60,7 @@ const XRDView = (props: Props) => {
 
     loadActive();
     setIsLoading(false);
+    setSideEffects({ zoomOut: zoomOut });
     return () => {};
   }, []);
 
@@ -79,7 +81,6 @@ const XRDView = (props: Props) => {
   }, [activeCharts, isLoading]);
 
   useEffect(() => {
-    console.log(processedImages);
     const newProcessedImages = processedImages
       .filter((val) => activeImages.includes(val.name))
       .map((val) => ({ name: val.name, data: val.data as Array<ChartDataPoint> }));
@@ -338,6 +339,10 @@ const XRDView = (props: Props) => {
           // TODO: add annotation logic
           // not sure what I had in mind here
           break;
+        case 'Z':
+          // TODO: add support for zoom-in on mobile
+          // replace drag and drop with release position 1, release position 2
+          break;
       }
     }
     setLastClickTime(currentTime);
@@ -348,11 +353,7 @@ const XRDView = (props: Props) => {
     if (e.key === 'Escape') {
       setAction('');
     } else {
-      if (action === e.key) {
-        setAction('');
-      } else {
-        setAction(e.key);
-      }
+      action === e.key ? setAction('') : setAction(e.key);
     }
   };
 
