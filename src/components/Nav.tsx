@@ -38,9 +38,13 @@ const Nav = async (props: Props) => {
       <div className="navbar-center hidden lg:flex">
         <ul className="menu menu-horizontal p-0">
           {NAV_LINKS.map((item, index) => (
-            <li key={index}>
+            <li key={index} className={item?.disabled ? 'disabled' : ''}>
               <div>
-                <Link href={item.url} className="my-[2px] text-base-content">
+                <Link
+                  href={item.url}
+                  className={`my-[2px] ${item?.disabled ? '' : 'text-base-content'}`}
+                  style={{ pointerEvents: item?.disabled ? 'none' : 'auto' }}
+                >
                   {item.name}
                 </Link>
               </div>

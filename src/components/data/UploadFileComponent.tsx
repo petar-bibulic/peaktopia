@@ -10,6 +10,8 @@ import { motion, useMotionValue } from 'framer-motion';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { useAuthContext } from '@store/AuthContext';
 import { anonSignIn } from '@firebaseApp/authUtils';
+import { toast, Theme } from 'react-toastify';
+import useGlobalStore from '@hooks/useGlobalStore';
 
 type Props = {};
 
@@ -18,6 +20,7 @@ const UploadFileComponent = (props: Props) => {
   const [files, setFiles] = useState<File[]>();
   const [uploaded, setUploaded] = useState(false);
   const [loading, setLoading] = useState(false);
+  const theme = useGlobalStore((state) => state.theme);
   let user = useAuthContext();
   const router = useRouter();
   const progress = useMotionValue(90);
@@ -43,8 +46,7 @@ const UploadFileComponent = (props: Props) => {
     event.preventDefault();
 
     if (!files) {
-      // TODO: add toast
-      console.error('No file selected');
+      toast.warn('No file selected', { theme: theme as Theme });
       return;
     }
 

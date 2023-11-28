@@ -13,10 +13,10 @@ export const SLOW_SHIFT = 1;
 export const FAST_SHIFT = 10;
 export const SELECT_RANGE_CUTOFF = 50;
 export const ANIMATION_DURATION = 1500;
-export const NAV_LINKS: { name: string; url: string; image?: React.ReactElement }[] = [
-  { name: 'Use', url: '', image: <BiBook className={ICON_SIZE} /> },
-  { name: 'Tables', url: '', image: <HiTableCells className={ICON_SIZE} /> },
+export const NAV_LINKS: { name: string; url: string; disabled?: boolean; image?: React.ReactElement }[] = [
+  { name: 'Use', url: '', disabled: true, image: <BiBook className={ICON_SIZE} /> },
+  { name: 'Tables', url: '', disabled: true, image: <HiTableCells className={ICON_SIZE} /> },
   { name: 'Charts', url: '/data/charts', image: <BiBarChart className={ICON_SIZE} /> },
   { name: 'Images', url: '/data/image', image: <BiImage className={ICON_SIZE} /> },
-  { name: 'About', url: '', image: <BiInfoSquare className={ICON_SIZE} /> },
+  { name: 'About', url: '', disabled: true, image: <BiInfoSquare className={ICON_SIZE} /> },
 ];

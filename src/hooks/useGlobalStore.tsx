@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { DocType } from '@components/data/DataTypes';
+import { DocType, SideEffectsType } from '@components/data/DataTypes';
 
 type ActionState = {
   action: string;
@@ -8,6 +8,8 @@ type ActionState = {
   setCharts: (array: Array<DocType>) => void;
   activeCharts: Array<string>;
   setActiveCharts: (array: Array<string>) => void;
+  activeDatasets: Array<string>;
+  setActiveDatasets: (array: Array<string>) => void;
   processedImages: Array<DocType>;
   setProcessedImages: (array: Array<DocType>) => void;
   activeImages: Array<string>;
@@ -16,6 +18,8 @@ type ActionState = {
   setUserInstruction: (value: string) => void;
   theme: string;
   setTheme: (value: string) => void;
+  sideEffects: SideEffectsType;
+  setSideEffects: (effects: SideEffectsType) => void;
 };
 
 const useGlobalStore = create<ActionState>()((set) => ({
@@ -25,14 +29,18 @@ const useGlobalStore = create<ActionState>()((set) => ({
   setCharts: (array) => set(() => ({ charts: array })),
   activeCharts: [],
   setActiveCharts: (array) => set(() => ({ activeCharts: array })),
+  activeDatasets: [],
+  setActiveDatasets: (array) => set(() => ({ activeDatasets: array })),
   processedImages: [],
   setProcessedImages: (array) => set(() => ({ processedImages: array })),
   activeImages: [],
   setActiveImages: (array) => set(() => ({ activeImages: array })),
   userInstruction: '',
   setUserInstruction: (value) => set(() => ({ userInstruction: value })),
-  theme: 'dark',
+  theme: '',
   setTheme: (value) => set(() => ({ theme: value })),
+  sideEffects: {},
+  setSideEffects: (effects: SideEffectsType) => set(() => ({ sideEffects: effects })),
 }));
 
 export default useGlobalStore;

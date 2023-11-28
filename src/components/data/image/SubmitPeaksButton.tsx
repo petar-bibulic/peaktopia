@@ -62,7 +62,7 @@ const SubmitPeaksButton = (props: Props) => {
   return (
     <button
       onClick={clickHandler}
-      disabled={false}
+      disabled={!isDisabled}
       className="btn btn-primary w-full max-w-[50vw] md:w-fit mt-6 md:mt-0"
     >
       Continue

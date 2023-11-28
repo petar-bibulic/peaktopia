@@ -1,13 +1,17 @@
+import useGlobalStore from '@hooks/useGlobalStore';
+
 type Props = {
   clickHandler: (action: string) => void;
   action: string;
   isActive: boolean;
   text: string;
-  keyShortcut: string | null;
+  sideEffect?: string;
+  keyShortcut?: string;
 };
 
 const MenuActionElement = (props: Props) => {
-  const { clickHandler, action, isActive, text, keyShortcut } = props;
+  const { clickHandler, action, isActive, text, keyShortcut, sideEffect } = props;
+  const sideEffects = useGlobalStore((state) => state.sideEffects);
 
   const modifiedClickHandler = (action: string) => {
     if (isActive) {
@@ -15,14 +19,16 @@ const MenuActionElement = (props: Props) => {
     } else {
       clickHandler(action);
     }
+    if (sideEffect && sideEffects.hasOwnProperty(sideEffect)) {
+      sideEffects[sideEffect](); // call side effect if present
+    }
   };
 
   return (
-    <li>
+    <li className="">
       {isActive ? (
         <div
-          // className="flex bg-green-500 hover:bg-green-600  dark:bg-green-700 dark:hover:bg-green-800"
-          className="flex ease-in-out font-semibold border-solid border-l-4 border-l-green-500 hover:border-l-green-600 dark:border-green-700 dark:hover:border-gree-800"
+          className="flex font-semibold border-solid border-l-4 border-green-500 hover:border-green-600 dark:border-green-700 dark:hover:border-green-800"
           onClick={() => modifiedClickHandler(action)}
         >
           {text}

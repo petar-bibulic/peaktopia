@@ -4,6 +4,7 @@ import _ from 'lodash';
 import { useEffect, useState, useReducer, useRef, MutableRefObject } from 'react';
 import { useRouter } from 'next/navigation';
 import useGlobalStore from '@hooks/useGlobalStore';
+import { toast, Theme } from 'react-toastify';
 
 import { db } from '@firebaseApp/config';
 import { collection, getDocs, query, where } from 'firebase/firestore';
@@ -51,6 +52,7 @@ const ImagePreview = (props: Props, ref: MutableRefObject<HTMLDivElement | null>
   const setCharts = useGlobalStore((state) => state.setCharts);
   const setActiveCharts = useGlobalStore((state) => state.setActiveCharts);
   const setUserInstruction = useGlobalStore((state) => state.setUserInstruction);
+  const theme = useGlobalStore((state) => state.theme);
 
   useEffect(() => {
     // fetch file from the firebase storage
@@ -62,10 +64,12 @@ const ImagePreview = (props: Props, ref: MutableRefObject<HTMLDivElement | null>
           setActiveCharts([docSnap.data().name]);
         } else {
           setActiveCharts([]);
-          console.warn('File not found');
+          toast.warn('File not found', { theme: theme as Theme });
         }
       } catch (e) {
-        console.error(e);
+        if (e instanceof Error) {
+          toast.error(e.message, { theme: theme as Theme });
+        }
       }
     };
     if (props.fileId) {
@@ -99,7 +103,9 @@ const ImagePreview = (props: Props, ref: MutableRefObject<HTMLDivElement | null>
         router.push('/data/image?fileId=test');
       }
     } catch (e) {
-      console.error(`Error while fetching from Firestore Database: ${e}`);
+      if (e instanceof Error) {
+        toast.error(e.message, { theme: theme as Theme });
+      }
     }
   };
 
@@ -129,16 +135,14 @@ const ImagePreview = (props: Props, ref: MutableRefObject<HTMLDivElement | null>
       }, 100);
     }
     dispatch({ type: 'increment' });
-    // setContinueBool(false);
-
-    // on step 4 (Done) upload peak data to firestore DB and show button to redirect to peaks page
+    setContinueBool(false);
   };
 
   return (
     <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 outline-none" onKeyDown={handleKeyPress}>
       <div className="xl:col-span-2">
         <div className="alert mb-2 bg-base-200">
-          <AiOutlineInfoCircle className="stroke-info shrink-0 w-6 h-6 text-primary" />
+          <AiOutlineInfoCircle className="text-primary shrink-0 w-6 h-6" />
           <span>{userInstruction || 'Process image'}</span>
         </div>
         <div className="w-full min-h-0 max-h-screen relative" ref={chartDivRef}>
@@ -178,7 +182,9 @@ const ImagePreview = (props: Props, ref: MutableRefObject<HTMLDivElement | null>
           className={state.step === 2 ? '' : 'hidden'}
         />
       )}
-      {props.fileId && <TableDisplay peaks={peaks} className={state.step === 3 ? 'hidden xl:block' : 'hidden'} />}
+      {props.fileId && (
+        <TableDisplay peaks={{ foo: peaks }} className={state.step === 3 ? 'hidden xl:block' : 'hidden'} />
+      )}
       <div className="xl:col-span-2">
         <div className="flex flex-wrap justify-center items-center mt-6 md:flex-nowrap ">
           <Steps
@@ -193,7 +199,9 @@ const ImagePreview = (props: Props, ref: MutableRefObject<HTMLDivElement | null>
           )}
         </div>
       </div>
-      {props.fileId && <TableDisplay peaks={peaks} className={state.step === 3 ? 'block xl:hidden' : 'hidden'} />}
+      {props.fileId && (
+        <TableDisplay peaks={{ foo: peaks }} className={state.step === 3 ? 'block xl:hidden' : 'hidden'} />
+      )}
     </div>
   );
 };

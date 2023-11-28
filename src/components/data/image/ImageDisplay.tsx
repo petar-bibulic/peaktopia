@@ -8,6 +8,7 @@ import { redirect } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import firebaseAdminApp from '@firebaseApp/configAdmin';
+import { toast, Theme } from 'react-toastify';
 
 type Props = {
   fileId?: string;
@@ -40,7 +41,6 @@ const ImageDisplay = async (props: Props) => {
     const userCookie = cookies().get('userToken');
     userToken = await getAuth(firebaseAdminApp as App).verifyIdToken(userCookie?.value as string);
   } catch (e) {
-    // console.error(`User token not available: ${e}`);
     props.fileId && props.fileId !== 'test' && redirect(`/auth/login?next=/data/image?fileId=${props.fileId}`);
   }
 
@@ -54,7 +54,7 @@ const ImageDisplay = async (props: Props) => {
       } else {
         // docSnap.data() will be undefined in this case
         item = null;
-        console.log('No such document!');
+        console.warn('Document not found');
       }
     } else if (!userToken) {
       const storageRef = ref(storage, 'images/XRPDtest.png');
