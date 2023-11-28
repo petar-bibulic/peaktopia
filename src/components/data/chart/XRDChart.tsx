@@ -45,20 +45,11 @@ const CustomTooltip = ({ active, payload, label }: TooltipProps<ValueType, NameT
 const XRDChart = (props: Props) => {
   const { data, chartState, peaks, peakWidth, setState, zoom, handleClick } = props;
   const sortedPeaks = useMemo(() => {
-    const sortedPeaks: ChartDataset = { ...peaks };
-    for (let key in sortedPeaks) {
-      sortedPeaks[key].sort((a, b) => a.position - b.position);
-    }
-    return sortedPeaks;
+    return Object.values(peaks)
+      .flat()
+      .sort((a, b) => a.position - b.position);
   }, [peaks]);
-  const allPeaks = useMemo(() => {
-    let allPositions: ChartDataPoint[] = [];
-    for (let key in sortedPeaks) {
-      allPositions = [...allPositions, ...sortedPeaks[key]];
-    }
-    return allPositions.filter((value, index, array) => array.indexOf(value) === index);
-  }, [sortedPeaks]);
-  const peakColors = useMemo(() => getPeakColor(allPeaks, peakWidth), [sortedPeaks, peakWidth]);
+  const peakColors = useMemo(() => getPeakColor(sortedPeaks, peakWidth), [sortedPeaks, peakWidth]);
 
   const error = console.error;
   console.error = (...args: any) => {
@@ -125,7 +116,7 @@ const XRDChart = (props: Props) => {
         {chartState.zoomLeft && chartState.zoomRight ? (
           <ReferenceArea x1={chartState.zoomLeft} x2={chartState.zoomRight} strokeOpacity={1} />
         ) : null}
-        {allPeaks.map((item, index) => (
+        {sortedPeaks.map((item, index) => (
           <Fragment key={`fragment-${index}`}>
             <ReferenceArea
               x1={item.position - 0.01}
