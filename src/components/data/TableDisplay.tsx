@@ -38,7 +38,7 @@ const TableDisplay = memo(function TableDisplay(props: Props) {
   };
 
   return (
-    <div className={`overflow-x max-h-[70vh] ${className}`}>
+    <div className={`overflow-auto max-h-[70vh] ${className}`}>
       <div className="inline-flex items-center gap-2">
         <p className="text-base-content text-lg font-semibold">Intensities [rel]</p>
         <div
