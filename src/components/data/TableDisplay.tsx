@@ -41,7 +41,10 @@ const TableDisplay = memo(function TableDisplay(props: Props) {
     <div className={`overflow-x max-h-[70vh] ${className}`}>
       <div className="inline-flex items-center gap-2">
         <p className="text-base-content text-lg font-semibold">Intensities [rel]</p>
-        <div className="tooltip" data-tip="Check each table column to activate selecting or deselecting peaks">
+        <div
+          className="tooltip tooltip-bottom z-30"
+          data-tip="Check each table column to activate selecting or deselecting peaks"
+        >
           <AiFillInfoCircle className="text-primary hover:text-sky-500 text-lg" />
         </div>
       </div>
