@@ -8,13 +8,20 @@ import { ref, getBlob } from 'firebase/storage';
 import { storage } from '@firebaseApp/config';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { CategoricalChartState } from 'recharts/types/chart/generateCategoricalChart';
-import { XRDDataType, ChartDataType, ChartStateType, DocType, ChartDataPoint } from '@components/data/DataTypes';
 import TableDisplay from '@components/data/TableDisplay';
 import XRDChart from '@components/data/chart/XRDChart';
 import PeakWidthSelector from '@components/data/PeakWidthSelector';
 import useGlobalStore from '@hooks/useGlobalStore';
 import { AiOutlineInfoCircle } from 'react-icons/ai';
 import { OFFSET, SEARCH_MAX_WIDTH } from '@utils/constants';
+import {
+  XRDDataType,
+  ChartDataType,
+  ChartStateType,
+  DocType,
+  ChartDataPoint,
+  ChartDataset,
+} from '@components/data/DataTypes';
 
 type Props = {
   fileId: string;
@@ -25,7 +32,7 @@ const XRDView = (props: Props) => {
   const userObj = user ? JSON.parse(user) : null;
   const [isLoading, setIsLoading] = useState(true);
   const [lastClickTime, setLastClickTime] = useState(0);
-  const [peaks, setPeaks] = useState<ChartDataPoint[]>([]);
+  const [peaks, setPeaks] = useState<ChartDataset>({});
   const [peakWidth, setPeakWidth] = useState(0.1);
   const [chartData, setChartData] = useState<Array<ChartDataType>>([]);
   const [detectMax, setDetectMax] = useState(false);
@@ -42,13 +49,14 @@ const XRDView = (props: Props) => {
   });
   const action = useGlobalStore((state) => state.action);
   const setAction = useGlobalStore((state) => state.setAction);
-  const charts = useGlobalStore((state) => state.charts);
+  const charts = useGlobalStore((state) => state.charts); // all user chart from the DB
   const setCharts = useGlobalStore((state) => state.setCharts);
-  const activeCharts = useGlobalStore((state) => state.activeCharts);
+  const activeCharts = useGlobalStore((state) => state.activeCharts); // active charts for display
   const setActiveCharts = useGlobalStore((state) => state.setActiveCharts);
-  const processedImages = useGlobalStore((state) => state.processedImages);
+  const activeDatasets = useGlobalStore((state) => state.activeDatasets); // active datasets for selecting peaks
+  const processedImages = useGlobalStore((state) => state.processedImages); // all user images from the DB
   const setProcessedImages = useGlobalStore((state) => state.setProcessedImages);
-  const activeImages = useGlobalStore((state) => state.activeImages);
+  const activeImages = useGlobalStore((state) => state.activeImages); // active images for display
   const setActiveImages = useGlobalStore((state) => state.setActiveImages);
   const setSideEffects = useGlobalStore((state) => state.setSideEffects);
 
@@ -104,6 +112,7 @@ const XRDView = (props: Props) => {
           docs.push({ ...doc.data(), id: doc.id } as DocType);
         });
         setCharts(docs);
+        setPeaks(Object.fromEntries(docs.map((item) => [item.name, []])));
 
         if (props.fileId) {
           setActiveCharts([docs.filter((val) => val.id === props.fileId)[0].name]);
@@ -111,11 +120,13 @@ const XRDView = (props: Props) => {
           docs.length > 0 && setActiveCharts([docs[0].name]);
         }
       } else {
-        setCharts([
+        let docs = [
           { name: 'Example', url: 'datafiles/Caffeine.xrdml', userId: '', id: '' },
           { name: 'Example 2', url: 'datafiles/4,4-Bipyridine.xrdml', userId: '', id: '' },
-        ]);
-        setActiveCharts(['Example']);
+        ];
+        setCharts(docs);
+        setPeaks(Object.fromEntries(docs.map((item) => [item.name, []])));
+        setActiveCharts([docs[0].name]);
       }
     } catch (e) {
       console.error(`Error while fetching from Firestore Database: ${e}`);
@@ -145,7 +156,7 @@ const XRDView = (props: Props) => {
 
   // fetch data for selected charts from storage
   const fetchStore = async () => {
-    const parsedChartData: { [key: string]: ChartDataPoint[] } = {};
+    const parsedChartData: ChartDataset = {};
     try {
       for (let ac of activeCharts) {
         if (chartData.map((val) => val.name).includes(ac)) {
@@ -190,39 +201,68 @@ const XRDView = (props: Props) => {
 
   // adds a new peak (based on cursor position) to the peak list
   const addPeak = (position: number) => {
-    // TODO: add option to find peaks per chart or option to choose chart
-    const data = chartData[0].data;
-    const dataValues = data.map((val) => val.position);
-    const positionIndex = findClosestIndex(position, dataValues);
+    let peaksDataset: ChartDataset = {};
+    for (let dataset of activeDatasets) {
+      const chartDataset = chartData.filter((item) => item.name === dataset);
 
-    if (!detectMax) {
-      const newPeak = { position: data[positionIndex].position, intensity: data[positionIndex].intensity };
-      setPeaks([...peaks, newPeak]);
-      return;
+      if (chartDataset.length === 0) {
+        peaksDataset[dataset] = [];
+        continue;
+      }
+
+      const data = chartDataset[0].data;
+      const dataValues = data.map((val) => val.position);
+      const positionIndex = findClosestIndex(position, dataValues);
+      let newPeak: ChartDataPoint;
+
+      if (detectMax) {
+        const low = findClosestIndex(position - SEARCH_MAX_WIDTH, dataValues);
+        const high = findClosestIndex(position + SEARCH_MAX_WIDTH, dataValues);
+        newPeak = data.slice(low, high + 1).reduce((maxVal, current) => {
+          return current.intensity > maxVal.intensity ? current : maxVal;
+        }, data[0]);
+      } else {
+        newPeak = { position: data[positionIndex].position, intensity: data[positionIndex].intensity };
+      }
+      peaksDataset[dataset] = [newPeak];
     }
 
-    const low = findClosestIndex(position - SEARCH_MAX_WIDTH, dataValues);
-    const high = findClosestIndex(position + SEARCH_MAX_WIDTH, dataValues);
-
-    const newPeak = data.slice(low, high + 1).reduce((maxVal, current) => {
-      return current.intensity > maxVal.intensity ? current : maxVal;
-    }, data[0]);
-    setPeaks([...peaks, newPeak]);
+    const updatePeaks = Object.fromEntries(
+      Object.keys(peaksDataset).map((item) => [item, [...peaks[item], ...peaksDataset[item]]])
+    );
+    setPeaks({ ...peaks, ...updatePeaks });
   };
 
   // removes peak closes to the cursor position from the peak list
   const removePeak = (position: number) => {
-    // TODO: add option to find peaks per chart or option to choose chart
-    const closest =
-      peaks.length > 0
-        ? peaks.reduce((prev, curr) => {
-            return Math.abs(curr.position - position) < Math.abs(prev.position - position) ? curr : prev;
-          })
-        : null;
-    if (closest && Math.abs(closest.position - position) > 1) {
-      return;
+    let peaksDataset: ChartDataset = {};
+    for (let dataset of activeDatasets) {
+      const closest =
+        Object.keys(peaks[dataset]).length > 0
+          ? peaks[dataset].reduce((prev, curr) => {
+              return Math.abs(curr.position - position) < Math.abs(prev.position - position) ? curr : prev;
+            })
+          : null;
+      if (!closest) {
+        peaksDataset[dataset] = [];
+        continue;
+      } else if (Math.abs(closest.position - position) > 1) {
+        peaksDataset[dataset] = [];
+        continue;
+      } else {
+        peaksDataset[dataset] = [closest];
+      }
     }
-    setPeaks([...peaks].filter((peak) => peak !== closest));
+
+    if (Object.values(peaks).flat().length > 0) {
+      const newPeaks = Object.fromEntries(
+        Object.keys(peaks).map((item) => [
+          item,
+          peaks[item].filter((peak) => peak !== (peaksDataset[item] && peaksDataset[item][0])),
+        ])
+      );
+      setPeaks(newPeaks);
+    }
   };
 
   // calculate data range for X-axis, given lower and higher bounds
@@ -361,7 +401,7 @@ const XRDView = (props: Props) => {
     <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 outline-none" tabIndex={-1} onKeyDown={handleKeyPress}>
       <div className="xl:col-span-2">
         <div className="alert mb-2 bg-base-200">
-          <AiOutlineInfoCircle className="stroke-info shrink-0 w-6 h-6 text-primary" />
+          <AiOutlineInfoCircle className="text-primary shrink-0 w-6 h-6" />
           <span>Click & drag to zoom, double-click to zoom out</span>
         </div>
         <div>
@@ -392,18 +432,18 @@ const XRDView = (props: Props) => {
           <div className="inline-flex gap-5">
             <div className="text-base-content">Scale all charts</div>
             <input
-              name="detect-max-checkbox"
               type="checkbox"
-              checked={scaleCharts}
+              name="detect-max-checkbox"
+              className="toggle toggle-primary"
               onChange={() => {
                 setScaleCharts(scaleCharts ? false : true);
               }}
-              className="checkbox checkbox-primary"
+              disabled
             />
           </div>
         </div>
       </div>
-      <TableDisplay peaks={peaks} />
+      <TableDisplay peaks={peaks} className={charts.length > 2 ? 'xl:col-span-2 mt-4' : 'col-span-1 mt-4 xl:mt-0'} />
     </div>
   );
 };

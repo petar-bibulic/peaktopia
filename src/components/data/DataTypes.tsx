@@ -64,10 +64,12 @@ export type NamedPoints = {
   [key: string]: Point;
 };
 
+export type ChartDataset = { [key: string]: Array<ChartDataPoint> };
+
 export type PointName = { name: string; point: Point };
 
 export type PointIndex = { index: number; point: Point };
 
 export type AxesNames = 'X1' | 'X2' | 'Y1' | 'Y2';
 
-export type SideEffectsType = { [key: string]: (...params: any[]) => void };
+export type SideEffectsType = { [key: string]: (...params: Array<any>) => void };

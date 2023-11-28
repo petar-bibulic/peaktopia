@@ -5,12 +5,17 @@ import { signUp } from '@firebaseApp/authUtils';
 import { facebookProvider, githubProvider, googleProvider } from '@firebaseApp/config';
 import { oauthSignIn } from '@firebaseApp/authUtils';
 import Link from 'next/link';
+import { FacebookAuthProvider, GithubAuthProvider, GoogleAuthProvider } from 'firebase/auth';
 import { GoogleLoginButton, FacebookLoginButton, GithubLoginButton } from '@components/auth/OAuthLoginButton';
 import { toast, Theme } from 'react-toastify';
+import useIsMobile from '@hooks/useIsMobile';
+import useGlobalStore from '@hooks/useGlobalStore';
 
 type Props = {};
 
 const LoginForm = (props: Props) => {
+  const isMobile = useIsMobile();
+  const theme = useGlobalStore((state) => state.theme);
   const [email, setEmail] = useState(' ');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -66,6 +71,24 @@ const LoginForm = (props: Props) => {
         theme: theme as Theme,
       });
     }
+  };
+
+  const toastyClickHandler = async (provider: GoogleAuthProvider | FacebookAuthProvider | GithubAuthProvider) => {
+    const promiseFunc = oauthSignIn.bind(null, provider)(isMobile);
+    let message: string = 'Log in successful';
+
+    if (isMobile) message = 'Redirecting shortly';
+
+    toast.promise(
+      promiseFunc,
+      {
+        pending: 'Waiting to log in...',
+        success: message,
+        error: 'Failed to log in',
+      },
+      { theme: theme as Theme }
+    );
+    return promiseFunc;
   };
 
   return (
@@ -134,9 +157,9 @@ const LoginForm = (props: Props) => {
         <div className="my-4 flex items-center before:mt-0.5 before:flex-1 before:border-t before:border-neutral-300 after:mt-0.5 after:flex-1 after:border-t after:border-neutral-300">
           <p className="mx-4 mb-0 text-center font-semibold text-base-content">OR</p>
         </div>
-        <GoogleLoginButton clickHandler={oauthSignIn.bind(null, googleProvider)} />
-        <FacebookLoginButton clickHandler={oauthSignIn.bind(null, facebookProvider)} />
-        <GithubLoginButton clickHandler={oauthSignIn.bind(null, githubProvider)} />
+        <GoogleLoginButton clickHandler={() => toastyClickHandler(googleProvider)} />
+        <FacebookLoginButton clickHandler={() => toastyClickHandler(facebookProvider)} />
+        <GithubLoginButton clickHandler={() => toastyClickHandler(githubProvider)} />
       </form>
     </div>
   );

@@ -15,14 +15,14 @@ import {
 } from 'recharts';
 import { CategoricalChartState } from 'recharts/types/chart/generateCategoricalChart';
 import { ValueType, NameType } from 'recharts/types/component/DefaultTooltipContent';
-import { ChartDataType, ChartStateType, ChartDataPoint } from '@components/data/DataTypes';
+import { ChartDataType, ChartStateType, ChartDataset, ChartDataPoint } from '@components/data/DataTypes';
 import React, { useMemo, Dispatch, SetStateAction, Fragment } from 'react';
 import { getPeakColor, getChartColor } from '@utils/helperFunctions';
 
 type Props = {
   data: Array<ChartDataType>;
   chartState: ChartStateType;
-  peaks: Array<ChartDataPoint>;
+  peaks: ChartDataset;
   peakWidth: number;
   setState: Dispatch<SetStateAction<ChartStateType>>;
   zoom: () => void;
@@ -33,8 +33,8 @@ const CustomTooltip = ({ active, payload, label }: TooltipProps<ValueType, NameT
   if (active && payload && payload.length) {
     return (
       <div className="custom-tooltip">
-        <p className="label">{`2Θ: ${label?.toFixed(4)} °`}</p>
-        <p className="intro">{`Intensity: ${payload[0].value}`}</p>
+        <p className="label text-sm text-base-content">{`2Θ: ${label?.toFixed(4)} °`}</p>
+        <p className="intro text-sm text-base-content">{`Intensity: ${payload[0].value}`}</p>
       </div>
     );
   }
@@ -45,9 +45,20 @@ const CustomTooltip = ({ active, payload, label }: TooltipProps<ValueType, NameT
 const XRDChart = (props: Props) => {
   const { data, chartState, peaks, peakWidth, setState, zoom, handleClick } = props;
   const sortedPeaks = useMemo(() => {
-    return [...peaks].sort((a, b) => a.position - b.position);
+    const sortedPeaks: ChartDataset = { ...peaks };
+    for (let key in sortedPeaks) {
+      sortedPeaks[key].sort((a, b) => a.position - b.position);
+    }
+    return sortedPeaks;
   }, [peaks]);
-  const peakColors = useMemo(() => getPeakColor(sortedPeaks, peakWidth), [sortedPeaks, peakWidth]);
+  const allPeaks = useMemo(() => {
+    let allPositions: ChartDataPoint[] = [];
+    for (let key in sortedPeaks) {
+      allPositions = [...allPositions, ...sortedPeaks[key]];
+    }
+    return allPositions.filter((value, index, array) => array.indexOf(value) === index);
+  }, [sortedPeaks]);
+  const peakColors = useMemo(() => getPeakColor(allPeaks, peakWidth), [sortedPeaks, peakWidth]);
 
   const error = console.error;
   console.error = (...args: any) => {
@@ -56,7 +67,7 @@ const XRDChart = (props: Props) => {
   };
 
   return (
-    <ResponsiveContainer aspect={1.78} width="100%" className="bg-slate-800 rounded-md select-none">
+    <ResponsiveContainer aspect={1.78} width="100%" className="bg-slate-100 dark:bg-slate-800 rounded-md select-none">
       <LineChart
         data={data}
         margin={{
@@ -114,7 +125,7 @@ const XRDChart = (props: Props) => {
         {chartState.zoomLeft && chartState.zoomRight ? (
           <ReferenceArea x1={chartState.zoomLeft} x2={chartState.zoomRight} strokeOpacity={1} />
         ) : null}
-        {sortedPeaks.map((item, index) => (
+        {allPeaks.map((item, index) => (
           <Fragment key={`fragment-${index}`}>
             <ReferenceArea
               x1={item.position - 0.01}

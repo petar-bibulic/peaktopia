@@ -10,6 +10,7 @@ import { useAuthContext } from '@store/AuthContext';
 import { toast, Theme } from 'react-toastify';
 import { FacebookAuthProvider, GithubAuthProvider, GoogleAuthProvider } from 'firebase/auth';
 import useGlobalStore from '@hooks/useGlobalStore';
+import useIsMobile from '@hooks/useIsMobile';
 
 type Props = {};
 
@@ -21,6 +22,7 @@ const LoginForm = (props: Props) => {
   const user = useAuthContext();
   const [isLoading, setIsLoading] = useState(true);
   const theme = useGlobalStore((state) => state.theme);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     setIsLoading(false);
@@ -77,12 +79,16 @@ const LoginForm = (props: Props) => {
   };
 
   const toastyClickHandler = async (provider: GoogleAuthProvider | FacebookAuthProvider | GithubAuthProvider) => {
-    const promiseFunc = oauthSignIn.bind(null, provider)();
+    const promiseFunc = oauthSignIn.bind(null, provider)(isMobile);
+    let message: string = 'Log in successful';
+
+    if (isMobile) message = 'Redirecting shortly';
+
     toast.promise(
       promiseFunc,
       {
         pending: 'Waiting to log in...',
-        success: 'Log in successful',
+        success: message,
         error: 'Failed to log in',
       },
       { theme: theme as Theme }

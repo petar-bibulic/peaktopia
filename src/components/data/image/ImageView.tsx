@@ -142,7 +142,7 @@ const ImagePreview = (props: Props, ref: MutableRefObject<HTMLDivElement | null>
     <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 outline-none" onKeyDown={handleKeyPress}>
       <div className="xl:col-span-2">
         <div className="alert mb-2 bg-base-200">
-          <AiOutlineInfoCircle className="stroke-info shrink-0 w-6 h-6 text-primary" />
+          <AiOutlineInfoCircle className="text-primary shrink-0 w-6 h-6" />
           <span>{userInstruction || 'Process image'}</span>
         </div>
         <div className="w-full min-h-0 max-h-screen relative" ref={chartDivRef}>
@@ -182,7 +182,9 @@ const ImagePreview = (props: Props, ref: MutableRefObject<HTMLDivElement | null>
           className={state.step === 2 ? '' : 'hidden'}
         />
       )}
-      {props.fileId && <TableDisplay peaks={peaks} className={state.step === 3 ? 'hidden xl:block' : 'hidden'} />}
+      {props.fileId && (
+        <TableDisplay peaks={{ foo: peaks }} className={state.step === 3 ? 'hidden xl:block' : 'hidden'} />
+      )}
       <div className="xl:col-span-2">
         <div className="flex flex-wrap justify-center items-center mt-6 md:flex-nowrap ">
           <Steps
@@ -197,7 +199,9 @@ const ImagePreview = (props: Props, ref: MutableRefObject<HTMLDivElement | null>
           )}
         </div>
       </div>
-      {props.fileId && <TableDisplay peaks={peaks} className={state.step === 3 ? 'block xl:hidden' : 'hidden'} />}
+      {props.fileId && (
+        <TableDisplay peaks={{ foo: peaks }} className={state.step === 3 ? 'block xl:hidden' : 'hidden'} />
+      )}
     </div>
   );
 };

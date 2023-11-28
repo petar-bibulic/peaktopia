@@ -8,7 +8,7 @@ import { getChartColor, taxicabDist, getClosestPoint, getNearestPeak } from '@ut
 
 import CustomCross from '@components/data/image/CustomCross';
 import CustomPeakMark from '@components/data/image/CustomPeakMark';
-import { Point, NamedPoints, PointName, ChartDataPoint, AxesNames } from '@components/data/DataTypes';
+import { Point, NamedPoints, PointName, ChartDataPoint, AxesNames, ChartDataset } from '@components/data/DataTypes';
 import {
   FAST_SHIFT,
   SLOW_SHIFT,

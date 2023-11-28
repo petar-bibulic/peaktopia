@@ -14,7 +14,6 @@ const ChartMenuActions = (props: Props) => {
 
   useEffect(() => {
     // use effect to prevent different server and client side props
-    console.log('should render?', render, isMobile);
     setRender(isMobile);
 
     return () => {};

@@ -46,7 +46,6 @@ const UploadFileComponent = (props: Props) => {
     event.preventDefault();
 
     if (!files) {
-      // TODO: add toast
       toast.warn('No file selected', { theme: theme as Theme });
       return;
     }
