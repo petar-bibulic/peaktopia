@@ -10,7 +10,7 @@ type Props = {};
 const ThemeSwitch = (props: Props) => {
   const [cookies, setCookie] = useCookies(['peaktopiaTheme']);
   const html = typeof window !== 'undefined' ? document.documentElement : null;
-  let theme = cookies.peaktopiaTheme;
+  let theme = cookies.peaktopiaTheme || 'dark';
   const themeStore = useGlobalStore((state) => state.theme);
   const setTheme = useGlobalStore((state) => state.setTheme);
 

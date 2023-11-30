@@ -37,7 +37,7 @@ const useGlobalStore = create<ActionState>()((set) => ({
   setActiveImages: (array) => set(() => ({ activeImages: array })),
   userInstruction: '',
   setUserInstruction: (value) => set(() => ({ userInstruction: value })),
-  theme: '',
+  theme: 'dark',
   setTheme: (value) => set(() => ({ theme: value })),
   sideEffects: {},
   setSideEffects: (effects: SideEffectsType) => set(() => ({ sideEffects: effects })),

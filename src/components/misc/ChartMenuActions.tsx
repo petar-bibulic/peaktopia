@@ -56,6 +56,7 @@ const ChartMenuActions = (props: Props) => {
         isActive={action.toUpperCase() === 'A' ? true : false}
         text="Annotate peaks"
         keyShortcut="A"
+        disabled={true}
       />
       <div className={render === true ? 'block' : 'hidden'}>
         <MenuActionElement clickHandler={setAction} action="" isActive={false} text="Zoom out" sideEffect="zoomOut" />

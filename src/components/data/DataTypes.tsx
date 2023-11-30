@@ -55,6 +55,14 @@ export type DocType = {
   data?: Array<ChartDataPoint>;
 };
 
+export type PeakType = {
+  id: string;
+  objectId: string;
+  name: string;
+  userId: string;
+  peaks: Array<ChartDataPoint>;
+};
+
 export type Point = {
   x: number;
   y: number;

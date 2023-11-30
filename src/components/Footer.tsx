@@ -11,7 +11,7 @@ const Footer = (props: Props) => {
         <Link href="" className="link link-hover hover:text-primary">
           About us
         </Link>
-        <Link href="" className="link link-hover hover:text-primary">
+        <Link href="mailto:pbibulic@gmail.com" className="link link-hover hover:text-primary">
           Contact
         </Link>
       </div>

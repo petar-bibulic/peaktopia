@@ -160,7 +160,12 @@ const ImagePreview = (props: Props, ref: MutableRefObject<HTMLDivElement | null>
         </div>
         {state.step === 3 && (
           <div className="mt-6 inline-flex gap-5">
-            <div className="text-base-content">Only select peaks</div>
+            <div
+              className="text-left text-base-content tooltip tooltip-bottom before:z-50 before:content-[attr(data-tip)]"
+              data-tip="With this option checked only peak points should be selected. All chart data can be selected otherwise."
+            >
+              Only peaks
+            </div>
             <input
               name="only-peaks"
               type="checkbox"

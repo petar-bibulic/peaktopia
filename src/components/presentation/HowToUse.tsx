@@ -1,13 +1,23 @@
+'use client';
+
+import useGlobalStore from '@hooks/useGlobalStore';
+
 type Props = {};
 
 const HowToUse = (props: Props) => {
+  const theme = useGlobalStore((state) => state.theme);
+
   return (
-    <div className="w-full flex h-full flex-col relative bg-cyan-950">
-      <div className="absolute bottom-0 w-full h-[50vh] bg-cover bg-bottom bg-no-repeat bg-[url('/assets/images/layer2_peaks.svg')]"></div>
+    <div className="w-full flex h-full flex-col relative">
+      {theme === 'dark' ? (
+        <div className="absolute bottom-0 w-full h-[50vh] bg-cover bg-bottom bg-no-repeat bg-[url('/assets/images/layer2_peaks_dark.svg')]"></div>
+      ) : (
+        <div className="absolute bottom-0 w-full h-[50vh] bg-cover bg-bottom bg-no-repeat bg-[url('/assets/images/layer2_peaks_light.svg')]"></div>
+      )}
       <div className="hero min-h-screen backdrop-blur-[2px] z-10">
         <div className="hero-content text-center">
           <div className="max-w-xl">
-            <p className="py-6 mb-[40vh] mx-5 text-left">
+            <p className="py-6 mb-[30vh] mx-5 text-left text-base-content">
               Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque sit amet lorem neque. Fusce vulputate a
               ex nec convallis. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos
               himenaeos. Mauris id mollis orci, ut varius lorem. Mauris non sapien pulvinar, auctor massa eu, molestie

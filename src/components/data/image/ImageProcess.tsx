@@ -86,7 +86,7 @@ const ImageProcess = (props: Props) => {
         break;
       case 4:
         setTimeout(() => {
-          setUserInstruction('Done, continue to Charts page');
+          setUserInstruction('Submit peaks and continue to Charts page');
         }, ANIMATION_DURATION);
         break;
     }

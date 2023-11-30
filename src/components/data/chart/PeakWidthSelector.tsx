@@ -22,7 +22,12 @@ const PeakWidthSelector = (props: Props) => {
 
   return (
     <div className="mt-2 flex flex-wrap sm:inline-flex w-full gap-5 items-center">
-      <div className="whitespace-nowrap text-base-content">Peak width [° 2&Theta;]</div>
+      <div
+        className="text-left tooltip tooltip-right before:z-50 before:content-[attr(data-tip)]"
+        data-tip="Select peak width to detect overlap with adjecent peaks"
+      >
+        <div className="whitespace-nowrap text-base-content">Peak width [° 2&Theta;]</div>
+      </div>
       <input
         name="peak-width-text"
         className="grow sm:flex-none sm:block input input-bordered input-sm input-primary text-base-content"
@@ -30,7 +35,13 @@ const PeakWidthSelector = (props: Props) => {
         value={tempValue}
         onBlur={(e) => peakWidthHandler(e.target.value)}
         onChange={(e) => setTempValue(e.target.value)}
-        onKeyDown={(e) => e.stopPropagation()}
+        onKeyDown={(e) => {
+          e.stopPropagation();
+          if (e.key === 'Enter') {
+            const target = e.target as HTMLInputElement;
+            peakWidthHandler(target.value);
+          }
+        }}
       />
       <input
         name="peak-width-slider"
@@ -40,6 +51,9 @@ const PeakWidthSelector = (props: Props) => {
         max={1}
         step={0.05}
         value={peakWidth}
+        onKeyDown={(e) => {
+          e.preventDefault();
+        }}
         onChange={(e) => {
           e.preventDefault();
           setPeakWidth(Number(e.target.value));

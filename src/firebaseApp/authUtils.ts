@@ -102,9 +102,10 @@ async function oauthSignIn(provider: AuthProvider, isMobile: boolean = false): P
       newRoute && (windowObj.location.href = newRoute as string);
     } catch (e: any) {
       error = e;
+      throw new Error(`Login error: ${e}`);
     }
   }
-  return { result, error };
+  return result;
 }
 
 async function linkProvidersSignIn(

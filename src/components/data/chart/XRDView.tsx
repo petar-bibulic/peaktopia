@@ -10,8 +10,11 @@ import { collection, getDocs, query, where } from 'firebase/firestore';
 import { CategoricalChartState } from 'recharts/types/chart/generateCategoricalChart';
 import TableDisplay from '@components/data/TableDisplay';
 import XRDChart from '@components/data/chart/XRDChart';
-import PeakWidthSelector from '@components/data/PeakWidthSelector';
+import PeakWidthSelector from '@components/data/chart/PeakWidthSelector';
+import ChartControls from '@components/data/chart/ChartControls';
 import useGlobalStore from '@hooks/useGlobalStore';
+import { useCookies } from 'react-cookie';
+import { toast, Theme } from 'react-toastify';
 import { AiOutlineInfoCircle } from 'react-icons/ai';
 import { OFFSET, SEARCH_MAX_WIDTH } from '@utils/constants';
 import {
@@ -22,6 +25,7 @@ import {
   ChartDataPoint,
   ChartDataset,
 } from '@components/data/DataTypes';
+import { useAuthContext } from '@store/AuthContext';
 
 type Props = {
   fileId: string;
@@ -30,6 +34,7 @@ type Props = {
 const XRDView = (props: Props) => {
   const user = typeof window !== 'undefined' ? localStorage.getItem('user') : null;
   const userObj = user ? JSON.parse(user) : null;
+  const [cookies, setCookie, removeCookie] = useCookies(['userToken']);
   const [isLoading, setIsLoading] = useState(true);
   const [lastClickTime, setLastClickTime] = useState(0);
   const [peaks, setPeaks] = useState<ChartDataset>({});
@@ -47,6 +52,7 @@ const XRDView = (props: Props) => {
     animation: true,
     ticks: _.range(0, 41, 5).map((val) => val.toString()),
   });
+  const theme = useGlobalStore((state) => state.theme);
   const action = useGlobalStore((state) => state.action);
   const setAction = useGlobalStore((state) => state.setAction);
   const charts = useGlobalStore((state) => state.charts); // all user chart from the DB
@@ -62,8 +68,13 @@ const XRDView = (props: Props) => {
 
   useEffect(() => {
     const loadActive = async () => {
-      await fetchChartData();
-      await fetchImageData();
+      const chartDocs: Array<DocType> = await fetchChartData();
+      const imageDocs: Array<DocType> = await fetchImageData();
+
+      setPeaks({
+        ...Object.fromEntries(chartDocs.map((item) => [item.name, []])),
+        ...Object.fromEntries(imageDocs.map((item) => [item.name, []])),
+      });
     };
 
     loadActive();
@@ -104,15 +115,15 @@ const XRDView = (props: Props) => {
   // fetch all available charts from DB
   const fetchChartData = async () => {
     try {
+      let docs: Array<DocType> = [];
       if (userObj) {
         const q = query(collection(db, 'files'), where('userId', '==', userObj?.uid));
         const qSnapshot = await getDocs(q);
-        let docs: Array<DocType> = [];
         qSnapshot.forEach((doc) => {
           docs.push({ ...doc.data(), id: doc.id } as DocType);
         });
         setCharts(docs);
-        setPeaks(Object.fromEntries(docs.map((item) => [item.name, []])));
+        setPeaks({ ...peaks, ...Object.fromEntries(docs.map((item) => [item.name, []])) });
 
         if (props.fileId) {
           setActiveCharts([docs.filter((val) => val.id === props.fileId)[0].name]);
@@ -125,11 +136,12 @@ const XRDView = (props: Props) => {
           { name: 'Example 2', url: 'datafiles/4,4-Bipyridine.xrdml', userId: '', id: '' },
         ];
         setCharts(docs);
-        setPeaks(Object.fromEntries(docs.map((item) => [item.name, []])));
         setActiveCharts([docs[0].name]);
       }
+      return docs;
     } catch (e) {
       console.error(`Error while fetching from Firestore Database: ${e}`);
+      return [];
     }
   };
 
@@ -148,9 +160,13 @@ const XRDView = (props: Props) => {
         if (props.fileId) {
           setActiveImages([docs.filter((val) => val.id === props.fileId)[0].name]);
         }
+
+        return docs;
       }
+      return [];
     } catch (e) {
       console.error(`Error while fetching from Firestore Database: ${e}`);
+      return [];
     }
   };
 
@@ -224,7 +240,10 @@ const XRDView = (props: Props) => {
       } else {
         newPeak = { position: data[positionIndex].position, intensity: data[positionIndex].intensity };
       }
-      peaksDataset[dataset] = [newPeak];
+
+      if (Math.abs(newPeak.position - position) < 2 * SEARCH_MAX_WIDTH) {
+        peaksDataset[dataset] = [newPeak];
+      }
     }
 
     const updatePeaks = Object.fromEntries(
@@ -246,7 +265,7 @@ const XRDView = (props: Props) => {
       if (!closest) {
         peaksDataset[dataset] = [];
         continue;
-      } else if (Math.abs(closest.position - position) > 1) {
+      } else if (Math.abs(closest.position - position) > 2 * SEARCH_MAX_WIDTH) {
         peaksDataset[dataset] = [];
         continue;
       } else {
@@ -377,7 +396,7 @@ const XRDView = (props: Props) => {
           break;
         case 'A':
           // TODO: add annotation logic
-          // not sure what I had in mind here
+          // this functions should be used to add additional description to peaks (tag peaks)
           break;
         case 'Z':
           // TODO: add support for zoom-in on mobile
@@ -393,7 +412,63 @@ const XRDView = (props: Props) => {
     if (e.key === 'Escape') {
       setAction('');
     } else {
-      action === e.key ? setAction('') : setAction(e.key);
+      action === e.key.toUpperCase() ? setAction('') : setAction(e.key.toUpperCase());
+    }
+  };
+
+  // submit peaks to the Firebase DB
+  const submitPeaks = async () => {
+    const postData = async (url: string, data: any) => {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      return response;
+    };
+
+    const allCharts = [...charts, ...processedImages];
+    const peakData = allCharts
+      .map((item) => ({ name: item.name, objectId: item.id, peaks: peaks[item.name] }))
+      .filter((item) => item.peaks && item.peaks.length > 0);
+    const data = {
+      uid: userObj?.uid,
+      authToken: cookies.userToken,
+      data: peakData,
+    };
+
+    const toastId = toast.loading('Uploading data...', { theme: theme as Theme });
+    const response = await postData('/api/peaks', data);
+    const payload = await response.json();
+    if (response.status === 201) {
+      toast.update(toastId, {
+        render: 'Data saved successfully',
+        type: 'success',
+        isLoading: false,
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: theme as Theme,
+      });
+    } else {
+      toast.update(toastId, {
+        render: `Error uploading data: ${payload.message}`,
+        type: 'error',
+        isLoading: false,
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: theme as Theme,
+      });
     }
   };
 
@@ -416,32 +491,13 @@ const XRDView = (props: Props) => {
           />
         </div>
         <PeakWidthSelector peakWidth={peakWidth} setPeakWidth={setPeakWidth} />
-        <div className="mt-4 flex flex-wrap gap-x-10 gap-y-2">
-          <div className="inline-flex gap-5">
-            <div className="text-base-content">Detect peak maximum</div>
-            <input
-              name="detect-max-checkbox"
-              type="checkbox"
-              checked={detectMax}
-              onChange={() => {
-                setDetectMax(detectMax ? false : true);
-              }}
-              className="checkbox checkbox-primary"
-            />
-          </div>
-          <div className="inline-flex gap-5">
-            <div className="text-base-content">Scale all charts</div>
-            <input
-              type="checkbox"
-              name="detect-max-checkbox"
-              className="toggle toggle-primary"
-              onChange={() => {
-                setScaleCharts(scaleCharts ? false : true);
-              }}
-              disabled
-            />
-          </div>
-        </div>
+        <ChartControls
+          detectMax={detectMax}
+          setDetectMax={setDetectMax}
+          scaleCharts={scaleCharts}
+          setScaleCharts={setScaleCharts}
+          clickHandler={submitPeaks}
+        />
       </div>
       <TableDisplay peaks={peaks} className={charts.length > 2 ? 'xl:col-span-2 mt-4' : 'col-span-1 mt-4 xl:mt-0'} />
     </div>
