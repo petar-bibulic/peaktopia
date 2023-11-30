@@ -67,6 +67,7 @@ const XRDView = (props: Props) => {
   const setSideEffects = useGlobalStore((state) => state.setSideEffects);
 
   useEffect(() => {
+    // load chart and image documents
     const loadActive = async () => {
       const chartDocs: Array<DocType> = await fetchChartData();
       const imageDocs: Array<DocType> = await fetchImageData();
@@ -80,10 +81,10 @@ const XRDView = (props: Props) => {
     loadActive();
     setIsLoading(false);
     setSideEffects({ zoomOut: zoomOut });
-    return () => {};
   }, []);
 
   useEffect(() => {
+    // fetch file data for loaded charts from storage
     const getData = async () => {
       const fileData = await fetchStore();
       const resultObject = fileData ? Object.entries(fileData).map(([key, val]) => ({ name: key, data: val })) : [];
@@ -100,6 +101,7 @@ const XRDView = (props: Props) => {
   }, [activeCharts, isLoading]);
 
   useEffect(() => {
+    // fetch processed image data for loaded images
     const newProcessedImages = processedImages
       .filter((val) => activeImages.includes(val.name))
       .map((val) => ({ name: val.name, data: val.data as Array<ChartDataPoint> }));
@@ -122,8 +124,6 @@ const XRDView = (props: Props) => {
         qSnapshot.forEach((doc) => {
           docs.push({ ...doc.data(), id: doc.id } as DocType);
         });
-        setCharts(docs);
-        setPeaks({ ...peaks, ...Object.fromEntries(docs.map((item) => [item.name, []])) });
 
         if (props.fileId) {
           setActiveCharts([docs.filter((val) => val.id === props.fileId)[0].name]);
@@ -131,13 +131,15 @@ const XRDView = (props: Props) => {
           docs.length > 0 && setActiveCharts([docs[0].name]);
         }
       } else {
-        let docs = [
+        docs = [
           { name: 'Example', url: 'datafiles/Caffeine.xrdml', userId: '', id: '' },
           { name: 'Example 2', url: 'datafiles/4,4-Bipyridine.xrdml', userId: '', id: '' },
         ];
-        setCharts(docs);
         setActiveCharts([docs[0].name]);
       }
+      setCharts(docs);
+      setPeaks({ ...peaks, ...Object.fromEntries(docs.map((item) => [item.name, []])) });
+
       return docs;
     } catch (e) {
       console.error(`Error while fetching from Firestore Database: ${e}`);
@@ -274,13 +276,13 @@ const XRDView = (props: Props) => {
     }
 
     if (Object.values(peaks).flat().length > 0) {
-      const newPeaks = Object.fromEntries(
+      const filteredPeaks = Object.fromEntries(
         Object.keys(peaks).map((item) => [
           item,
           peaks[item].filter((peak) => peak !== (peaksDataset[item] && peaksDataset[item][0])),
         ])
       );
-      setPeaks(newPeaks);
+      setPeaks(filteredPeaks);
     }
   };
 
