@@ -50,6 +50,7 @@ const ImagePreview = (props: Props, ref: MutableRefObject<HTMLDivElement | null>
   const setAction = useGlobalStore((state) => state.setAction);
   const userInstruction = useGlobalStore((state) => state.userInstruction);
   const setCharts = useGlobalStore((state) => state.setCharts);
+  const activeCharts = useGlobalStore((state) => state.activeCharts);
   const setActiveCharts = useGlobalStore((state) => state.setActiveCharts);
   const setUserInstruction = useGlobalStore((state) => state.setUserInstruction);
   const theme = useGlobalStore((state) => state.theme);
@@ -188,7 +189,11 @@ const ImagePreview = (props: Props, ref: MutableRefObject<HTMLDivElement | null>
         />
       )}
       {props.fileId && (
-        <TableDisplay peaks={{ foo: peaks }} className={state.step === 3 ? 'hidden xl:block' : 'hidden'} />
+        <TableDisplay
+          peaks={Object.fromEntries([[activeCharts[0], peaks]])}
+          setPeaks={(item) => setPeaks(item[activeCharts[0]])}
+          className={state.step === 3 ? 'hidden xl:block' : 'hidden'}
+        />
       )}
       <div className="xl:col-span-2">
         <div className="flex flex-wrap justify-center items-center mt-6 md:flex-nowrap ">
@@ -205,7 +210,11 @@ const ImagePreview = (props: Props, ref: MutableRefObject<HTMLDivElement | null>
         </div>
       </div>
       {props.fileId && (
-        <TableDisplay peaks={{ foo: peaks }} className={state.step === 3 ? 'block xl:hidden' : 'hidden'} />
+        <TableDisplay
+          peaks={Object.fromEntries([[activeCharts[0], peaks]])}
+          setPeaks={(item) => setPeaks(item[activeCharts[0]])}
+          className={state.step === 3 ? 'block xl:hidden' : 'hidden'}
+        />
       )}
     </div>
   );

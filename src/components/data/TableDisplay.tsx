@@ -2,30 +2,34 @@ import { ChartDataset } from '@components/data/DataTypes';
 import useGlobalStore from '@hooks/useGlobalStore';
 import { useEffect, useMemo, memo } from 'react';
 import { AiFillInfoCircle } from 'react-icons/ai';
+import { BiTrash } from 'react-icons/bi';
 
 type Props = {
   peaks: ChartDataset;
+  setPeaks: (value: ChartDataset) => void;
   className?: string;
 };
 
 const TableDisplay = memo(function TableDisplay(props: Props) {
-  const { peaks, className } = props;
+  const { peaks, setPeaks, className } = props;
   const activeImages = useGlobalStore((state) => state.activeImages); // active images for display
   const activeCharts = useGlobalStore((state) => state.activeCharts); // active charts for display
-  const sortedPeaks: ChartDataset = { ...peaks };
+
   const allDatasets = useMemo(() => {
     return [...activeCharts, ...activeImages];
   }, [activeCharts, activeImages]);
-  const positions = useMemo(() => {
-    let allPositions: number[] = [];
-    for (let key in sortedPeaks) {
-      sortedPeaks[key].sort((a, b) => a.position - b.position);
-      allPositions = [...allPositions, ...sortedPeaks[key].map((item) => item.position)];
-    }
-    allPositions = allPositions.filter((value, index, array) => array.indexOf(value) === index);
 
-    return allPositions.sort((a, b) => a - b);
-  }, [sortedPeaks]);
+  const allPositions = useMemo(() => {
+    let positions: number[] = [];
+    for (let key in peaks) {
+      peaks[key].sort((a, b) => a.position - b.position);
+      positions = [...positions, ...peaks[key].map((item) => item.position)];
+    }
+    positions = positions.filter((value, index, array) => array.indexOf(value) === index);
+
+    return positions.sort((a, b) => a - b);
+  }, [peaks]);
+
   const activeDatasets = useGlobalStore((state) => state.activeDatasets);
   const setActiveDatasets = useGlobalStore((state) => state.setActiveDatasets);
   const action = useGlobalStore((state) => state.action);
@@ -52,6 +56,21 @@ const TableDisplay = memo(function TableDisplay(props: Props) {
       : setActiveDatasets([...activeDatasets, item]);
   };
 
+  const deleteDataset = (index: number) => {
+    const datasetName = allDatasets[index];
+    setPeaks({ ...peaks, ...Object.fromEntries([[datasetName, []]]) });
+  };
+
+  const deletePeak = (index: number) => {
+    const position = allPositions[index];
+    const newPeaks = Object.keys(peaks).map((dataset) => [
+      dataset,
+      peaks[dataset].filter((item) => item.position !== position),
+    ]);
+
+    setPeaks(Object.fromEntries(newPeaks));
+  };
+
   return (
     <div className={`${className}`}>
       <div className="inline-flex items-center gap-2">
@@ -69,36 +88,57 @@ const TableDisplay = memo(function TableDisplay(props: Props) {
             <tr>
               <th></th>
               <th>Position [° 2&Theta;]</th>
-              {allDatasets.map((item, index) => (
-                <th key={index}>
-                  <div className="inline-flex items-center gap-x-2">
-                    {item}
-                    <input
-                      type="checkbox"
-                      checked={activeDatasets.includes(item)}
-                      onChange={() => selectDataset(item)}
-                      className="checkbox checkbox-xs checkbox-primary"
-                    />
-                  </div>
-                </th>
-              ))}
+              {Object.keys(peaks).map((item, index) => {
+                if (allDatasets.includes(item)) {
+                  return (
+                    <th key={index} className="group">
+                      <div className="inline-flex items-center gap-2">
+                        <label className="label cursor-pointer">
+                          <span className="mr-2">{item}</span>
+                          <input
+                            type="checkbox"
+                            checked={activeDatasets.includes(item)}
+                            onChange={() => selectDataset(item)}
+                            className="checkbox checkbox-xs checkbox-primary"
+                          />
+                        </label>
+                        <button
+                          className="btn btn-ghost btn-sm invisible group-hover:visible hover:bg-transparent px-1 text-warning hover:text-error"
+                          onClick={() => deleteDataset(index)}
+                        >
+                          <BiTrash className="text-lg" />
+                        </button>
+                      </div>
+                    </th>
+                  );
+                }
+              })}
+              <th className="w-1"></th>
             </tr>
           </thead>
           <tbody>
-            {positions.map((position, index) => (
-              <tr className="hover" key={`rowIndex-${index}`}>
-                <th>{index + 1}</th>
+            {allPositions.map((position, i) => (
+              <tr className="hover group" key={`rowIndex-${i}`}>
+                <th>{i + 1}</th>
                 <td>{position.toFixed(4)}</td>
-                {Object.keys(sortedPeaks).map((key, i) => {
-                  const peakIndex = sortedPeaks[key].map((item) => item.position).indexOf(position);
-                  if (peakIndex >= 0) {
-                    return (
-                      <td key={`columnIndex-${index}-${i}`}>{sortedPeaks[key][peakIndex].intensity.toFixed(0)}</td>
-                    );
-                  } else {
-                    return <td key={`columnIndex-${index}-${i}`}></td>;
+                {Object.keys(peaks).map((key, j) => {
+                  if (allDatasets.includes(key)) {
+                    const peakForChart = peaks[key].find((item) => item.position === position);
+                    if (peakForChart) {
+                      return <td key={`columnIndex-${i}-${j}`}>{peakForChart.intensity.toFixed(0)}</td>;
+                    } else {
+                      return <td key={`columnIndex-${i}-${j}`}></td>;
+                    }
                   }
                 })}
+                <td className="w-1">
+                  <button
+                    className="btn btn-ghost btn-sm invisible group-hover:visible hover:bg-transparent px-1 text-warning hover:text-error"
+                    onClick={() => deletePeak(i)}
+                  >
+                    <BiTrash className="text-lg" />
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>

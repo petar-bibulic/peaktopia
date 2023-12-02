@@ -7,14 +7,24 @@ import { App } from 'firebase-admin/app';
 
 import { ChartDataPoint } from '@components/data/DataTypes';
 
-type RequestBody = {
+type PostRequestBody = {
   authToken: string;
   uid?: string;
   data: Array<{ name: string; objectId: string; peaks: Array<ChartDataPoint> }>;
 };
 
+type GetRequestBody = {
+  authToken: string;
+  uid?: string;
+  data: Array<{ name: string; objectId: string; peaks: Array<ChartDataPoint> }>;
+};
+
+export async function GET(request: Request) {
+  // TODO
+}
+
 export async function POST(request: Request) {
-  const data: RequestBody = await request.json();
+  const data: PostRequestBody = await request.json();
   const { authToken } = data;
 
   let userToken: DecodedIdToken | null = null;
