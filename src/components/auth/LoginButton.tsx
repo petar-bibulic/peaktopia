@@ -28,7 +28,7 @@ const LoginButton = (props: Props) => {
               <button onClick={logoutHandler}>Logout</button>
             </li>
             <li className="text-base-content disabled">
-              <a>Profile</a>
+              <a className="pointer-events-none">Profile</a>
             </li>
           </ul>
         </div>

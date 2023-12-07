@@ -36,7 +36,11 @@ const MenuActionElement = (props: Props) => {
           {keyShortcut && <kbd className="kbd kbd-sm">{keyShortcut}</kbd>}
         </div>
       ) : (
-        <div className="flex ml-1" onClick={() => modifiedClickHandler(action)}>
+        <div
+          style={{ pointerEvents: disabled ? 'none' : 'auto' }}
+          className="flex ml-1"
+          onClick={() => modifiedClickHandler(action)}
+        >
           {text}
           {keyShortcut && <kbd className="kbd kbd-sm">{keyShortcut}</kbd>}
         </div>

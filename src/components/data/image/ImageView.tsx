@@ -7,14 +7,14 @@ import useGlobalStore from '@hooks/useGlobalStore';
 import { toast, Theme } from 'react-toastify';
 
 import { db } from '@firebaseApp/config';
-import { collection, getDocs, query, where } from 'firebase/firestore';
-import { doc, getDoc } from 'firebase/firestore';
+import { collection, doc, getDoc, getDocs, query, where } from 'firebase/firestore';
 import { AiOutlineInfoCircle } from 'react-icons/ai';
 import { DocType, AxesNames, ChartDataPoint } from '@components/data/DataTypes';
 
 import TableDisplay from '@components/data/TableDisplay';
 import AxesForm from '@components/data/image/AxesForm';
 import ImageProcess from '@components/data/image/ImageProcess';
+import ImageMagnifier from './ImageMagnifier';
 import ContinueButton from '@components/data/image/ContinueButton';
 import SubmitPeaksButton from '@components/data/image/SubmitPeaksButton';
 import Steps from '@components/misc/Steps';
@@ -45,6 +45,7 @@ const ImagePreview = (props: Props, ref: MutableRefObject<HTMLDivElement | null>
   const chartDivRef = useRef<HTMLDivElement | null>(null);
   const [peaks, setPeaks] = useState<ChartDataPoint[]>([]); // peaks in { position, intensity } format
   const [onlyPeaks, setOnlyPeaks] = useState(true);
+  const [showMagnifier, setShowMagnifier] = useState(true);
 
   const action = useGlobalStore((state) => state.action);
   const setAction = useGlobalStore((state) => state.setAction);
@@ -128,7 +129,15 @@ const ImagePreview = (props: Props, ref: MutableRefObject<HTMLDivElement | null>
   const continueClickHandler = () => {
     if (state.step === 1) {
       setTimeout(() => {
-        axesFormRef.current && axesFormRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
+        if (!axesFormRef.current) return;
+
+        const yPosition = axesFormRef.current.getBoundingClientRect().top;
+        if (yPosition < 150) {
+          // axes form will be about this high when right from image
+          axesFormRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
+        } else {
+          axesFormRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
       }, 100);
     } else if (state.step === 2) {
       setTimeout(() => {
@@ -140,44 +149,66 @@ const ImagePreview = (props: Props, ref: MutableRefObject<HTMLDivElement | null>
   };
 
   return (
-    <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 outline-none" onKeyDown={handleKeyPress}>
+    <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 outline-none " onKeyDown={handleKeyPress}>
       <div className="xl:col-span-2">
         <div className="alert mb-2 bg-base-200">
           <AiOutlineInfoCircle className="text-primary shrink-0 w-6 h-6" />
           <span>{userInstruction || 'Process image'}</span>
         </div>
-        <div className="w-full min-h-0 max-h-screen relative" ref={chartDivRef}>
-          {props.children}
-          {props.fileId && (
-            <ImageProcess
-              setContinue={setContinueBool}
-              step={state.step}
-              peaks={peaks}
-              setPeaks={setPeaks}
-              onlyPeaks={onlyPeaks}
-              axesRange={axesRange.current}
-            />
-          )}
+        <div className="w-full relative" ref={chartDivRef}>
+          <ImageMagnifier show={showMagnifier}>
+            {props.children}
+            {props.fileId && (
+              <ImageProcess
+                setContinue={setContinueBool}
+                step={state.step}
+                peaks={peaks}
+                setPeaks={setPeaks}
+                onlyPeaks={onlyPeaks}
+                axesRange={axesRange.current}
+                className="absolute top-0 left-0 w-full h-full"
+              />
+            )}
+          </ImageMagnifier>
         </div>
-        {state.step === 3 && (
-          <div className="mt-6 inline-flex gap-5">
+        <div className="mt-4 flex flex-wrap gap-x-10 gap-y-2 items-center">
+          <div className="inline-flex gap-5">
             <div
-              className="text-left text-base-content tooltip tooltip-bottom before:z-50 before:content-[attr(data-tip)]"
-              data-tip="With this option checked only peak points should be selected. All chart data can be selected otherwise."
+              className="text-left text-base-content tooltip tooltip-right before:z-50 before:content-[attr(data-tip)]"
+              data-tip="Show image magnifier"
             >
-              Only peaks
+              Show magnifier
             </div>
             <input
-              name="only-peaks"
               type="checkbox"
-              checked={onlyPeaks}
+              name="detect-max-checkbox"
+              className="toggle toggle-primary"
+              checked={showMagnifier}
               onChange={() => {
-                setOnlyPeaks(onlyPeaks ? false : true);
+                setShowMagnifier(showMagnifier ? false : true);
               }}
-              className="checkbox checkbox-primary"
             />
           </div>
-        )}
+          {state.step === 3 && (
+            <div className="inline-flex gap-5">
+              <div
+                className="text-left text-base-content tooltip tooltip-right before:z-50 before:content-[attr(data-tip)]"
+                data-tip="With this option checked only peak points should be selected. All chart data can be selected otherwise."
+              >
+                Only peaks
+              </div>
+              <input
+                name="only-peaks"
+                type="checkbox"
+                checked={onlyPeaks}
+                onChange={() => {
+                  setOnlyPeaks(onlyPeaks ? false : true);
+                }}
+                className="checkbox checkbox-primary"
+              />
+            </div>
+          )}
+        </div>
       </div>
       {props.fileId && (
         <AxesForm

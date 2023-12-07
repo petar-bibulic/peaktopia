@@ -115,7 +115,7 @@ const ImageProcess = (props: Props) => {
   const getChartDimensions = (): [number | null, number | null] => {
     if (chartRef.current) {
       const offset = chartRef.current.state.offset;
-      return [offset.width, offset.height];
+      return [offset?.width, offset?.height];
     } else {
       return [null, null];
     }
@@ -284,7 +284,7 @@ const ImageProcess = (props: Props) => {
   return (
     <div tabIndex={-1} onKeyDown={handleKeyPress}>
       <ResponsiveContainer
-        aspect={1.78}
+        height="100%"
         width="100%"
         className={`w-full h-full rounded-md select-none ${props.className}`}
       >

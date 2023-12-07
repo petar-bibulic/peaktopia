@@ -41,6 +41,7 @@ const ChartControls = (props: Props) => {
           type="checkbox"
           name="detect-max-checkbox"
           className="toggle toggle-primary"
+          checked={scaleCharts}
           onChange={() => {
             setScaleCharts(scaleCharts ? false : true);
           }}

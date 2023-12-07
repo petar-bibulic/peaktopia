@@ -39,12 +39,8 @@ const Nav = async (props: Props) => {
         <ul className="menu menu-horizontal p-0">
           {NAV_LINKS.map((item, index) => (
             <li key={index} className={item?.disabled ? 'disabled' : ''}>
-              <div>
-                <Link
-                  href={item.url}
-                  className={`my-[2px] ${item?.disabled ? '' : 'text-base-content'}`}
-                  style={{ pointerEvents: item?.disabled ? 'none' : 'auto' }}
-                >
+              <div style={{ pointerEvents: item?.disabled ? 'none' : 'auto' }}>
+                <Link href={item.url} className={`my-[2px] ${item?.disabled ? '' : 'text-base-content'}`}>
                   {item.name}
                 </Link>
               </div>
