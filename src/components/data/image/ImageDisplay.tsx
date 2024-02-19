@@ -5,10 +5,9 @@ import { getAuth } from 'firebase-admin/auth';
 import { App } from 'firebase-admin/app';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import Image from 'next/image';
 import Link from 'next/link';
 import firebaseAdminApp from '@firebaseApp/configAdmin';
-import { toast, Theme } from 'react-toastify';
+import Image from 'next/image';
 
 type Props = {
   fileId?: string;
@@ -67,11 +66,12 @@ const ImageDisplay = async (props: Props) => {
 
   return item ? (
     <Image
-      className="object-fill object-left-bottom brightness-90"
+      className="object-fill object-left-bottom h-auto w-full brightness-90 pointer-events-auto"
       src={item}
       alt="Data image"
       priority={true}
-      fill={true}
+      width={1000}
+      height={1000}
     />
   ) : (
     <NoItemComponent fileId={props.fileId} className="my-8 text-base-content" />

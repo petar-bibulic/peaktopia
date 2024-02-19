@@ -3,54 +3,34 @@
 import { ChartDataset } from '@components/data/DataTypes';
 import useGlobalStore from '@hooks/useGlobalStore';
 import { useEffect, useMemo, memo } from 'react';
-import { AiFillInfoCircle } from 'react-icons/ai';
 import { BiTrash } from 'react-icons/bi';
 
 type Props = {
   peaks: ChartDataset;
-  setPeaks: (value: ChartDataset) => void;
+  setPeaks?: (value: ChartDataset) => void;
   className?: string;
 };
 
-const TableDisplay = memo(function TableDisplay(props: Props) {
+const TablePreview = memo(function TableDisplay(props: Props) {
   const { peaks, setPeaks, className } = props;
-  const activeImages = useGlobalStore((state) => state.activeImages); // active images for display
-  const activeCharts = useGlobalStore((state) => state.activeCharts); // active charts for display
+  const activeCharts = useGlobalStore((state) => state.activeCharts);
   const activeDatasets = useGlobalStore((state) => state.activeDatasets);
   const setActiveDatasets = useGlobalStore((state) => state.setActiveDatasets);
-  const action = useGlobalStore((state) => state.action);
-
-  const allDatasets = useMemo(() => {
-    return [...activeCharts, ...activeImages];
-  }, [activeCharts, activeImages]);
 
   const allPositions = useMemo(() => {
     let positions: number[] = [];
-    for (let key in peaks) {
+    for (let key of activeCharts) {
       peaks[key].sort((a, b) => a.position - b.position);
       positions = [...positions, ...peaks[key].map((item) => item.position)];
     }
     positions = positions.filter((value, index, array) => array.indexOf(value) === index);
 
     return positions.sort((a, b) => a - b);
-  }, [peaks]);
-
-  const activeAction = () => {
-    switch (action) {
-      case 'S':
-        return 'Select peaks';
-      case 'D':
-        return 'Deselect peaks';
-      case 'A':
-        return 'Annotate peaks';
-      default:
-        return 'No active action';
-    }
-  };
+  }, [peaks, activeCharts]);
 
   useEffect(() => {
-    setActiveDatasets([...activeCharts, ...activeImages]);
-  }, [activeCharts, activeImages]);
+    setActiveDatasets(activeCharts);
+  }, [activeCharts]);
 
   const selectDataset = (item: string) => {
     activeDatasets.includes(item)
@@ -59,16 +39,16 @@ const TableDisplay = memo(function TableDisplay(props: Props) {
   };
 
   const deleteDataset = (index: number) => {
-    setPeaks && setPeaks({ ...peaks, ...Object.fromEntries([[allDatasets[index], []]]) });
+    setPeaks && setPeaks({ ...peaks, ...Object.fromEntries([[activeCharts[index], []]]) });
   };
 
   const deletePeak = (index: number) => {
     const position = allPositions[index];
-    const newPeaks = Object.keys(peaks).map((dataset) => [
-      dataset,
-      peaks[dataset].filter((item) => item.position !== position),
-    ]);
-
+    const newPeaks = Object.keys(peaks).map((dataset) =>
+      activeDatasets.includes(dataset)
+        ? [dataset, peaks[dataset].filter((item) => item.position !== position)]
+        : [dataset, peaks[dataset]]
+    );
     setPeaks && setPeaks(Object.fromEntries(newPeaks));
   };
 
@@ -76,21 +56,15 @@ const TableDisplay = memo(function TableDisplay(props: Props) {
     <div className={`${className}`}>
       <div className="inline-flex items-center gap-2">
         <p className="text-base-content text-lg font-semibold">Intensities [rel]</p>
-        <div
-          className="text-left tooltip tooltip-bottom before:z-50 before:content-[attr(data-tip)]"
-          data-tip={`Check each table column to select charts for current action: ${activeAction()}`}
-        >
-          <AiFillInfoCircle className="text-primary hover:text-sky-500 text-lg" />
-        </div>
       </div>
-      <div className="overflow-auto min-h-[10vh] max-h-[70vh]">
+      <div className="overflow-auto min-h-[10vh]">
         <table className="table table-pin-rows text-base-content">
           <thead>
             <tr>
               <th></th>
               <th>Position [° 2&Theta;]</th>
               {Object.keys(peaks).map((item, index) => {
-                if (allDatasets.includes(item)) {
+                if (activeCharts.includes(item)) {
                   return (
                     <th key={index} className="group">
                       <div className="inline-flex items-center gap-2">
@@ -123,7 +97,7 @@ const TableDisplay = memo(function TableDisplay(props: Props) {
                 <th>{i + 1}</th>
                 <td>{position.toFixed(4)}</td>
                 {Object.keys(peaks).map((key, j) => {
-                  if (allDatasets.includes(key)) {
+                  if (activeCharts.includes(key)) {
                     const peakForChart = peaks[key].find((item) => item.position === position);
                     if (peakForChart) {
                       return <td key={`columnIndex-${i}-${j}`}>{peakForChart.intensity.toFixed(0)}</td>;
@@ -149,4 +123,4 @@ const TableDisplay = memo(function TableDisplay(props: Props) {
   );
 });
 
-export default TableDisplay;
+export default TablePreview;

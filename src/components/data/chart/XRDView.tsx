@@ -501,7 +501,11 @@ const XRDView = (props: Props) => {
           clickHandler={submitPeaks}
         />
       </div>
-      <TableDisplay peaks={peaks} className={charts.length > 2 ? 'xl:col-span-2 mt-4' : 'col-span-1 mt-4 xl:mt-0'} />
+      <TableDisplay
+        peaks={peaks}
+        setPeaks={setPeaks}
+        className={charts.length > 2 ? 'xl:col-span-2 mt-4' : 'col-span-1 mt-4 xl:mt-0'}
+      />
     </div>
   );
 };

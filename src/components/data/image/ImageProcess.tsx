@@ -2,7 +2,7 @@
 
 import { ResponsiveContainer, LineChart, XAxis, YAxis, Line, Customized, LabelList } from 'recharts';
 import { CategoricalChartState } from 'recharts/types/chart/generateCategoricalChart';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useMemo } from 'react';
 import useGlobalStore from '@hooks/useGlobalStore';
 import { getChartColor, taxicabDist, getClosestPoint, getNearestPeak } from '@utils/helperFunctions';
 
@@ -32,11 +32,29 @@ const ImageProcess = (props: Props) => {
   const [currentPosition, setCurrentPosition] = useState<Point | null>(null);
   const [activeAnchor, setactiveAnchor] = useState<PointName | null>(null);
   const [activeDragPoint, setActiveDragPoint] = useState<PointName | null>(null);
-  const [peakPoints, setPeakPoints] = useState<Point[]>([]); // peaks in { X, Y } format, used for charts
   const setUserInstruction = useGlobalStore((state) => state.setUserInstruction);
   const action = useGlobalStore((state) => state.action);
   const chartRef = useRef<any>(null);
   const { setContinue, step, peaks, setPeaks, axesRange } = props;
+
+  const peakPoints: Array<Point> = useMemo(() => {
+    const points: Array<Point> = [];
+    const tranformToPoint = (point: ChartDataPoint): Point => {
+      if (!axesRange) return { x: 0, y: 0 };
+      const X =
+        ((point.position - axesRange.X1) / (axesRange.X2 - axesRange.X1)) * (range.x2.x - range.x1.x) + range.x1.x;
+      const Y =
+        ((point.intensity - axesRange.Y1) / (axesRange.Y2 - axesRange.Y1)) * (range.y2.y - range.y1.y) + range.y1.y;
+
+      return { x: X, y: Y };
+    };
+
+    for (let peak of peaks) {
+      points.push(tranformToPoint(peak));
+    }
+
+    return points;
+  }, [peaks]);
 
   const error = console.error;
   console.error = (...args: any) => {
@@ -97,7 +115,7 @@ const ImageProcess = (props: Props) => {
   const getChartDimensions = (): [number | null, number | null] => {
     if (chartRef.current) {
       const offset = chartRef.current.state.offset;
-      return [offset.width, offset.height];
+      return [offset?.width, offset?.height];
     } else {
       return [null, null];
     }
@@ -118,7 +136,6 @@ const ImageProcess = (props: Props) => {
   };
 
   // add new peak based on click position
-  // orthogonal projection based to previously defined X and Y axes
   const addPeak = (point: Point) => {
     //TODO: make orthogonal projection of position onto X and Y axes
     if (!axesRange) return;
@@ -126,7 +143,6 @@ const ImageProcess = (props: Props) => {
     const newY = ((point.y - range.y1.y) / (range.y2.y - range.y1.y)) * (axesRange.Y2 - axesRange.Y1) + axesRange.Y1;
     const newPeak: ChartDataPoint = { position: newX, intensity: newY };
     setPeaks([...peaks, newPeak]);
-    setPeakPoints([...peakPoints, point]);
     setContinue(true);
   };
 
@@ -134,7 +150,6 @@ const ImageProcess = (props: Props) => {
   const removePeak = (position: Point) => {
     const nearest = getNearestPeak(position, peakPoints);
     if (nearest && taxicabDist(position, nearest.point) < SELECT_RANGE_CUTOFF) {
-      setPeakPoints(peakPoints.filter((peak, index) => index !== nearest.index));
       setPeaks(peaks.filter((peak, index) => index !== nearest.index));
       if (peaks.length <= 1) setContinue(false);
     }
@@ -240,6 +255,7 @@ const ImageProcess = (props: Props) => {
   };
 
   // control mouse down event based on step state
+  // TODO: move click logic in the same function and add check for how long the button was pressed
   const handleMouseDown = (e: CategoricalChartState) => {
     if (step > 2) return;
 
@@ -269,7 +285,7 @@ const ImageProcess = (props: Props) => {
   return (
     <div tabIndex={-1} onKeyDown={handleKeyPress}>
       <ResponsiveContainer
-        aspect={1.78}
+        height="100%"
         width="100%"
         className={`w-full h-full rounded-md select-none ${props.className}`}
       >

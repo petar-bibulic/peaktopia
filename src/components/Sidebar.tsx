@@ -1,14 +1,15 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import { toTitle } from '@utils/helperFunctions';
 import ChartMenuActions from '@components/misc/ChartMenuActions';
 import ImageMenuActions from '@components/misc/ImageMenuActions';
+import TableMenuActions from '@components/misc/TableMenuActions';
 import MenuCharts from '@components/misc/MenuCharts';
+import MenuImages from '@components/misc/MenuImages';
+import MenuTables from '@components/misc/MenuTables';
 import MenuNav from '@components/misc/MenuNav';
 import NavIcon from '@components/misc/NavIcon';
 import SidebarTop from '@components/misc/SidebarTop';
-import MenuImages from './misc/MenuImages';
 
 type Props = {
   children: React.ReactNode;
@@ -22,6 +23,8 @@ const Sidebar = (props: Props) => {
     type = 'chart';
   } else if (currentRoute.includes('image')) {
     type = 'image';
+  } else if (currentRoute.includes('table')) {
+    type = 'table';
   } else {
     console.warn('Cannot find supported route to use in sidebar.');
     type = null;
@@ -54,6 +57,12 @@ const Sidebar = (props: Props) => {
             <>
               <ImageMenuActions />
               <MenuImages />
+            </>
+          )}
+          {type === 'table' && (
+            <>
+              <TableMenuActions />
+              <MenuTables />
             </>
           )}
         </aside>

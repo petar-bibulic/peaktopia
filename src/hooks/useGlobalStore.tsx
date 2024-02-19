@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { DocType, SideEffectsType } from '@components/data/DataTypes';
+import { DocType, SideEffectsType, ChartDataset } from '@components/data/DataTypes';
 
 type ActionState = {
   action: string;
@@ -20,6 +20,8 @@ type ActionState = {
   setTheme: (value: string) => void;
   sideEffects: SideEffectsType;
   setSideEffects: (effects: SideEffectsType) => void;
+  data: ChartDataset;
+  setData: (value: ChartDataset) => void;
 };
 
 const useGlobalStore = create<ActionState>()((set) => ({
@@ -41,6 +43,8 @@ const useGlobalStore = create<ActionState>()((set) => ({
   setTheme: (value) => set(() => ({ theme: value })),
   sideEffects: {},
   setSideEffects: (effects: SideEffectsType) => set(() => ({ sideEffects: effects })),
+  data: {},
+  setData: (value) => set(() => ({ data: value })),
 }));
 
 export default useGlobalStore;
