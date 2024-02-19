@@ -158,7 +158,7 @@ const ImagePreview = (props: Props, ref: MutableRefObject<HTMLDivElement | null>
         <div className="w-full relative" ref={chartDivRef}>
           <ImageMagnifier show={showMagnifier}>
             {props.children}
-            {props.fileId && (
+            {props.fileId && activeCharts.length > 0 && (
               <ImageProcess
                 setContinue={setContinueBool}
                 step={state.step}

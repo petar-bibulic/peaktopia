@@ -255,6 +255,7 @@ const ImageProcess = (props: Props) => {
   };
 
   // control mouse down event based on step state
+  // TODO: move click logic in the same function and add check for how long the button was pressed
   const handleMouseDown = (e: CategoricalChartState) => {
     if (step > 2) return;
 

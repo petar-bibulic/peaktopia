@@ -4,12 +4,10 @@ import useGlobalStore from '@hooks/useGlobalStore';
 
 type Props = {};
 
-const MenuPeaks = (props: Props) => {
+const MenuTables = (props: Props) => {
   const charts = useGlobalStore((state) => state.charts);
   const activeCharts = useGlobalStore((state) => state.activeCharts);
   const setActiveCharts = useGlobalStore((state) => state.setActiveCharts);
-  const activeImages = useGlobalStore((state) => state.activeImages);
-  const setActiveImages = useGlobalStore((state) => state.setActiveImages);
 
   const onChartSelect = (name: string) => {
     activeCharts.includes(name)
@@ -36,4 +34,4 @@ const MenuPeaks = (props: Props) => {
   );
 };
 
-export default MenuPeaks;
+export default MenuTables;

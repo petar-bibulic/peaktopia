@@ -4,7 +4,6 @@ import { doc, setDoc, getDocs, query, collection, where, updateDoc } from 'fireb
 import firebaseAdminApp from '@firebaseApp/configAdmin';
 import { getAuth, DecodedIdToken } from 'firebase-admin/auth';
 import { App } from 'firebase-admin/app';
-
 import { ChartDataPoint } from '@components/data/DataTypes';
 
 type PostRequestBody = {

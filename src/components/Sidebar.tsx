@@ -6,7 +6,7 @@ import ImageMenuActions from '@components/misc/ImageMenuActions';
 import TableMenuActions from '@components/misc/TableMenuActions';
 import MenuCharts from '@components/misc/MenuCharts';
 import MenuImages from '@components/misc/MenuImages';
-import MenuPeaks from '@components/misc/MenuPeaks';
+import MenuTables from '@components/misc/MenuTables';
 import MenuNav from '@components/misc/MenuNav';
 import NavIcon from '@components/misc/NavIcon';
 import SidebarTop from '@components/misc/SidebarTop';
@@ -62,7 +62,7 @@ const Sidebar = (props: Props) => {
           {type === 'table' && (
             <>
               <TableMenuActions />
-              <MenuPeaks />
+              <MenuTables />
             </>
           )}
         </aside>
