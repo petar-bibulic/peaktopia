@@ -59,14 +59,9 @@ const SubmitPeaksButton = (props: Props) => {
     const payload = await response.json();
     if (response.status === 201) {
       toast.update(toastId, {
-        render: 'Sign in successful',
+        render: 'Data saved successfully',
         type: 'success',
         isLoading: false,
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
         progress: undefined,
         theme: theme as Theme,
       });
@@ -76,11 +71,6 @@ const SubmitPeaksButton = (props: Props) => {
         render: `Error uploading data: ${payload.message}`,
         type: 'error',
         isLoading: false,
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
         progress: undefined,
         theme: theme as Theme,
       });

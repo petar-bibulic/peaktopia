@@ -7,7 +7,7 @@ import parser from 'xml2js';
 import { ref, getBlob } from 'firebase/storage';
 import { storage } from '@firebaseApp/config';
 import { collection, getDocs, query, where } from 'firebase/firestore';
-import { CategoricalChartState } from 'recharts/types/chart/generateCategoricalChart';
+import { CategoricalChartState } from 'recharts/types/chart/types';
 import TableDisplay from '@components/data/TableDisplay';
 import XRDChart from '@components/data/chart/XRDChart';
 import PeakWidthSelector from '@components/data/chart/PeakWidthSelector';
@@ -450,11 +450,6 @@ const XRDView = (props: Props) => {
         render: 'Data saved successfully',
         type: 'success',
         isLoading: false,
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
         progress: undefined,
         theme: theme as Theme,
       });
@@ -463,11 +458,6 @@ const XRDView = (props: Props) => {
         render: `Error uploading data: ${payload.message}`,
         type: 'error',
         isLoading: false,
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
         progress: undefined,
         theme: theme as Theme,
       });

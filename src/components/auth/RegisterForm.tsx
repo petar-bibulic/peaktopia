@@ -49,11 +49,6 @@ const LoginForm = (props: Props) => {
         render: 'Registration successful',
         type: 'success',
         isLoading: false,
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
         progress: undefined,
         theme: theme as Theme,
       });
@@ -62,11 +57,6 @@ const LoginForm = (props: Props) => {
         render: error.message,
         type: 'error',
         isLoading: false,
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
         progress: undefined,
         theme: theme as Theme,
       });

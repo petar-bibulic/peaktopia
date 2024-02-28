@@ -13,7 +13,7 @@ import {
   TooltipProps,
   Brush,
 } from 'recharts';
-import { CategoricalChartState } from 'recharts/types/chart/generateCategoricalChart';
+import { CategoricalChartState } from 'recharts/types/chart/types';
 import { ValueType, NameType } from 'recharts/types/component/DefaultTooltipContent';
 import { ChartDataType, ChartStateType, ChartDataset, ChartDataPoint } from '@components/data/DataTypes';
 import React, { useMemo, Dispatch, SetStateAction, Fragment } from 'react';

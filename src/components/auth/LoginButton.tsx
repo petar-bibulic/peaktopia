@@ -1,5 +1,6 @@
 'use client';
 
+import { usePathname } from 'next/navigation';
 import { useAuthContext } from '@store/AuthContext';
 import Link from 'next/link';
 import { logOut } from '@firebaseApp/authUtils';
@@ -12,6 +13,7 @@ type Props = {};
 const LoginButton = (props: Props) => {
   const user = useAuthContext();
   const theme = useGlobalStore((state) => state.theme);
+  const urlPath = usePathname();
 
   const logoutHandler = async () => {
     await logOut();
@@ -35,7 +37,7 @@ const LoginButton = (props: Props) => {
       </div>
     </div>
   ) : (
-    <Link href="/auth/login" className="btn btn-primary rounded my-1">
+    <Link href={`/auth/login?next=${urlPath}`} className="btn btn-primary rounded my-1">
       Login
     </Link>
   );

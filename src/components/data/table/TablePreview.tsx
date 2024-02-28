@@ -7,7 +7,7 @@ import { BiTrash } from 'react-icons/bi';
 
 type Props = {
   peaks: ChartDataset;
-  setPeaks?: (value: ChartDataset) => void;
+  setPeaks: (value: ChartDataset) => void;
   className?: string;
 };
 
@@ -19,9 +19,11 @@ const TablePreview = memo(function TableDisplay(props: Props) {
 
   const allPositions = useMemo(() => {
     let positions: number[] = [];
-    for (let key of activeCharts) {
-      peaks[key].sort((a, b) => a.position - b.position);
-      positions = [...positions, ...peaks[key].map((item) => item.position)];
+    if (Object.entries(peaks).length) {
+      for (let key of activeCharts) {
+        peaks[key].sort((a, b) => a.position - b.position);
+        positions = [...positions, ...peaks[key].map((item) => item.position)];
+      }
     }
     positions = positions.filter((value, index, array) => array.indexOf(value) === index);
 
@@ -30,6 +32,8 @@ const TablePreview = memo(function TableDisplay(props: Props) {
 
   useEffect(() => {
     setActiveDatasets(activeCharts);
+
+    return () => {};
   }, [activeCharts]);
 
   const selectDataset = (item: string) => {

@@ -35,9 +35,15 @@ const MenuCharts = (props: Props) => {
           </span>
           <span>Charts</span>
         </li>
-        {charts.map((chart, i) => (
-          <MenuChartElement name={chart.name} key={i} clickHandler={onChartSelect} active={activeCharts} />
-        ))}
+        {charts.length ? (
+          charts.map((chart, i) => (
+            <MenuChartElement name={chart.name} key={i} clickHandler={onChartSelect} active={activeCharts} />
+          ))
+        ) : (
+          <li style={{ pointerEvents: 'none' }}>
+            <span>No charts to select</span>
+          </li>
+        )}
         <li></li>
       </ul>
       {images.length > 0 && (
@@ -49,9 +55,15 @@ const MenuCharts = (props: Props) => {
             </span>
             <span>Processed images</span>
           </li>
-          {images.map((image, i) => (
-            <MenuChartElement name={image.name} key={i} clickHandler={onImageSelect} active={activeImages} />
-          ))}
+          {images.length ? (
+            images.map((image, i) => (
+              <MenuChartElement name={image.name} key={i} clickHandler={onImageSelect} active={activeImages} />
+            ))
+          ) : (
+            <li style={{ pointerEvents: 'none' }}>
+              <span>No images to select</span>
+            </li>
+          )}
           <li></li>
         </ul>
       )}

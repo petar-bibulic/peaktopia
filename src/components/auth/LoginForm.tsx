@@ -25,9 +25,9 @@ const LoginForm = (props: Props) => {
   const isMobile = useIsMobile();
 
   useEffect(() => {
+    console.warn('THIS GOT CALLED');
     setIsLoading(false);
     if (!isLoading && user) {
-      // add timeout and toast notification before redirecting
       const query = searchParams.get('next');
       if (query) {
         router.push(query);
@@ -54,11 +54,6 @@ const LoginForm = (props: Props) => {
         render: 'Sign in successful',
         type: 'success',
         isLoading: false,
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
         progress: undefined,
         theme: theme as Theme,
       });
@@ -67,11 +62,6 @@ const LoginForm = (props: Props) => {
         render: error.message,
         type: 'error',
         isLoading: false,
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
         progress: undefined,
         theme: theme as Theme,
       });

@@ -25,9 +25,15 @@ const MenuTables = (props: Props) => {
           </span>
           <span>Data</span>
         </li>
-        {charts.map((chart, i) => (
-          <MenuChartElement name={chart.name} key={i} clickHandler={onChartSelect} active={activeCharts} />
-        ))}
+        {charts.length ? (
+          charts.map((chart, i) => (
+            <MenuChartElement name={chart.name} key={i} clickHandler={onChartSelect} active={activeCharts} />
+          ))
+        ) : (
+          <li style={{ pointerEvents: 'none' }}>
+            <span>No data to select</span>
+          </li>
+        )}
         <li></li>
       </ul>
     </>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { GoogleLoginButton, FacebookLoginButton, GithubLoginButton } from '@components/auth/OAuthLoginButton';
 import { useEffect, useState } from 'react';
@@ -43,12 +43,17 @@ const AuthenticateWithProvider = (props: Props) => {
   const [isLoading, setIsLoading] = useState(true);
   const user = useAuthContext();
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   useEffect(() => {
     setIsLoading(false);
     if (!isLoading && user) {
-      // add timeout and toast notification before redirecting
-      router.push('/');
+      const query = searchParams.get('next');
+      if (query) {
+        router.push(query);
+      } else {
+        router.push('/');
+      }
     }
   }, [user]);
 

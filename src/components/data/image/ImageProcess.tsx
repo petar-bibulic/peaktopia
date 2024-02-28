@@ -1,7 +1,7 @@
 'use client';
 
 import { ResponsiveContainer, LineChart, XAxis, YAxis, Line, Customized, LabelList } from 'recharts';
-import { CategoricalChartState } from 'recharts/types/chart/generateCategoricalChart';
+import { CategoricalChartState } from 'recharts/types/chart/types';
 import { useEffect, useState, useRef, useMemo } from 'react';
 import useGlobalStore from '@hooks/useGlobalStore';
 import { getChartColor, taxicabDist, getClosestPoint, getNearestPeak } from '@utils/helperFunctions';

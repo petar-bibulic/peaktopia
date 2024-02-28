@@ -37,13 +37,22 @@ const TableView = (props: Props) => {
         qSnapshot.forEach((doc) => {
           peakData.push({ ...doc.data(), id: doc.id } as PeakType);
         });
-        setActiveCharts(peakData.map((obj) => obj.name));
-        setCharts(peakData.map((obj) => ({ ...obj, url: 'Fake url' })));
-        setPeaks(Object.fromEntries(peakData.map(({ name, peaks }) => [name, peaks])));
+        if (peakData.length) {
+          setActiveCharts(peakData.map((obj) => obj.name));
+          setCharts(peakData.map((obj) => ({ ...obj, url: 'Fake url' })));
+          setPeaks(Object.fromEntries(peakData.map(({ name, peaks }) => [name, peaks])));
+        }
+      } else {
+        setActiveCharts([]);
+        setCharts([]);
+        setPeaks({});
       }
       return [];
     } catch (e) {
       console.error(`Error while fetching from Firestore Database: ${e}`);
+      setActiveCharts([]);
+      setCharts([]);
+      setPeaks({});
       return [];
     }
   };
